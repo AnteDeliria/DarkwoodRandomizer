@@ -57,62 +57,19 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
                 description: "COSMETIC: The biomes to choose from when randomizing chunk ground sprites. Valid values are \"forest\", \"forest_dense\", \"forest_mutated\", \"swamp\", \"meadow\", and \"empty\". Will default to all if no value is specified"
             );
 
-        Settings.Locations_RandomizeExistingLocations = Config.Bind
+        Settings.Locations_RandomizeLocations = Config.Bind
             (
                 section: "Locations",
-                key: "Randomize existing locations",
+                key: "Randomize locations",
                 defaultValue: false,
-                description: "Whether to randomize existing locations"
+                description: "Whether to randomize locations"
             );
-        Settings.Locations_RandomizeExistingLocationsAllowRepeats = Config.Bind
+        Settings.Locations_RandomizeLocationsExcludeHideouts = Config.Bind
             (
                 section: "Locations",
-                key: "Allow repeats when randomizing existing locations",
+                key: "Exclude hideouts when randomizing locations",
                 defaultValue: false,
-                description: "Whether to allow locations to be repeated when randomizing existing locations"
-            );
-        Settings.Locations_RandomizeExistingLocationsExcludeHideouts = Config.Bind
-            (
-                section: "Locations",
-                key: "Exclude hideouts when randomizing existing locations",
-                defaultValue: false,
-                description: "Whether to exclude hideouts when randomizing existing locations"
-            );
-        Settings.Locations_RandomizeExistingLocationsPool = Config.Bind
-            (
-                section: "Locations",
-                key: "Randomize existing locations pool",
-                defaultValue: "chapter1",
-                description: "The location pools to choose from when randomizing locations. Valid values are \"chapter1\", \"wolf_camps\", \"chapter2\", \"hideouts\". Will default to all if no value is specified"
-            );
-
-        Settings.Locations_AddExtraLocations = Config.Bind
-            (
-                section: "Locations",
-                key: "Add extra locations",
-                defaultValue: false,
-                description: "Whether to add extra locations"
-            );
-        Settings.Locations_AddExtraLocationsAllowRepeats = Config.Bind
-            (
-                section: "Locations",
-                key: "Allow repeats when adding extra locations",
-                defaultValue: false,
-                description: "Whether to allow locations to be repeated when adding extra locations"
-            );
-        Settings.Locations_AddExtraLocationsExcludeHideouts = Config.Bind
-            (
-                section: "Locations",
-                key: "Exclude hideouts when adding extra locations",
-                defaultValue: false,
-                description: "Whether to exclude hideouts when adding extra locations"
-            );
-        Settings.Locations_AddExtraLocationsPool = Config.Bind
-            (
-                section: "Locations",
-                key: "Add extra locations pool",
-                defaultValue: "chapter1",
-                description: "The location pools to choose from when adding extra locations. Valid values are \"chapter1\", \"wolf_camps\", \"chapter2\", \"hideouts\". Will default to all if no value is specified"
+                description: "Whether to exclude hideouts when randomizing locations"
             );
 
 

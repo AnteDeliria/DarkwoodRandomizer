@@ -12,15 +12,8 @@ namespace DarkwoodRandomizer
 
 
 
-        internal static ConfigEntry<bool> Locations_RandomizeExistingLocations;
-        internal static ConfigEntry<bool> Locations_RandomizeExistingLocationsAllowRepeats;
-        internal static ConfigEntry<bool> Locations_RandomizeExistingLocationsExcludeHideouts;
-        internal static ConfigEntry<string> Locations_RandomizeExistingLocationsPool;
-
-        internal static ConfigEntry<bool> Locations_AddExtraLocations;
-        internal static ConfigEntry<bool> Locations_AddExtraLocationsAllowRepeats;
-        internal static ConfigEntry<bool> Locations_AddExtraLocationsExcludeHideouts;
-        internal static ConfigEntry<string> Locations_AddExtraLocationsPool;
+        internal static ConfigEntry<bool> Locations_RandomizeLocations;
+        internal static ConfigEntry<bool> Locations_RandomizeLocationsExcludeHideouts;
 
 
 

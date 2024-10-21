@@ -47,89 +47,35 @@ namespace DarkwoodRandomizer
             __instance.biome = __state;
         }
 
-        //[HarmonyPatch("spawnNextLocation", MethodType.Enumerator)]
-        //[HarmonyTranspiler]
-        //internal static IEnumerable<CodeInstruction> RandomizeMapBorders(IEnumerable<CodeInstruction> instructions)
-        //{
-        //    foreach (var instruction in instructions)
-        //    {
-        //        if (instruction.Calls(AccessTools.Method(typeof(WorldChunk), "getLocationName")))
-        //        {
-        //            yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(WorldChunkPatches), nameof(IWasHere)));
-        //        }
-        //        yield return instruction;
-        //    }
-        //}
-
-        //internal static void IWasHere()
-        //{
-        //    DarkwoodRandomizerPlugin.Logger.LogInfo("I was here");
-        //}
 
 
-        /*  
-         *  Spawns locations in chunks without a predefined location
-         *  Mostly spawns around the edges but can also block off paths
-         */
         internal static List<string> alreadySpawned = new();
 
         [HarmonyPatch("populate")]
         [HarmonyPrefix]
         internal static void PopulatePrefix(WorldChunk __instance)
         {
-            //DarkwoodRandomizerPlugin.Logger.LogInfo("Old location name: " + __instance.locationName ?? "null");
-
-            //if (!string.IsNullOrEmpty(__instance.locationName) || __instance.isBorderChunk)
-            //    return;
-
-            
-
-            if (__instance.isBorderChunk || Locations.Hideouts.Contains(__instance.locationName)) // Don't want to clip locations into the wall or rearrange hideouts
+            if (!Settings.Locations_RandomizeLocations.Value)
+                return;
+            if (string.IsNullOrEmpty(__instance.locationName)) // Empty chunk
+                return;
+            if (__instance.isBorderChunk) // Don't want to clip locations into the wall
+                return;
+            if (Settings.Locations_RandomizeLocationsExcludeHideouts.Value && Locations.Hideouts.Contains(__instance.locationName))
                 return;
 
-            if (Settings.Locations_RandomizeExistingLocations.Value && !string.IsNullOrEmpty(__instance.locationName))
+            List<string> availableToSpawn = Locations.MustSpawnCh1;
+
+            if (!Settings.Locations_RandomizeLocationsExcludeHideouts.Value)
+                availableToSpawn = availableToSpawn.Concat(Locations.Hideouts).ToList();
+
+            availableToSpawn = availableToSpawn.Except(alreadySpawned).ToList();
+
+            if (availableToSpawn.Count > 0)
             {
-                if (Settings.Locations_RandomizeExistingLocationsExcludeHideouts.Value && Locations.Hideouts.Contains(__instance.locationName))
-                    return;
-
-                List<string> availableToSpawn = Locations.GetOverworldLocationPool(Settings.Locations_RandomizeExistingLocationsPool);
-
-                if (Settings.Locations_RandomizeExistingLocationsExcludeHideouts.Value)
-                    availableToSpawn = availableToSpawn.Except(Locations.Hideouts).ToList();
-                if (!Settings.Locations_RandomizeExistingLocationsAllowRepeats.Value)
-                    availableToSpawn = availableToSpawn.Except(alreadySpawned).ToList();
-
-                if (availableToSpawn.Count > 0)
-                {
-                    __instance.locationName = availableToSpawn[UnityEngine.Random.Range(0, availableToSpawn.Count)];
-                    alreadySpawned.Add(__instance.locationName);
-                }
+                __instance.locationName = availableToSpawn[UnityEngine.Random.Range(0, availableToSpawn.Count)];
+                alreadySpawned.Add(__instance.locationName);
             }
-            else if (Settings.Locations_AddExtraLocations.Value && !string.IsNullOrEmpty(__instance.locationName))
-            {
-                List<string> availableToSpawn = Locations.GetOverworldLocationPool(Settings.Locations_AddExtraLocationsPool);
-
-                if (Settings.Locations_RandomizeExistingLocationsExcludeHideouts.Value)
-                    availableToSpawn = availableToSpawn.Except(Locations.Hideouts).ToList();
-                if (!Settings.Locations_AddExtraLocationsAllowRepeats.Value)
-                    availableToSpawn = availableToSpawn.Except(alreadySpawned).ToList();
-
-                if (availableToSpawn.Count > 0)
-                {
-                    __instance.locationName = availableToSpawn[UnityEngine.Random.Range(0, availableToSpawn.Count)];
-                    alreadySpawned.Add(__instance.locationName);
-                }
-            }
-
-            //List<LocationPreset> presets = Singleton<WorldGenerator>.Instance.locationPresets.ToList();
-
-            //foreach (LocationPreset preset in presets.ToArray())
-            //    if (unloadedPresets.Contains(preset.name) || hideouts.Contains(preset.name))
-            //        presets.Remove(preset);
-
-
-
-            //DarkwoodRandomizerPlugin.Logger.LogInfo("Spawned location: " + __instance.locationName);
         }
     }
 }
