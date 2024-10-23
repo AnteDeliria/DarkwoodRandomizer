@@ -57,6 +57,7 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
                 description: "COSMETIC: The biomes to choose from when randomizing chunk ground sprites. Valid values are \"forest\", \"forest_dense\", \"forest_mutated\", \"swamp\", \"meadow\", and \"empty\". Will default to all if no value is specified"
             );
 
+
         Settings.Locations_RandomizeLocations = Config.Bind
             (
                 section: "Locations",
@@ -70,6 +71,37 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
                 key: "Exclude hideouts when randomizing locations",
                 defaultValue: false,
                 description: "Whether to exclude hideouts when randomizing locations"
+            );
+        Settings.Locations_RandomizeLocationRotation = Config.Bind
+            (
+                section: "Locations",
+                key: "Randomize location rotation",
+                defaultValue: false,
+                description: "Whether to randomize location rotation. Also makes vaulting a little janky. Does not affect border locations"
+            );
+        Settings.Locations_RandomizeHideoutRotation = Config.Bind
+            (
+                section: "Locations",
+                key: "Randomize hideout rotation",
+                defaultValue: false,
+                description: "Whether to randomize hideout rotation. Also makes vaulting a little janky."
+            );
+
+
+        Settings.Enemies_RandomizeEnemies = Config.Bind
+            (
+                section: "Enemies",
+                key: "Randomize enemies",
+                defaultValue: false,
+                description: "Whether to randomize enemies"
+            );
+
+        Settings.Night_RandomizeEnemies = Config.Bind
+            (
+                section: "Night",
+                key: "Randomize enemies",
+                defaultValue: false,
+                description: "Whether to randomize night enemies"
             );
 
 

@@ -61,13 +61,13 @@ namespace DarkwoodRandomizer
                 return;
             if (__instance.isBorderChunk) // Don't want to clip locations into the wall
                 return;
-            if (Settings.Locations_RandomizeLocationsExcludeHideouts.Value && Locations.Hideouts.Contains(__instance.locationName))
+            if (Settings.Locations_RandomizeLocationsExcludeHideouts.Value && Locations.HideoutsCh1.Contains(__instance.locationName))
                 return;
 
             List<string> availableToSpawn = Locations.MustSpawnCh1;
 
             if (!Settings.Locations_RandomizeLocationsExcludeHideouts.Value)
-                availableToSpawn = availableToSpawn.Concat(Locations.Hideouts).ToList();
+                availableToSpawn = availableToSpawn.Concat(Locations.HideoutsCh1).ToList();
 
             availableToSpawn = availableToSpawn.Except(alreadySpawned).ToList();
 

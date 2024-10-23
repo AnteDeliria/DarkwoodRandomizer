@@ -11,9 +11,16 @@ namespace DarkwoodRandomizer
         internal static ConfigEntry<string> World_RandomizeChunkGroundSpritesPool;
 
 
-
         internal static ConfigEntry<bool> Locations_RandomizeLocations;
         internal static ConfigEntry<bool> Locations_RandomizeLocationsExcludeHideouts;
+        internal static ConfigEntry<bool> Locations_RandomizeLocationRotation;
+        internal static ConfigEntry<bool> Locations_RandomizeHideoutRotation;
+
+
+        internal static ConfigEntry<bool> Enemies_RandomizeEnemies;
+
+
+        internal static ConfigEntry<bool> Night_RandomizeEnemies;
 
 
 

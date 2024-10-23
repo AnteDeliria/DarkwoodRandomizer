@@ -1,17 +1,24 @@
 ﻿using BepInEx.Configuration;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace DarkwoodRandomizer
 {
+    [HarmonyPatch]
     internal static class Locations
     {
         // Need to recheck
         // Some are missing like village entrance, zone connections, road to doctor etc
 
         // "med_cottage_tree_01" beginner hideout
-        internal static List<string> Hideouts = ["med_cottage_tree_01", "big_farm_02", "big_hideout_03", "med_hideout_04", "med_hideout_05"];
+        internal static List<string> HideoutsCh1 = ["med_cottage_tree_01", "big_farm_02", "big_hideout_03"];
+        
+        internal static List<string> HideoutsCh2 = ["med_hideout_04", "med_hideout_05"];
 
         internal static List<string> MustSpawnCh1 =
             ["big_burned_houses_01", "med_bunker_enter_01",
@@ -56,45 +63,19 @@ namespace DarkwoodRandomizer
 
 
 
-        internal static List<string> GetAllOverworldLocations()
+
+        // Randomizes location rotation
+        // Also makes vaulting a little scuffed
+        // Does not affect border locations
+        [HarmonyPatch(typeof(GameObject), "SetActive")]
+        [HarmonyPrefix]
+        internal static void RandomizeLocationRotation(GameObject __instance)
         {
-            return MustSpawnCh1.Concat(WolfCamps).Concat(MustSpawnCh2).Concat(Hideouts).ToList();
-        }
+            if (Settings.Locations_RandomizeHideoutRotation.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
+                __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
 
-        internal static List<string> GetOverworldLocationPool(ConfigEntry<string> configEntry)
-        {
-            IEnumerable<string> locationStrings = configEntry.Value.Split(',').Select(x => x.Trim().ToLower());
-            List<string> locationChoices = new();
-
-            foreach (string location in locationStrings)
-            {
-                switch (location)
-                {
-                    case "chapter1":
-                        locationChoices.AddRange(MustSpawnCh1);
-                        break;
-                    case "chapter2": // Locations are not added to build settings 
-                        //foreach (string sceneName in MustSpawnCh2)
-                        //    if (!SceneManager.GetSceneByName(sceneName).isLoaded)
-                        //    {
-                        //        DarkwoodRandomizerPlugin.Logger.LogInfo("test");
-                        //        SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-                        //    }
-                        locationChoices.AddRange(MustSpawnCh2.Except(UnloadedPresets));
-                        break;
-                    case "wolf_camps":
-                        locationChoices.AddRange(WolfCamps);
-                        break;
-                    case "hideouts":
-                        locationChoices.AddRange(Hideouts);
-                        break;
-                }
-            }
-
-            if (locationChoices.Count == 0)
-                return GetAllOverworldLocations();
-            else
-                return locationChoices;
+            if (Settings.Locations_RandomizeLocationRotation.Value && MustSpawnCh1.Contains(__instance.name.Replace("_done", "")))
+                __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
     }
 }
