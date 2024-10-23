@@ -88,6 +88,29 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
             );
 
 
+        Settings.GridObjects_RandomizeGridObjects = Config.Bind
+            (
+                section: "Grid Objects",
+                key: "Randomize grid objects",
+                defaultValue: false,
+                description: "Whether to randomize the position of grid objects (e.g.: shrines, tank wrecks, log piles, etc.)"
+            );
+        Settings.GridObjects_IncludeSwampObjectsInPool = Config.Bind
+            (
+                section: "Grid Objects",
+                key: "Include swamp objects in grid objects pool",
+                defaultValue: false,
+                description: "Whether to allow chapter 2 (swamp) objects to be generated. These are much larger in size than chapter 1 objects"
+            );
+        Settings.GridObjects_RandomizeGridObjectRotation = Config.Bind
+            (
+                section: "Grid Objects",
+                key: "Randomize grid object rotation",
+                defaultValue: false,
+                description: "Whether to randomize grid object rotation"
+            );
+
+
         Settings.Enemies_RandomizeEnemies = Config.Bind
             (
                 section: "Enemies",
