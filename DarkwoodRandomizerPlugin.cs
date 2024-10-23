@@ -58,19 +58,19 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
             );
 
 
-        Settings.Locations_RandomizeLocations = Config.Bind
+        Settings.Locations_RandomizeLocationPosition = Config.Bind
             (
                 section: "Locations",
-                key: "Randomize locations",
+                key: "Randomize location position",
                 defaultValue: false,
-                description: "Whether to randomize locations"
+                description: "Whether to randomize the position of locations"
             );
-        Settings.Locations_RandomizeLocationsExcludeHideouts = Config.Bind
+        Settings.Locations_RandomizeHideoutPosition = Config.Bind
             (
                 section: "Locations",
-                key: "Exclude hideouts when randomizing locations",
+                key: "Randomize hideout position",
                 defaultValue: false,
-                description: "Whether to exclude hideouts when randomizing locations"
+                description: "Whether to randomize the position of hideouts"
             );
         Settings.Locations_RandomizeLocationRotation = Config.Bind
             (

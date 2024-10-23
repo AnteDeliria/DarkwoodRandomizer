@@ -46,36 +46,5 @@ namespace DarkwoodRandomizer
 
             __instance.biome = __state;
         }
-
-
-
-        internal static List<string> alreadySpawned = new();
-
-        [HarmonyPatch("populate")]
-        [HarmonyPrefix]
-        internal static void PopulatePrefix(WorldChunk __instance)
-        {
-            if (!Settings.Locations_RandomizeLocations.Value)
-                return;
-            if (string.IsNullOrEmpty(__instance.locationName)) // Empty chunk
-                return;
-            if (__instance.isBorderChunk) // Don't want to clip locations into the wall
-                return;
-            if (Settings.Locations_RandomizeLocationsExcludeHideouts.Value && Locations.HideoutsCh1.Contains(__instance.locationName))
-                return;
-
-            List<string> availableToSpawn = Locations.MustSpawnCh1;
-
-            if (!Settings.Locations_RandomizeLocationsExcludeHideouts.Value)
-                availableToSpawn = availableToSpawn.Concat(Locations.HideoutsCh1).ToList();
-
-            availableToSpawn = availableToSpawn.Except(alreadySpawned).ToList();
-
-            if (availableToSpawn.Count > 0)
-            {
-                __instance.locationName = availableToSpawn[UnityEngine.Random.Range(0, availableToSpawn.Count)];
-                alreadySpawned.Add(__instance.locationName);
-            }
-        }
     }
 }

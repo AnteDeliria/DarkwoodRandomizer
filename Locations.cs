@@ -1,11 +1,7 @@
-﻿using BepInEx.Configuration;
-using HarmonyLib;
-using System;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace DarkwoodRandomizer
 {
@@ -63,6 +59,39 @@ namespace DarkwoodRandomizer
 
 
 
+
+
+        private static List<string> locationsAlreadySpawned = new();
+
+        [HarmonyPatch(typeof(WorldChunk), "populate")]
+        [HarmonyPrefix]
+        internal static void RandomizeLocations(WorldChunk __instance)
+        {
+            if (string.IsNullOrEmpty(__instance.locationName)) // Empty chunk
+                return;
+            if (__instance.isBorderChunk) // Don't want to clip locations into the wall
+                return;
+            if (!Settings.Locations_RandomizeLocationPosition.Value && MustSpawnCh1.Contains(__instance.locationName))
+                return;
+            if (!Settings.Locations_RandomizeHideoutPosition.Value && HideoutsCh1.Contains(__instance.locationName))
+                return;
+
+
+            List<string> availableToSpawn = new();
+
+            if (Settings.Locations_RandomizeLocationPosition.Value)
+                availableToSpawn = availableToSpawn.Concat(MustSpawnCh1).ToList();
+            if (Settings.Locations_RandomizeHideoutPosition.Value)
+                availableToSpawn = availableToSpawn.Concat(HideoutsCh1).ToList();
+
+            availableToSpawn = availableToSpawn.Except(locationsAlreadySpawned).ToList();
+
+            if (availableToSpawn.Count == 0)
+                return;
+            
+            __instance.locationName = availableToSpawn[UnityEngine.Random.Range(0, availableToSpawn.Count)];
+            locationsAlreadySpawned.Add(__instance.locationName);
+        }
 
         // Randomizes location rotation
         // Also makes vaulting a little scuffed
