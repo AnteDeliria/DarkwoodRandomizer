@@ -35,6 +35,8 @@ namespace DarkwoodRandomizer
         internal static ConfigEntry<bool> Night_RandomizeEnemies;
 
 
+        internal static ConfigEntry<bool> Loot_RandomizeItemContainers;
+
 
         internal static ConfigEntry<bool> Map_RandomizeBorders;
 

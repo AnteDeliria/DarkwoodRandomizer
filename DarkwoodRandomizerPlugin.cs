@@ -181,6 +181,14 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
             );
 
 
+        Settings.Loot_RandomizeItemContainers = Config.Bind
+            (
+                section: "Loot",
+                key: "Randomize item containers",
+                defaultValue: false,
+                description: "Whether to randomize item containers by swapping their inventory contents"
+            );
+
 
 
         Settings.Map_RevealAllMapElements = Config.Bind
