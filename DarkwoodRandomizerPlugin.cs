@@ -127,18 +127,55 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
             );
 
 
-        Settings.Enemies_RandomizeEnemies = Config.Bind
+        Settings.FreeRoamingEnemies_RandomizeType = Config.Bind
             (
-                section: "Enemies",
-                key: "Randomize enemies",
+                section: "Free Roaming Enemies",
+                key: "Randomize free roaming enemies",
                 defaultValue: false,
-                description: "Whether to randomize enemies"
+                description: "Whether to randomize free roaming enemy spawns"
             );
+        Settings.FreeRoamingEnemies_DryMeadowEnemiesPool = Config.Bind
+            (
+                section: "Free Roaming Enemies",
+                key: "Dry Meadow enemy pool",
+                defaultValue: "",
+                description:
+                "The enemies to choose from when randomizing free roaming enemies in the Dry Meadow. " +
+                "Valid values are \"Centipede\", \"ChomperRed\", \"ChomperHalf\", \"ChomperBlack\", " +
+                "\"Pig\", \"Chicken\", \"Dog\", \"DogMutated\", \"Deer\", \"Redneck\", \"Redneck02\", " +
+                "\"Villager\", \"Villager3_plank\", \"Banshee\", \"Spider01\", \"Spider03_day\", " +
+                "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
+            );
+        Settings.FreeRoamingEnemies_SilentForestEnemiesPool = Config.Bind
+            (
+                section: "Free Roaming Enemies",
+                key: "Silent Forest enemy pool",
+                defaultValue: "",
+                description:
+                "The enemies to choose from when randomizing free roaming enemies in the Dry Meadow. " +
+                "Valid values are \"Centipede\", \"ChomperRed\", \"ChomperHalf\", \"ChomperBlack\", " +
+                "\"Pig\", \"Chicken\", \"Dog\", \"DogMutated\", \"Deer\", \"Redneck\", \"Redneck02\", " +
+                "\"Villager\", \"Villager3_plank\", \"Banshee\", \"Spider01\", \"Spider03_day\", " +
+                "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
+            );
+        Settings.FreeRoamingEnemies_OldWoodsEnemiesPool = Config.Bind
+            (
+                section: "Free Roaming Enemies",
+                key: "Old Woods enemy pool",
+                defaultValue: "",
+                description:
+                "The enemies to choose from when randomizing free roaming enemies in the Dry Meadow. " +
+                "Valid values are \"Centipede\", \"ChomperRed\", \"ChomperHalf\", \"ChomperBlack\", " +
+                "\"Pig\", \"Chicken\", \"Dog\", \"DogMutated\", \"Deer\", \"Redneck\", \"Redneck02\", " +
+                "\"Villager\", \"Villager3_plank\", \"Banshee\", \"Spider01\", \"Spider03_day\", " +
+                "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
+            );
+
 
         Settings.Night_RandomizeEnemies = Config.Bind
             (
                 section: "Night",
-                key: "Randomize enemies",
+                key: "Randomize night enemies",
                 defaultValue: false,
                 description: "Whether to randomize night enemies"
             );
