@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DarkwoodRandomizer
 {
     [HarmonyPatch]
-    internal class GridObjects
+    internal static class GridObjects
     {
         [HarmonyPatch(typeof(WorldGenerator), "onConnectedRoads")]
         [HarmonyPrefix]

@@ -22,6 +22,10 @@ namespace DarkwoodRandomizer
         internal static ConfigEntry<bool> GridObjects_RandomizeGridObjectRotation;
 
 
+        internal static ConfigEntry<bool> MiscObjects_RandomizeMiscObjects;
+        internal static ConfigEntry<bool> MiscObjects_IncludeSwampObjectsInPool;
+
+
         internal static ConfigEntry<bool> Enemies_RandomizeEnemies;
 
 

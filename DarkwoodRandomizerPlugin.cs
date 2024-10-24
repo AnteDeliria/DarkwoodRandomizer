@@ -91,16 +91,16 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
         Settings.GridObjects_RandomizeGridObjects = Config.Bind
             (
                 section: "Grid Objects",
-                key: "Randomize grid objects",
+                key: "Randomize grid objects between biomes",
                 defaultValue: false,
-                description: "Whether to randomize the position of grid objects (e.g.: shrines, tank wrecks, log piles, etc.)"
+                description: "Whether to randomize the biome spawning of grid objects (e.g.: shrines, tank wrecks, log piles etc.)"
             );
         Settings.GridObjects_IncludeSwampObjectsInPool = Config.Bind
             (
                 section: "Grid Objects",
-                key: "Include swamp objects in grid objects pool",
+                key: "Include swamp prefabs in grid objects pool",
                 defaultValue: false,
-                description: "Whether to allow chapter 2 (swamp) objects to be generated. These are much larger in size than chapter 1 objects"
+                description: "Whether to allow chapter 2 (swamp) prefabs to be generated. These are significantly larger in size than chapter 1 prefabs"
             );
         Settings.GridObjects_RandomizeGridObjectRotation = Config.Bind
             (
@@ -108,6 +108,22 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
                 key: "Randomize grid object rotation",
                 defaultValue: false,
                 description: "Whether to randomize grid object rotation"
+            );
+
+
+        Settings.MiscObjects_RandomizeMiscObjects = Config.Bind
+            (
+                section: "Misc Objects",
+                key: "Randomize miscellaneous objects between biomes",
+                defaultValue: false,
+                description: "Whether to randomize the biome spawning of miscellaneous objects (e.g.: crates, rocks, mushrooms etc.)"
+            );
+        Settings.MiscObjects_IncludeSwampObjectsInPool = Config.Bind
+            (
+                section: "Misc Objects",
+                key: "Include swamp prefabs in miscellaneous objects pool",
+                defaultValue: false,
+                description: "Whether to allow chapter 2 (swamp) prefabs to be generated. These are significantly larger in size than chapter 1 prefabs"
             );
 
 
