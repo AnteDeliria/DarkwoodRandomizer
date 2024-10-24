@@ -31,10 +31,14 @@ namespace DarkwoodRandomizer
                     Inventory randomInventory = inventoriesPool[UnityEngine.Random.Range(0, inventoriesPool.Count)];
                     inventoriesPool.Remove(randomInventory);
 
-                    //Inventory oldInventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
-                    //Vector3 oldPosition = oldInventory.position;
-                    //randomInventory.position = oldPosition;
-                    AccessTools.Field(typeof(Item), "inventory").SetValue(itemContainer, randomInventory);
+                    Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
+                    // I don't know if setting all of them is necessary
+                    inventory.maxColumns = randomInventory.maxColumns;
+                    inventory.currentColumn = randomInventory.currentColumn;
+                    inventory.currentRow = randomInventory.currentRow;
+                    AccessTools.Field(typeof(Inventory), "slotSize").SetValue(inventory, AccessTools.Field(typeof(Inventory), "slotSize").GetValue(randomInventory));
+                    inventory.position = randomInventory.position;
+                    inventory.slots = randomInventory.slots;
                 }
         }
     }
