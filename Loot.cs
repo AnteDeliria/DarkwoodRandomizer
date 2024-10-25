@@ -27,7 +27,7 @@ namespace DarkwoodRandomizer
             List<Inventory> inventoriesPool = new();
 
             foreach (Location location in __instance.locations)
-                foreach (Item itemContainer in location.inventoriesList)
+                foreach (Item itemContainer in location.inventoriesList) // Sublocations don't have containers in inventoriesList, it is instead tied to the main location
                 {
                     if (itemContainer.name.Contains("workbench"))
                         continue;

@@ -26,10 +26,15 @@ namespace DarkwoodRandomizer
         internal static ConfigEntry<bool> MiscObjects_IncludeSwampObjectsInPool;
 
 
-        internal static ConfigEntry<bool> FreeRoamingEnemies_RandomizeType;
-        internal static ConfigEntry<string> FreeRoamingEnemies_DryMeadowEnemiesPool;
-        internal static ConfigEntry<string> FreeRoamingEnemies_SilentForestEnemiesPool;
-        internal static ConfigEntry<string> FreeRoamingEnemies_OldWoodsEnemiesPool;
+        internal static ConfigEntry<bool> Enemies_RandomizeFreeRoamingEnemies;
+        internal static ConfigEntry<string> Enemies_FreeRoamingEnemiesDryMeadowPool;
+        internal static ConfigEntry<string> Enemies_FreeRoamingEnemiesSilentForestPool;
+        internal static ConfigEntry<string> Enemies_FreeRoamingEnemiesOldWoodsPool;
+
+        internal static ConfigEntry<bool> Enemies_RandomizeLocationEnemies;
+        internal static ConfigEntry<string> Enemies_LocationEnemiesDryMeadowPool;
+        internal static ConfigEntry<string> Enemies_LocationEnemiesSilentForestPool;
+        internal static ConfigEntry<string> Enemies_LocationEnemiesOldWoodsPool;
 
 
         internal static ConfigEntry<bool> Night_RandomizeEnemies;

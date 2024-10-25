@@ -8,7 +8,7 @@ using UnityEngine;
 namespace DarkwoodRandomizer
 {
     [HarmonyPatch]
-    internal static class FreeRoamingEnemies
+    internal static class Enemies
     {
         private static CharacterType[] possibleCharacters =
             [CharacterType.Centipede, CharacterType.ChomperRed, CharacterType.ChomperHalf, CharacterType.ChomperBlack,
@@ -28,6 +28,7 @@ namespace DarkwoodRandomizer
                 return GetRandomCharacterType();
 
             IEnumerable<string> characterStrings = configEntry.Value.Split(',').Select(x => x.Trim().ToLower());
+
             if (characterStrings.Count() == 0)
                 return GetRandomCharacterType();
 
@@ -36,12 +37,12 @@ namespace DarkwoodRandomizer
         }
 
 
-
+        // TODO: fix to include all enemies and Core.SpawnPrefab
         [HarmonyPatch(typeof(WorldChunk), "spawnFreeRoamingCharacters")]
         [HarmonyPrefix]
         internal static bool RandomizeFreeRoamingCharacters(WorldChunk __instance, GameObject ___CharactersFreeRoaming, List<GameObject> ___freeRoamingChars)
         {
-            if (!Settings.FreeRoamingEnemies_RandomizeType.Value)
+            if (!Settings.Enemies_RandomizeFreeRoamingEnemies.Value)
                 return true;
 
             if (__instance.isBorderChunk)
@@ -61,11 +62,11 @@ namespace DarkwoodRandomizer
                             // Injection
                             string character;
                             if (__instance.biome.type == Biome.Type.meadow)
-                                character = GetRandomCharacterType(Settings.FreeRoamingEnemies_DryMeadowEnemiesPool).ToString();
+                                character = GetRandomCharacterType(Settings.Enemies_FreeRoamingEnemiesDryMeadowPool).ToString();
                             else if (__instance.biome.type == Biome.Type.forest)
-                                character = GetRandomCharacterType(Settings.FreeRoamingEnemies_SilentForestEnemiesPool).ToString();
+                                character = GetRandomCharacterType(Settings.Enemies_FreeRoamingEnemiesSilentForestPool).ToString();
                             else if (__instance.biome.type == Biome.Type.forest_mutated)
-                                character = GetRandomCharacterType(Settings.FreeRoamingEnemies_SilentForestEnemiesPool).ToString();
+                                character = GetRandomCharacterType(Settings.Enemies_FreeRoamingEnemiesOldWoodsPool).ToString();
                             else
                                 character = GetRandomCharacterType().ToString();
 
@@ -92,6 +93,40 @@ namespace DarkwoodRandomizer
             }
 
             return false;
+        }
+
+
+        // TODO: fix to include all enemies
+        [HarmonyPatch(typeof(WorldGenerator), "activateAllLocations")]
+        [HarmonyPrefix]
+        internal static void RandomizeLocationEnemies(WorldGenerator __instance)
+        {
+            if (!Settings.Enemies_RandomizeLocationEnemies.Value)
+                return;
+
+            foreach (Location location in __instance.locations)
+            {
+                if (location.isGridObject)
+                    continue;
+
+                foreach (Character character in location.charactersList.ToArray())
+                {
+                    CharacterType characterToSpawn;
+
+                    if (location.biomeType == Biome.Type.meadow)
+                        characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesDryMeadowPool);
+                    else if (location.biomeType == Biome.Type.forest)
+                        characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesSilentForestPool);
+                    else if (location.biomeType == Biome.Type.forest_mutated)
+                        characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesOldWoodsPool);
+                    else
+                        characterToSpawn = GetRandomCharacterType();
+
+                    location.charactersList.Remove(character);
+                    Character component = Core.AddPrefab("Characters/" + characterToSpawn.ToString(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                    location.charactersList.Add(component);
+                }
+            }
         }
     }
 }
