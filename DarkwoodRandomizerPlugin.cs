@@ -188,6 +188,13 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
                 defaultValue: false,
                 description: "Whether to randomize item containers by swapping their inventory contents"
             );
+        Settings.Loot_RandomizeItemContainersWithinBiomes = Config.Bind
+            (
+                section: "Loot",
+                key: "Apply item container randomization within biomes",
+                defaultValue: false,
+                description: "Whether to randomize item containers within their respective biomes only"
+            );
 
 
 
