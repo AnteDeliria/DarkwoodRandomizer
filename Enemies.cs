@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static NightScenario;
 
 namespace DarkwoodRandomizer
 {
@@ -98,7 +99,7 @@ namespace DarkwoodRandomizer
 
         // TODO: fix to include all enemies
         [HarmonyPatch(typeof(WorldGenerator), "activateAllLocations")]
-        [HarmonyPrefix]
+        [HarmonyPostfix]
         internal static void RandomizeLocationEnemies(WorldGenerator __instance)
         {
             if (!Settings.Enemies_RandomizeLocationEnemies.Value)
@@ -111,21 +112,37 @@ namespace DarkwoodRandomizer
 
                 foreach (Character character in location.charactersList.ToArray())
                 {
-                    CharacterType characterToSpawn;
-
-                    if (location.biomeType == Biome.Type.meadow)
-                        characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesDryMeadowPool);
-                    else if (location.biomeType == Biome.Type.forest)
-                        characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesSilentForestPool);
-                    else if (location.biomeType == Biome.Type.forest_mutated)
-                        characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesOldWoodsPool);
-                    else
-                        characterToSpawn = GetRandomCharacterType();
-
                     location.charactersList.Remove(character);
-                    Character component = Core.AddPrefab("Characters/" + characterToSpawn.ToString(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                    UnityEngine.Object.Destroy(character.gameObject);
+
+                    Character component = Core.AddPrefab("Characters/" + GetRandomCharacterTypeForLocation(location).ToString(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
                     location.charactersList.Add(component);
                 }
+
+                foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
+                {
+                    location.spawnPoints.Remove(characterSpawnPoint);
+                    UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
+
+                    Character component = Core.AddPrefab("Characters/" + GetRandomCharacterTypeForLocation(location).ToString(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                    location.charactersList.Add(component);
+                }
+            }
+
+            CharacterType GetRandomCharacterTypeForLocation(Location location)
+            {
+                CharacterType characterToSpawn;
+
+                if (location.biomeType == Biome.Type.meadow)
+                    characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesDryMeadowPool);
+                else if (location.biomeType == Biome.Type.forest)
+                    characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesSilentForestPool);
+                else if (location.biomeType == Biome.Type.forest_mutated)
+                    characterToSpawn = GetRandomCharacterType(Settings.Enemies_LocationEnemiesOldWoodsPool);
+                else
+                    characterToSpawn = GetRandomCharacterType();
+
+                return characterToSpawn;
             }
         }
     }
