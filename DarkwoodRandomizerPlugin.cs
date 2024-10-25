@@ -215,6 +215,50 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
                 "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
             );
 
+        Settings.Enemies_RandomizeGridObjectEnemies = Config.Bind
+            (
+                section: "Enemies",
+                key: "Randomize grid object enemies",
+                defaultValue: false,
+                description: "Whether to randomize grid object enemy spawns"
+            );
+        Settings.Enemies_GridObjectEnemiesDryMeadowPool = Config.Bind
+            (
+                section: "Enemies",
+                key: "Grid object enemies - Dry Meadow pool",
+                defaultValue: "",
+                description:
+                "The enemies to choose from when randomizing grid object enemies in the Dry Meadow. " +
+                "Valid values are \"Centipede\", \"ChomperRed\", \"ChomperHalf\", \"ChomperBlack\", " +
+                "\"Pig\", \"Chicken\", \"Dog\", \"DogMutated\", \"Deer\", \"Redneck\", \"Redneck02\", " +
+                "\"Villager\", \"Villager3_plank\", \"Banshee\", \"Spider01\", \"Spider03_day\", " +
+                "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
+            );
+        Settings.Enemies_GridObjectEnemiesSilentForestPool = Config.Bind
+            (
+                section: "Enemies",
+                key: "Grid object enemies - Silent Forest pool",
+                defaultValue: "",
+                description:
+                "The enemies to choose from when randomizing grid object enemies in the Dry Meadow. " +
+                "Valid values are \"Centipede\", \"ChomperRed\", \"ChomperHalf\", \"ChomperBlack\", " +
+                "\"Pig\", \"Chicken\", \"Dog\", \"DogMutated\", \"Deer\", \"Redneck\", \"Redneck02\", " +
+                "\"Villager\", \"Villager3_plank\", \"Banshee\", \"Spider01\", \"Spider03_day\", " +
+                "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
+            );
+        Settings.Enemies_GridObjectEnemiesOldWoodsPool = Config.Bind
+            (
+                section: "Enemies",
+                key: "Grid object enemies - Old Woods pool",
+                defaultValue: "",
+                description:
+                "The enemies to choose from when randomizing grid object enemies in the Dry Meadow. " +
+                "Valid values are \"Centipede\", \"ChomperRed\", \"ChomperHalf\", \"ChomperBlack\", " +
+                "\"Pig\", \"Chicken\", \"Dog\", \"DogMutated\", \"Deer\", \"Redneck\", \"Redneck02\", " +
+                "\"Villager\", \"Villager3_plank\", \"Banshee\", \"Spider01\", \"Spider03_day\", " +
+                "\"Swamper1\", \"HumanSpider\", \"Villager1_Burning\". Will default to all if no value is specified"
+            );
+
 
         Settings.Night_RandomizeEnemies = Config.Bind
             (

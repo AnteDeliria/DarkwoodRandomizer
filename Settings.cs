@@ -36,6 +36,11 @@ namespace DarkwoodRandomizer
         internal static ConfigEntry<string> Enemies_LocationEnemiesSilentForestPool;
         internal static ConfigEntry<string> Enemies_LocationEnemiesOldWoodsPool;
 
+        internal static ConfigEntry<bool> Enemies_RandomizeGridObjectEnemies;
+        internal static ConfigEntry<string> Enemies_GridObjectEnemiesDryMeadowPool;
+        internal static ConfigEntry<string> Enemies_GridObjectEnemiesSilentForestPool;
+        internal static ConfigEntry<string> Enemies_GridObjectEnemiesOldWoodsPool;
+
 
         internal static ConfigEntry<bool> Night_RandomizeEnemies;
 
