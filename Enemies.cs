@@ -1,10 +1,7 @@
-﻿using BepInEx.Configuration;
-using HarmonyLib;
-using System;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static NightScenario;
 
 namespace DarkwoodRandomizer
 {
@@ -234,7 +231,6 @@ namespace DarkwoodRandomizer
             ["doppelganger"] = "characters/notused/doppelganger",
             ["robber"] = "characters/notused/robber",
             ["tank"] = "characters/notused/tank",
-            ["villager_pistol"] = "characters/notused/villager_pistol",
             ["redneck"] = "characters/redneck",
             ["redneck02"] = "characters/redneck02",
             ["redneck03"] = "characters/redneck03",
@@ -362,7 +358,6 @@ namespace DarkwoodRandomizer
             ["raven_dummy_01"] = "characters/fakechars/raven_dummy_01",
             ["shadow"] = "characters/fakechars/shadow",
             ["shadow_immortal"] = "characters/fakechars/shadow_immortal",
-            ["worms_enemy_01"] = "characters/fakechars/worms_enemy_01",
             ["zombie_female_bathing"] = "characters/fakechars/zombie_female_bathing",
             ["zombie_male_sitting"] = "characters/fakechars/zombie_male_sitting"
         };
@@ -437,7 +432,7 @@ namespace DarkwoodRandomizer
         [HarmonyPrefix]
         internal static bool RandomizeFreeRoamingCharacters(WorldChunk __instance, GameObject ___CharactersFreeRoaming, List<GameObject> ___freeRoamingChars)
         {
-            if (!Settings.Enemies_RandomizeFreeRoamingEnemies.Value)
+            if (!Settings.Enemies_RandomizeFreeRoamingEnemies!.Value)
                 return true;
             if (__instance.isBorderChunk)
                 return false;
@@ -479,21 +474,46 @@ namespace DarkwoodRandomizer
         }
 
 
-        [HarmonyPatch(typeof(WorldGenerator), "activateAllLocations")]
-        [HarmonyPostfix]
-        internal static void RandomizeLocationEnemies(WorldGenerator __instance)
+        [HarmonyPatch(typeof(WorldGenerator), "onFinished")]
+        [HarmonyPrefix]
+        internal static void RandomizeLocationCharacters(WorldGenerator __instance)
         {
-            foreach (Location location in __instance.locations)
+            // TODO: fix this not randomizing all NPCs
+            //if (Settings.Enemies_RandomizeNPCs!.Value)
+            //{
+            //    List<NPC> npcPool = new();
+            //    foreach (Location location in __instance.locations)
+            //        foreach (NPC npc in location.gameObject.GetComponentsInChildren<NPC>())
+            //            npcPool.Add(npc);
+
+            //    DarkwoodRandomizerPlugin.Logger.LogInfo($"NPC pool: {string.Join(", ", npcPool.Select(npc => npc.name))}");
+                
+            //    foreach (Location location in __instance.locations)
+            //        foreach (NPC npc in location.gameObject.GetComponentsInChildren<NPC>())
+            //        {
+            //            NPC newNPC = npcPool[UnityEngine.Random.Range(0, npcPool.Count)];
+            //            npcPool.Remove(newNPC);
+                            
+            //            DarkwoodRandomizerPlugin.Logger.LogInfo($"Old: {npc.name}, New: {newNPC.name}");
+
+            //            npc.name = newNPC.name;
+            //            npc.inventory = newNPC.inventory;
+            //            npc.characterDialogue = newNPC.characterDialogue;
+            //        }
+            //}
+
+
+            foreach (Location location in __instance.locations) // TODO: fix characters not having movement AI in outside locations
             {
                 foreach (Character character in location.charactersList.ToArray())
                 {
                     List<string>? characterPool = null;
                     
-                    if (specialCharacters.Keys.Contains(character.name))
+                    if (specialCharacters.Keys.Contains(character.name)) // Huge characters that may block paths if placed in a different location
                         continue;
-                    else if (Settings.Enemies_RandomizeLocationEnemies.Value && character.npc == null && !character.immobile)
+                    else if (Settings.Enemies_RandomizeLocationEnemies!.Value && character.npc == null && !character.immobile)
                         characterPool = activeCharacters.Values.ToList();
-                    else if (Settings.Enemies_RandomizeStaticCharacters.Value && character.npc == null && character.immobile)
+                    else if (Settings.Enemies_RandomizeStaticCharacters!.Value && character.npc == null && character.immobile)
                         characterPool = staticFakeCharacters.Values.ToList();
                     
                     if (characterPool == null)
@@ -516,6 +536,46 @@ namespace DarkwoodRandomizer
                     Character component = Core.AddPrefab(characterPool[UnityEngine.Random.Range(0, characterPool.Count)], characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
                     location.charactersList.Add(component);
                 }
+            }
+        }
+
+
+        [HarmonyPatch(typeof(OutsideLocations), "transportToLocation")]
+        [HarmonyPostfix]
+        internal static void RandomizeOutsideLocationCharacters(OutsideLocations __instance, string locationName)
+        {
+            Location location = __instance.spawnedLocations[locationName];
+
+            foreach (Character character in location.charactersList.ToArray())
+            {
+                List<string>? characterPool = null;
+
+                if (specialCharacters.Keys.Contains(character.name)) // Huge characters that may block paths if placed in a different location
+                    continue;
+                else if (Settings.Enemies_RandomizeLocationEnemies!.Value && character.npc == null && !character.immobile)
+                    characterPool = activeCharacters.Values.ToList();
+                else if (Settings.Enemies_RandomizeStaticCharacters!.Value && character.npc == null && character.immobile)
+                    characterPool = staticFakeCharacters.Values.ToList();
+
+                if (characterPool == null)
+                    continue;
+
+                location.charactersList.Remove(character);
+                UnityEngine.Object.Destroy(character.gameObject);
+
+                Character component = Core.AddPrefab(characterPool[UnityEngine.Random.Range(0, characterPool.Count)], character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                location.charactersList.Add(component);
+            }
+
+            foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
+            {
+                List<string>? characterPool = activeCharacters.Values.ToList();
+
+                location.spawnPoints.Remove(characterSpawnPoint);
+                UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
+
+                Character component = Core.AddPrefab(characterPool[UnityEngine.Random.Range(0, characterPool.Count)], characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                location.charactersList.Add(component);
             }
         }
     }

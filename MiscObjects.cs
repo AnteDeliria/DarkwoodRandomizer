@@ -11,7 +11,7 @@ namespace DarkwoodRandomizer
         [HarmonyPrefix]
         internal static void RandomizeMiscObjects(ref List<UnityEngine.Object> objectsToDistribute, ref float height, ref int density, ref int gridSize)
         {
-            if (!Settings.MiscObjects_RandomizeMiscObjects.Value)
+            if (!Settings.MiscObjects_RandomizeMiscObjects!.Value)
                 return;
 
             WorldGenerator worldGenerator = Singleton<WorldGenerator>.Instance;
@@ -31,7 +31,7 @@ namespace DarkwoodRandomizer
                 foreach (BiomePrefabsPreset prefab in biome.miscPrefabs)
                     miscPrefabPool.Add(prefab);
 
-            if (worldGenerator.chapterID == 1 && Settings.MiscObjects_IncludeSwampObjectsInPool.Value)
+            if (worldGenerator.chapterID == 1 && Settings.MiscObjects_IncludeSwampObjectsInPool!.Value)
                 foreach (BiomePrefabsPreset prefab in worldGenerator.biomePresets.First(x => x.type == Biome.Type.swamp).miscPrefabs)
                     miscPrefabPool.Add(prefab);
 

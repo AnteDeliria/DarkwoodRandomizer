@@ -17,7 +17,7 @@ namespace DarkwoodRandomizer
         [HarmonyPostfix]
         internal static void RevealAllMapElementsTwo(MapElement __instance)
         {
-            if (!Settings.Map_RevealAllMapElements.Value)
+            if (!Settings.Map_RevealAllMapElements!.Value)
                 return;
 
 

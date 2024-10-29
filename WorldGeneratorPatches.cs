@@ -52,7 +52,7 @@ namespace DarkwoodRandomizer
         [HarmonyTranspiler]
         internal static IEnumerable<CodeInstruction> RandomizeMapBorders(IEnumerable<CodeInstruction> instructions)
         {
-            if (!Settings.Map_RandomizeBorders.Value)
+            if (!Settings.Map_RandomizeBorders!.Value)
                 foreach (var instruction in instructions)
                     yield return instruction;
 

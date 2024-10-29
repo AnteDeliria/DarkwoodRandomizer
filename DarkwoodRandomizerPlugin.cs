@@ -11,7 +11,6 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger;
 
-
         
     private void Awake()
     {
@@ -20,8 +19,4 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
         Settings.InitializeConfigs(Config);
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
     }
-
-
-
-    
 }

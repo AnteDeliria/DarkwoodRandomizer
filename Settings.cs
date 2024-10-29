@@ -4,51 +4,53 @@ namespace DarkwoodRandomizer
 {
     internal static class Settings
     {
-        internal static ConfigEntry<bool> World_RandomizeChunkBiomes;
-        internal static ConfigEntry<string> World_RandomizeChunkBiomesPool;
+        internal static ConfigEntry<bool>? World_RandomizeChunkBiomes;
+        internal static ConfigEntry<string>? World_RandomizeChunkBiomesPool;
 
-        internal static ConfigEntry<bool> World_RandomizeChunkGroundSprites;
-        internal static ConfigEntry<string> World_RandomizeChunkGroundSpritesPool;
-
-
-        internal static ConfigEntry<bool> Locations_RandomizeLocationPosition;
-        internal static ConfigEntry<bool> Locations_RandomizeHideoutPosition;
-        internal static ConfigEntry<bool> Locations_RandomizeLocationRotation;
-        internal static ConfigEntry<bool> Locations_RandomizeHideoutRotation;
+        internal static ConfigEntry<bool>? World_RandomizeChunkGroundSprites;
+        internal static ConfigEntry<string>? World_RandomizeChunkGroundSpritesPool;
 
 
-        internal static ConfigEntry<bool> GridObjects_RandomizeGridObjects;
-        internal static ConfigEntry<bool> GridObjects_IncludeSwampObjectsInPool;
-        internal static ConfigEntry<bool> GridObjects_RandomizeGridObjectRotation;
+        internal static ConfigEntry<bool>? Locations_RandomizeLocationPosition;
+        internal static ConfigEntry<bool>? Locations_RandomizeHideoutPosition;
+        internal static ConfigEntry<bool>? Locations_RandomizeLocationRotation;
+        internal static ConfigEntry<bool>? Locations_RandomizeHideoutRotation;
 
 
-        internal static ConfigEntry<bool> MiscObjects_RandomizeMiscObjects;
-        internal static ConfigEntry<bool> MiscObjects_IncludeSwampObjectsInPool;
+        internal static ConfigEntry<bool>? GridObjects_RandomizeGridObjects;
+        internal static ConfigEntry<bool>? GridObjects_IncludeSwampObjectsInPool;
+        internal static ConfigEntry<bool>? GridObjects_RandomizeGridObjectRotation;
 
 
-        internal static ConfigEntry<bool> Enemies_RandomizeFreeRoamingEnemies;
+        internal static ConfigEntry<bool>? MiscObjects_RandomizeMiscObjects;
+        internal static ConfigEntry<bool>? MiscObjects_IncludeSwampObjectsInPool;
+
+
+        internal static ConfigEntry<bool>? Enemies_RandomizeFreeRoamingEnemies;
         // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesDryMeadowPool;
         // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesSilentForestPool;
         // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesOldWoodsPool;
 
-        internal static ConfigEntry<bool> Enemies_RandomizeLocationEnemies;
+        internal static ConfigEntry<bool>? Enemies_RandomizeLocationEnemies;
         // internal static ConfigEntry<string>? Enemies_LocationEnemiesDryMeadowPool;
         // internal static ConfigEntry<string>? Enemies_LocationEnemiesSilentForestPool;
         // internal static ConfigEntry<string>? Enemies_LocationEnemiesOldWoodsPool;
         
-        internal static ConfigEntry<bool> Enemies_RandomizeStaticCharacters;
+        internal static ConfigEntry<bool>? Enemies_RandomizeStaticCharacters;
+
+        internal static ConfigEntry<bool>? Enemies_RandomizeNPCs;
+        
+
+        internal static ConfigEntry<bool>? Night_RandomizeEnemies;
 
 
-        internal static ConfigEntry<bool> Night_RandomizeEnemies;
+        internal static ConfigEntry<bool>? Loot_RandomizeItemContainers;
+        internal static ConfigEntry<bool>? Loot_RandomizeItemContainersWithinBiomes;
 
 
-        internal static ConfigEntry<bool> Loot_RandomizeItemContainers;
-        internal static ConfigEntry<bool> Loot_RandomizeItemContainersWithinBiomes;
+        internal static ConfigEntry<bool>? Map_RandomizeBorders;
 
-
-        internal static ConfigEntry<bool> Map_RandomizeBorders;
-
-        internal static ConfigEntry<bool> Map_RevealAllMapElements;
+        internal static ConfigEntry<bool>? Map_RevealAllMapElements;
         
         
         
@@ -157,7 +159,7 @@ namespace DarkwoodRandomizer
     
             Enemies_RandomizeFreeRoamingEnemies = config.Bind
                 (
-                    section: "Enemies",
+                    section: "Characters",
                     key: "Randomize free roaming enemies",
                     defaultValue: false,
                     description: "Whether to randomize free roaming enemy spawns"
@@ -165,7 +167,7 @@ namespace DarkwoodRandomizer
     
             Enemies_RandomizeLocationEnemies = config.Bind
                 (
-                    section: "Enemies",
+                    section: "Characters",
                     key: "Randomize location enemies",
                     defaultValue: false,
                     description: "Whether to randomize location enemy spawns"
@@ -173,11 +175,19 @@ namespace DarkwoodRandomizer
             
             Enemies_RandomizeStaticCharacters = config.Bind
                 (
-                    section: "Enemies",
+                    section: "Characters",
                     key: "Randomize static characters",
                     defaultValue: false,
                     description: "Whether to randomize static characters spawns"
                 );
+            
+            //Enemies_RandomizeNPCs = config.Bind
+            //    (
+            //        section: "Characters",
+            //        key: "Randomize NPCs",
+            //        defaultValue: false,
+            //        description: "Whether to randomize NPCs"
+            //    );
     
     
             Night_RandomizeEnemies = config.Bind

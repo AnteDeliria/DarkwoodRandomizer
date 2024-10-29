@@ -13,7 +13,7 @@ namespace DarkwoodRandomizer
         [HarmonyPrefix]
         internal static void RandomizeNightEnemies(ref string type)
         {
-            if (!Settings.Night_RandomizeEnemies.Value)
+            if (!Settings.Night_RandomizeEnemies!.Value)
                 return;
 
             type = possibleCharacters[UnityEngine.Random.Range(0, possibleCharacters.Length)].ToString();

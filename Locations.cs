@@ -57,12 +57,25 @@ namespace DarkwoodRandomizer
                 "outside_bunker_underground_03", "outside_undergroundCh2_01", "dream_undergroundCh2_01", "mini_rocks_01",
                 "med_undergroundCh2Entrance_01", "mini_tent_camp"];
 
+        internal static List<string> OutsideLocations =
+            ["outside_bunker_underground_02", "outside_church_underground_01", "outside_church_underground_02",
+            "outsider_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
 
 
+
+        //[HarmonyPatch(typeof(WorldGenerator), "onPrepareTutorial")]
+        //[HarmonyPrefix]
+        //[HarmonyPriority(Priority.First)]
+        //internal static void PreloadOutsideLocations(WorldGenerator __instance)
+        //{
+        //    if (__instance.chapterID == 1)
+        //        foreach (string locationName in OutsideLocations.Except(["outsider_doctor_house_01"])) // outsider_doctor_house_01 not loaded for some reason
+        //            Singleton<OutsideLocations>.Instance.createLocation(locationName);
+        //}
 
 
         private static List<string> locationsAlreadySpawned = new();
-
+        // Randomize location position
         [HarmonyPatch(typeof(WorldChunk), "populate")]
         [HarmonyPrefix]
         internal static void RandomizeLocations(WorldChunk __instance)
@@ -71,9 +84,9 @@ namespace DarkwoodRandomizer
                 return;
             if (__instance.isBorderChunk) // Don't want to clip locations into the wall
                 return;
-            if (!Settings.Locations_RandomizeLocationPosition.Value && MustSpawnCh1.Contains(__instance.locationName))
+            if (!Settings.Locations_RandomizeLocationPosition!.Value && MustSpawnCh1.Contains(__instance.locationName))
                 return;
-            if (!Settings.Locations_RandomizeHideoutPosition.Value && HideoutsCh1.Contains(__instance.locationName))
+            if (!Settings.Locations_RandomizeHideoutPosition!.Value && HideoutsCh1.Contains(__instance.locationName))
                 return;
 
 
@@ -100,10 +113,10 @@ namespace DarkwoodRandomizer
         [HarmonyPrefix]
         internal static void RandomizeLocationRotation(GameObject __instance)
         {
-            if (Settings.Locations_RandomizeHideoutRotation.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
+            if (Settings.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
 
-            if (Settings.Locations_RandomizeLocationRotation.Value && MustSpawnCh1.Contains(__instance.name.Replace("_done", "")))
+            if (Settings.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
     }

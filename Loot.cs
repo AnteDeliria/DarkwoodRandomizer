@@ -13,10 +13,10 @@ namespace DarkwoodRandomizer
         [HarmonyPrefix]
         internal static void RandomizeItemContainers(WorldGenerator __instance)
         {
-            if (!Settings.Loot_RandomizeItemContainers.Value)
+            if (!Settings.Loot_RandomizeItemContainers!.Value)
                 return;
 
-            if (Settings.Loot_RandomizeItemContainersWithinBiomes.Value)
+            if (Settings.Loot_RandomizeItemContainersWithinBiomes!.Value)
                 RandomizeItemContainersWithinBiomes(__instance);
             else
                 RandomizeItemContainersGlobally(__instance);
