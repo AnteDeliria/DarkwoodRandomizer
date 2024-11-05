@@ -1,7 +1,11 @@
 ﻿using HarmonyLib;
+using Pathfinding;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace DarkwoodRandomizer
 {
@@ -57,21 +61,54 @@ namespace DarkwoodRandomizer
                 "outside_bunker_underground_03", "outside_undergroundCh2_01", "dream_undergroundCh2_01", "mini_rocks_01",
                 "med_undergroundCh2Entrance_01", "mini_tent_camp"];
 
-        internal static List<string> OutsideLocations =
+        internal static List<string> OutsideLocationsCh1 =
             ["outside_bunker_underground_02", "outside_church_underground_01", "outside_church_underground_02",
-            "outsider_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
+            "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"]; // "outsider_doctor_house_01",
 
 
 
-        //[HarmonyPatch(typeof(WorldGenerator), "onPrepareTutorial")]
-        //[HarmonyPrefix]
-        //[HarmonyPriority(Priority.First)]
-        //internal static void PreloadOutsideLocations(WorldGenerator __instance)
-        //{
-        //    if (__instance.chapterID == 1)
-        //        foreach (string locationName in OutsideLocations.Except(["outsider_doctor_house_01"])) // outsider_doctor_house_01 not loaded for some reason
-        //            Singleton<OutsideLocations>.Instance.createLocation(locationName);
-        //}
+        // Simply calling OutsideLocations.createLocation doesn't work, so we have to visit them one by one
+        // 
+        [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
+        [HarmonyPostfix]
+        internal static void PreloadOutsideLocations()
+        {
+            // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
+            foreach (string locationName in OutsideLocationsCh1.Except(["outside_bunker_underground_02"]))
+                Utils.RunWhenPredicateMet
+                (
+                    predicate: () => !Singleton<OutsideLocations>.Instance.loading,
+                    action: () => Singleton<OutsideLocations>.Instance.prepareLocation(locationName),
+                    exclusive: true
+                );
+
+            Utils.RunWhenPredicateMet
+            (
+                predicate: () => OutsideLocationsCh1.Count - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                action: () => Singleton<OutsideLocations>.Instance.prepareLocation("outside_bunker_underground_02"),
+                exclusive: true
+            );
+
+            Utils.RunWhenPredicateMet
+            (
+                predicate: () => OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                action: () =>
+                {
+                    GameEvents? component = Singleton<OutsideLocations>.Instance.spawnedLocations[Singleton<OutsideLocations>.Instance.currentLocationName].gameObject
+                    .GetComponentsInChildren(typeof(GameEvents))
+                    .FirstOrDefault
+                    (
+                        x => x.GetComponent<GameEvents>().events.Any(evnt => evnt.type == GameEvent.Type.returnToWorld)
+                    )
+                    ?.GetComponent<GameEvents>();
+
+                    DarkwoodRandomizerPlugin.Logger.LogInfo(component?.name);
+                    component?.fire();
+                },
+                exclusive: true
+            );
+        }
+
 
 
         private static List<string> locationsAlreadySpawned = new();

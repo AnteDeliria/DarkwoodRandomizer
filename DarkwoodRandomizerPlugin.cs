@@ -19,4 +19,9 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
         Settings.InitializeConfigs(Config);
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
     }
+
+    private void Update()
+    {
+        Utils.Update();
+    }
 }
