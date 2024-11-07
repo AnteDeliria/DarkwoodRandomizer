@@ -1,4 +1,5 @@
 ﻿using DarkwoodRandomizer.Plugin;
+using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using Pathfinding;
 using System;
@@ -67,7 +68,9 @@ namespace DarkwoodRandomizer.Patches
             "outside_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
 
 
-        internal static bool OutsideLocationsLoaded = false;
+        internal static bool OutsideLocationsLoaded =>
+            OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
+            !Singleton<OutsideLocations>.Instance.playerInOutsideLocation;
 
 
         // Simply calling OutsideLocations.createLocation doesn't work, so we have to visit them one by one
@@ -121,8 +124,6 @@ namespace DarkwoodRandomizer.Patches
                         else
                             location.biomeType = Biome.Type.swamp;
                     }
-
-                    OutsideLocationsLoaded = true;
                 },
                 exclusive: true
             );
@@ -140,17 +141,17 @@ namespace DarkwoodRandomizer.Patches
                 return;
             if (__instance.isBorderChunk) // Don't want to clip locations into the wall
                 return;
-            if (!Settings.Locations_RandomizeLocationPosition!.Value && MustSpawnCh1.Contains(__instance.locationName))
+            if (!SettingsManager.Locations_RandomizeLocationPosition!.Value && MustSpawnCh1.Contains(__instance.locationName))
                 return;
-            if (!Settings.Locations_RandomizeHideoutPosition!.Value && HideoutsCh1.Contains(__instance.locationName))
+            if (!SettingsManager.Locations_RandomizeHideoutPosition!.Value && HideoutsCh1.Contains(__instance.locationName))
                 return;
 
 
             List<string> availableToSpawn = new();
 
-            if (Settings.Locations_RandomizeLocationPosition.Value)
+            if (SettingsManager.Locations_RandomizeLocationPosition.Value)
                 availableToSpawn = availableToSpawn.Concat(MustSpawnCh1).ToList();
-            if (Settings.Locations_RandomizeHideoutPosition.Value)
+            if (SettingsManager.Locations_RandomizeHideoutPosition.Value)
                 availableToSpawn = availableToSpawn.Concat(HideoutsCh1).ToList();
 
             availableToSpawn = availableToSpawn.Except(locationsAlreadySpawned).ToList();
@@ -169,10 +170,10 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeLocationRotation(GameObject __instance)
         {
-            if (Settings.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
+            if (SettingsManager.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
 
-            if (Settings.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Concat(OutsideLocationsCh1).Contains(__instance.name.Replace("_done", "")))
+            if (SettingsManager.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Concat(OutsideLocationsCh1).Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
     }

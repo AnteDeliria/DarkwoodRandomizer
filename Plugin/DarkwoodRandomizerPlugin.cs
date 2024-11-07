@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using System.Reflection;
+using DarkwoodRandomizer.Plugin.Settings;
 
 namespace DarkwoodRandomizer.Plugin;
 
@@ -16,7 +17,7 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
     {
         Logger = base.Logger;
 
-        Settings.InitializeConfigs(Config);
+        SettingsManager.InitializeConfigs(Config);
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
     }
 

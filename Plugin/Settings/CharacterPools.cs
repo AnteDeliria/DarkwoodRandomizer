@@ -1,0 +1,205 @@
+﻿using System;
+
+namespace DarkwoodRandomizer.Plugin.Settings
+{
+    [Flags]
+    internal enum ActiveCharacters : Int64
+    {
+        forestspirit_onechance_02 = 1 << 0,
+        villager3_plank_burning = 1 << 1,
+        banshee = 1 << 2,
+        bansheebaby = 1 << 3,
+        brat_babykury = 1 << 4,
+        bride = 1 << 5,
+        centipede = 1 << 6,
+        chicken = 1 << 7,
+        chomperblack = 1 << 8,
+        chomperbride = 1 << 9,
+        chomperhalf = 1 << 10,
+        chomperred = 1 << 11,
+        chomperred_small = 1 << 12,
+        deer = 1 << 13,
+        dog = 1 << 14,
+        dogmutated = 1 << 15,
+        nightworms_02 = 1 << 16,
+        worms_enemy_01 = 1 << 17,
+        forestspirit_bunkerdream = 1 << 18,
+        humanspider = 1 << 19,
+        humanspiderminion = 1 << 20,
+        kamikaze = 1 << 21,
+        dodger = 1 << 22,
+        doppelganger = 1 << 23,
+        robber = 1 << 24,
+        tank = 1 << 25,
+        villager_pistol = 1 << 26,
+        doctor_follower = 1 << 27,
+        istota_lv1 = 1 << 28,
+        muzyk_runaway = 1 << 29,
+        pig = 1 << 30,
+        rabbit = 1 << 31,
+        raven = 1 << 32,
+        redneck = 1 << 33,
+        redneck02 = 1 << 34,
+        redneck03 = 1 << 35,
+        spider02 = 1 << 36,
+        spider03_day = 1 << 37,
+        swamper1 = 1 << 38,
+        villager = 1 << 39,
+        villager1_burning = 1 << 40,
+        villager3_plank = 1 << 41,
+        villagerpitchfork = 1 << 42,
+        villagertorch = 1 << 43
+    }
+
+    [Flags]
+    internal enum SpecialCharacters : Int64
+    {
+        larva_big_01 = 1 << 0,
+        pig_big_mutant = 1 << 1,
+        istota_lv1 = 1 << 2,
+        muzyk_huge = 1 << 3,
+        talkingtree = 1 << 4,
+        talkingtree_burned_roadtohome = 1 << 5,
+        talkingtree_darkside = 1 << 6
+    }
+
+    [Flags]
+    internal enum StaticCharacters : Int64
+    {
+        character_dummy_02 = 1 << 0,
+        clone_villager_01 = 1 << 1,
+        antagonistact2lv4_epilog = 1 << 2,
+        epilog_dozorca = 1 << 3,
+        epilog_man_burning_1 = 1 << 4,
+        epilog_man_burning_2 = 1 << 5,
+        epilog_man_burning_3 = 1 << 6,
+        epilog_man_crawl_1 = 1 << 7,
+        epilog_man_crawl_2 = 1 << 8,
+        epilog_man_crawl_3 = 1 << 9,
+        epilog_man_idle_1 = 1 << 10,
+        epilog_man_idle_1_burned = 1 << 11,
+        epilog_man_idle_1_first = 1 << 12,
+        epilog_man_idle_10_standing = 1 << 13,
+        epilog_man_idle_11_crawl = 1 << 14,
+        epilog_man_idle_2_burned = 1 << 15,
+        epilog_man_idle_2_burned_randomizer = 1 << 16,
+        epilog_man_idle_3 = 1 << 17,
+        epilog_man_idle_3_burned = 1 << 18,
+        epilog_man_idle_3_first = 1 << 19,
+        epilog_man_idle_4 = 1 << 20,
+        epilog_man_idle_5_standing = 1 << 21,
+        epilog_man_idle_6 = 1 << 22,
+        epilog_man_idle_7_wakeup = 1 << 23,
+        epilog_man_idle_8_wakeup = 1 << 24,
+        epilog_man_idle_9_wakeup = 1 << 25,
+        epilog_man_villager_1_burned = 1 << 26,
+        epilog_villager_idle_1 = 1 << 27,
+        epilog_villager_idle_2 = 1 << 28,
+        epilog_villager_idle_3 = 1 << 29,
+        areabird = 1 << 30,
+        banshee_cry = 1 << 31,
+        banshee_fake = 1 << 32,
+        bug_cockroach_big = 1 << 33,
+        bug_cockroach_huge = 1 << 34,
+        bug_cockroach_small = 1 << 35,
+        centipede_hole = 1 << 36,
+        centipede_hole_2 = 1 << 37,
+        crazy_villager_mininpc_01 = 1 << 38,
+        crazy_villager_mininpc_01_radiotower = 1 << 39,
+        crazy_villager_mininpc_02 = 1 << 40,
+        crazy_villager_mininpc_gridobj_rednecks_2_01 = 1 << 41,
+        crazy_villager_mininpc_onechance = 1 << 42,
+        raven_dummy_01 = 1 << 43,
+        zombie_female_bathing = 1 << 44,
+        zombie_male_sitting = 1 << 45,
+        cripple_npc_preepilogue = 1 << 46,
+        dog_01_wolfmanhideout_01 = 1 << 47,
+        dog_02_wolfmanhideout_01 = 1 << 48,
+        dog_03_wolfmanhideout_01 = 1 << 49,
+        dog_doctor = 1 << 50,
+        istota_lv1 = 1 << 51,
+        kapelusznik_dummy = 1 << 52,
+        kapelusznik_dummy_01 = 1 << 53,
+        kapelusznik_dummy_02 = 1 << 54,
+        maciek_noflamethrower = 1 << 55,
+        player_cutscene_soundtest = 1 << 56,
+        spider01 = 1 << 57,
+        villager1granny = 1 << 58,
+        villager2granny = 1 << 59,
+        villager3granny = 1 << 60,
+        crazy_villager_cottageruin = 1 << 61,
+        villager_bride_01 = 1 << 62,
+        villager_infected1 = 1 << 63,
+        villager_infected1_ch2 = 1 << 64,
+        villager_infected1b_ch2 = 1 << 65,
+        villager_infected2 = 1 << 66,
+        villager_infected2_ch2 = 1 << 67,
+        villager_infected3 = 1 << 68,
+        villager_infected3_ch2 = 1 << 69,
+        villager_infected4 = 1 << 70,
+        villager_normal1 = 1 << 71,
+        villager_normal10 = 1 << 72,
+        villager_normal11 = 1 << 73,
+        villager_normal12_babaplacze = 1 << 74,
+        villager_normal2 = 1 << 75,
+        villager_normal3 = 1 << 76,
+        villager_normal4 = 1 << 77,
+        villager_normal5 = 1 << 78,
+        villager_normal6 = 1 << 79,
+        villager_normal7 = 1 << 80,
+        villager_normal8 = 1 << 81,
+        villager_normal9 = 1 << 82
+    }
+
+    [Flags]
+    internal enum NPCCharactersCh1 : Int64
+    {
+        baba = 1 << 0,
+        doctor_confronted = 1 << 1,
+        doctor_confronted2 = 1 << 2,
+        doctor_idle = 1 << 3,
+        doctor_trapset = 1 << 4,
+        door_talkable_outside_bunker_underground_02 = 1 << 5,
+        muzyk = 1 << 6,
+        nighttrader = 1 << 7,
+        pigshedlever = 1 << 8,
+        piotrek = 1 << 9,
+        porter = 1 << 10,
+        shrine_03 = 1 << 11,
+        shrine_03_pigdead = 1 << 12,
+        soldier_underground = 1 << 13,
+        soldier_underground_old = 1 << 14,
+        tractor_muzyk = 1 << 15,
+        tree_dry_medium_deadpig_01_villageentrance = 1 << 16,
+        wolf = 1 << 17,
+        wolfman_att = 1 << 18
+    }
+
+    [Flags]
+    internal enum NPCCharactersCh2 : Int64
+    {
+        child = 1 << 0,
+        cripple = 1 << 1,
+        doctor_act2 = 1 << 2,
+        elephants = 1 << 3,
+        figurine_doctor = 1 << 4,
+        mushroomgranny = 1 << 5,
+        muzyk_duzy = 1 << 6,
+        shrine_mushroomgranny = 1 << 7,
+        shrine_treevillage = 1 << 8,
+        snail = 1 << 9,
+        thethree = 1 << 10,
+        tree_dry_medium_deadpig_01_villagersswamp = 1 << 11,
+        valve = 1 << 12
+    }
+
+    [Flags]
+    internal enum NPCCharactersEpilogue : Int64
+    {
+        bed_npc = 1 << 0,
+        maciek = 1 << 1,
+        scarecrow = 1 << 2,
+        stove_npc = 1 << 3,
+        wardrobe_npc = 1 << 4
+    }
+}

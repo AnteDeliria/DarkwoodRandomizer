@@ -1,4 +1,4 @@
-﻿using DarkwoodRandomizer.Plugin;
+﻿using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 
 namespace DarkwoodRandomizer.Patches
@@ -10,7 +10,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         internal static void RevealAllMapElements(MapElement __instance)
         {
-            if (!Settings.Map_RevealAllMapElements!.Value)
+            if (!SettingsManager.Map_RevealAllMapElements!.Value)
                 return;
 
             if (!__instance.elementName.Contains("border"))

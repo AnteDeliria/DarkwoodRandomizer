@@ -1,8 +1,8 @@
 ﻿using BepInEx.Configuration;
 
-namespace DarkwoodRandomizer.Plugin
+namespace DarkwoodRandomizer.Plugin.Settings
 {
-    internal static class Settings
+    internal static class SettingsManager
     {
         internal static ConfigEntry<bool>? World_RandomizeChunkBiomes;
         internal static ConfigEntry<string>? World_RandomizeChunkBiomesPool;
@@ -32,9 +32,9 @@ namespace DarkwoodRandomizer.Plugin
         // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesOldWoodsPool;
 
         internal static ConfigEntry<bool>? Enemies_RandomizeLocationEnemies;
-        // internal static ConfigEntry<string>? Enemies_LocationEnemiesDryMeadowPool;
-        // internal static ConfigEntry<string>? Enemies_LocationEnemiesSilentForestPool;
-        // internal static ConfigEntry<string>? Enemies_LocationEnemiesOldWoodsPool;
+         internal static ConfigEntry<string>? Enemies_LocationEnemiesDryMeadowPool;
+         internal static ConfigEntry<string>? Enemies_LocationEnemiesSilentForestPool;
+         internal static ConfigEntry<string>? Enemies_LocationEnemiesOldWoodsPool;
 
         internal static ConfigEntry<bool>? Enemies_RandomizeStaticCharacters;
 
@@ -172,6 +172,13 @@ namespace DarkwoodRandomizer.Plugin
                     defaultValue: false,
                     description: "Whether to randomize location enemy spawns"
                 );
+            //Enemies_LocationEnemiesDryMeadowPool = config.Bind
+            //    (
+            //        section: "Characters",
+            //        key: "Location enemies Dry Meadow pool",
+            //        defaultValue: CharacterPool.,
+            //        description: "Whether to randomize location enemy spawns"
+            //    );
 
             Enemies_RandomizeStaticCharacters = config.Bind
                 (

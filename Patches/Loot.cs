@@ -1,4 +1,5 @@
 ﻿using DarkwoodRandomizer.Plugin;
+using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,10 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeItemContainers(WorldGenerator __instance)
         {
-            if (!Settings.Loot_RandomizeItemContainers!.Value)
+            if (!SettingsManager.Loot_RandomizeItemContainers!.Value)
                 return;
 
-            if (Settings.Loot_RandomizeItemContainersWithinBiomes!.Value)
+            if (SettingsManager.Loot_RandomizeItemContainersWithinBiomes!.Value)
                 Utils.RunWhenPredicateMet
                 (
                     predicate: () => Locations.OutsideLocationsLoaded,

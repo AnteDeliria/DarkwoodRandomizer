@@ -1,4 +1,5 @@
 ﻿using DarkwoodRandomizer.Plugin;
+using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System;
 
@@ -14,7 +15,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeNightEnemies(ref string type)
         {
-            if (!Settings.Night_RandomizeEnemies!.Value)
+            if (!SettingsManager.Night_RandomizeEnemies!.Value)
                 return;
 
             type = possibleCharacters.RandomItem().ToString();
