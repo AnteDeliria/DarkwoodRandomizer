@@ -44,7 +44,7 @@ namespace DarkwoodRandomizer.Patches
             while (gridObjectPool.Count > 0)
             {
                 GridObject randomGridObject = gridObjectPool[Random.Range(0, gridObjectPool.Count)];
-                Biome biome = biomes[Random.Range(0, biomes.Count)];
+                Biome biome = biomes.RandomItem();
 
                 biome.gObjects.Add(randomGridObject);
                 gridObjectPool.Remove(randomGridObject);

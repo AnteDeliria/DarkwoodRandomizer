@@ -110,6 +110,18 @@ namespace DarkwoodRandomizer.Patches
                         ?.GetComponent<GameEvents>();
                     component?.fire();
 
+                    foreach (Location location in Singleton<OutsideLocations>.Instance.spawnedLocations.Values)
+                    {
+                        string locationName = location.name.Replace("_done", "");
+
+                        if (locationName == "outside_village_ch1_01" || locationName == "outside_village_ch1_cottage01_underground_01" || locationName == "outside_well_underground_01")
+                            location.biomeType = Biome.Type.forest;
+                        else if (locationName == "outside_bunker_underground_02" || locationName == "outside_church_underground_01" || locationName == "outside_church_underground_02" || locationName == "outside_doctor_house_01")
+                            location.biomeType = Biome.Type.forest_mutated;
+                        else
+                            location.biomeType = Biome.Type.swamp;
+                    }
+
                     OutsideLocationsLoaded = true;
                 },
                 exclusive: true
@@ -146,7 +158,7 @@ namespace DarkwoodRandomizer.Patches
             if (availableToSpawn.Count == 0)
                 return;
 
-            __instance.locationName = availableToSpawn.RandomIndex();
+            __instance.locationName = availableToSpawn.RandomItem();
             locationsAlreadySpawned.Add(__instance.locationName);
         }
 

@@ -17,7 +17,7 @@ namespace DarkwoodRandomizer.Patches
             if (!Settings.Night_RandomizeEnemies!.Value)
                 return;
 
-            type = possibleCharacters[UnityEngine.Random.Range(0, possibleCharacters.Length)].ToString();
+            type = possibleCharacters.RandomItem().ToString();
         }
     }
 }

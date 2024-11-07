@@ -1,6 +1,7 @@
 ﻿using DarkwoodRandomizer.Plugin;
 using HarmonyLib;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DarkwoodRandomizer.Patches
@@ -18,16 +19,24 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
             if (Settings.Loot_RandomizeItemContainersWithinBiomes!.Value)
-                RandomizeItemContainersWithinBiomes(__instance);
+                Utils.RunWhenPredicateMet
+                (
+                    predicate: () => Locations.OutsideLocationsLoaded,
+                    action: RandomizeItemContainersWithinBiomes
+                );
             else
-                RandomizeItemContainersGlobally(__instance);
+                Utils.RunWhenPredicateMet
+                (
+                    predicate: () => Locations.OutsideLocationsLoaded,
+                    action: RandomizeItemContainersGlobally
+                );
         }
 
-        private static void RandomizeItemContainersGlobally(WorldGenerator __instance)
+        private static void RandomizeItemContainersGlobally()
         {
             List<Inventory> inventoriesPool = new();
 
-            foreach (Location location in __instance.locations)
+            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                 foreach (Item itemContainer in location.inventoriesList) // Sublocations don't have containers in inventoriesList, it is instead tied to the main location
                 {
                     if (itemContainer.name.Contains("workbench"))
@@ -37,7 +46,7 @@ namespace DarkwoodRandomizer.Patches
                     inventoriesPool.Add(inventory);
                 }
 
-            foreach (Location location in __instance.locations)
+            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                 foreach (Item itemContainer in location.inventoriesList)
                 {
                     if (itemContainer.name.Contains("workbench"))
@@ -45,7 +54,7 @@ namespace DarkwoodRandomizer.Patches
 
                     Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
 
-                    Inventory randomInventory = inventoriesPool[Random.Range(0, inventoriesPool.Count)];
+                    Inventory randomInventory = inventoriesPool.RandomItem();
                     inventoriesPool.Remove(randomInventory);
 
                     // I don't know if setting all of them is necessary
@@ -58,11 +67,11 @@ namespace DarkwoodRandomizer.Patches
                 }
         }
 
-        private static void RandomizeItemContainersWithinBiomes(WorldGenerator __instance)
+        private static void RandomizeItemContainersWithinBiomes()
         {
             Dictionary<Biome.Type, List<Inventory>> inventoriesPool = new();
 
-            foreach (Location location in __instance.locations)
+            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                 foreach (Item itemContainer in location.inventoriesList)
                 {
                     if (itemContainer.name.Contains("workbench"))
@@ -76,7 +85,7 @@ namespace DarkwoodRandomizer.Patches
                     inventoriesPool[location.biomeType].Add(inventory);
                 }
 
-            foreach (Location location in __instance.locations)
+            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                 foreach (Item itemContainer in location.inventoriesList)
                 {
                     if (itemContainer.name.Contains("workbench"))
@@ -85,7 +94,7 @@ namespace DarkwoodRandomizer.Patches
                     Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
 
                     List<Inventory> biomePool = inventoriesPool[location.biomeType];
-                    Inventory randomInventory = biomePool[Random.Range(0, biomePool.Count)];
+                    Inventory randomInventory = biomePool.RandomItem();
                     inventoriesPool[location.biomeType].Remove(randomInventory);
 
                     // I don't know if setting all of them is necessary

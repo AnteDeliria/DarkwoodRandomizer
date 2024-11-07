@@ -450,7 +450,7 @@ namespace DarkwoodRandomizer.Patches
                         if (pointWithinBounds != Vector3.zero)
                         {
                             // Injection
-                            Character component = Core.AddPrefab(activeCharacters.Values.RandomIndex(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
+                            Character component = Core.AddPrefab(activeCharacters.Values.RandomItem(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
                             // End injection
                             if (component != null)
                             {
@@ -475,8 +475,8 @@ namespace DarkwoodRandomizer.Patches
         }
 
 
-        [HarmonyPatch(typeof(WorldGenerator), "onFinished")]
-        [HarmonyPrefix]
+        [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
+        [HarmonyPostfix]
         internal static void RandomizeLocationCharacters(WorldGenerator __instance)
         {
             // TODO: fix this not randomizing all NPCs
@@ -503,39 +503,62 @@ namespace DarkwoodRandomizer.Patches
             //        }
             //}
 
+            
+            Utils.RunWhenPredicateMet
+            (
+                predicate: () => Locations.OutsideLocationsLoaded,
+                action: RandomizeLocationCharacters
+            );
 
-            foreach (Location location in __instance.locations) // TODO: fix characters not having movement AI in outside locations
+
+            static void RandomizeLocationCharacters()
             {
-                foreach (Character character in location.charactersList.ToArray())
+                foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                 {
-                    List<string>? characterPool = null;
+                    foreach (Character character in location.charactersList.ToArray())
+                    {
+                        List<string>? characterPool = null;
 
-                    if (specialCharacters.Keys.Contains(character.name)) // Huge characters that may block paths if placed in a different location
-                        continue;
-                    else if (Settings.Enemies_RandomizeLocationEnemies!.Value && character.npc == null && !character.immobile)
-                        characterPool = activeCharacters.Values.ToList();
-                    else if (Settings.Enemies_RandomizeStaticCharacters!.Value && character.npc == null && character.immobile)
-                        characterPool = staticFakeCharacters.Values.ToList();
+                        if (specialCharacters.Keys.Contains(character.name)) // Huge characters that may block paths if placed in a different location
+                            continue;
+                        else if (Settings.Enemies_RandomizeLocationEnemies!.Value && character.npc == null && !character.immobile)
+                            characterPool = activeCharacters.Values.ToList();
+                        else if (Settings.Enemies_RandomizeStaticCharacters!.Value && character.npc == null && character.immobile)
+                            characterPool = staticFakeCharacters.Values.ToList();
 
-                    if (characterPool == null)
-                        continue;
+                        if (characterPool == null)
+                            continue;
 
-                    location.charactersList.Remove(character);
-                    Object.Destroy(character.gameObject);
+                        location.charactersList.Remove(character);
+                        Object.Destroy(character.gameObject);
 
-                    Character component = Core.AddPrefab(characterPool.RandomIndex(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
-                    location.charactersList.Add(component);
-                }
+                        Character component = Core.AddPrefab(characterPool.RandomItem(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                        location.charactersList.Add(component);
+                    }
 
-                foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
-                {
-                    List<string>? characterPool = activeCharacters.Values.ToList();
+                    foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
+                    {
+                        if (characterSpawnPoint.spawnedCharacter == null)
+                            continue;
 
-                    location.spawnPoints.Remove(characterSpawnPoint);
-                    Object.Destroy(characterSpawnPoint.gameObject);
+                        List<string>? characterPool = null;
 
-                    Character component = Core.AddPrefab(characterPool.RandomIndex(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
-                    location.charactersList.Add(component);
+                        if (specialCharacters.Keys.Contains(characterSpawnPoint.spawnedCharacter.name)) // Huge characters that may block paths if placed in a different location
+                            continue;
+                        else if (Settings.Enemies_RandomizeLocationEnemies!.Value && characterSpawnPoint.spawnedCharacter.npc == null && !characterSpawnPoint.spawnedCharacter.immobile)
+                            characterPool = activeCharacters.Values.ToList();
+                        else if (Settings.Enemies_RandomizeStaticCharacters!.Value && characterSpawnPoint.spawnedCharacter.npc == null && characterSpawnPoint.spawnedCharacter.immobile)
+                            characterPool = staticFakeCharacters.Values.ToList();
+
+                        if (characterPool == null)
+                            continue;
+
+                        location.spawnPoints.Remove(characterSpawnPoint);
+                        Object.Destroy(characterSpawnPoint.gameObject);
+
+                        Character component = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                        location.charactersList.Add(component);
+                    }
                 }
             }
         }

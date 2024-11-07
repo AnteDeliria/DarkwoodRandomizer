@@ -37,7 +37,7 @@ namespace DarkwoodRandomizer.Patches
                     miscPrefabPool.Add(prefab);
 
 
-            BiomePrefabsPreset randomMiscPrefab = miscPrefabPool[UnityEngine.Random.Range(0, miscPrefabPool.Count)];
+            BiomePrefabsPreset randomMiscPrefab = miscPrefabPool.RandomItem();
             objectsToDistribute = randomMiscPrefab.prefabs;
             height = randomMiscPrefab.height;
             density = randomMiscPrefab.density;

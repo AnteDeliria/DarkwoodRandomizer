@@ -5,7 +5,7 @@ namespace DarkwoodRandomizer.Plugin
 {
     internal static class ExtensionMethods
     {
-        internal static T RandomIndex<T>(this IEnumerable<T> enumerable)
+        internal static T RandomItem<T>(this IEnumerable<T> enumerable)
         {
             return enumerable.ToArray()[UnityEngine.Random.Range(0, enumerable.Count())];
         }
