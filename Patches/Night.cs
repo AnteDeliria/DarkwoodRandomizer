@@ -1,7 +1,8 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Plugin;
+using HarmonyLib;
 using System;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
     internal class Night

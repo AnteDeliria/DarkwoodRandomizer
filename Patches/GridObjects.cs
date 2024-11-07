@@ -1,9 +1,10 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Plugin;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
     internal static class GridObjects
@@ -42,9 +43,9 @@ namespace DarkwoodRandomizer
 
             while (gridObjectPool.Count > 0)
             {
-                GridObject randomGridObject = gridObjectPool[UnityEngine.Random.Range(0, gridObjectPool.Count)];
-                Biome biome = biomes[UnityEngine.Random.Range(0, biomes.Count)];
-                
+                GridObject randomGridObject = gridObjectPool[Random.Range(0, gridObjectPool.Count)];
+                Biome biome = biomes[Random.Range(0, biomes.Count)];
+
                 biome.gObjects.Add(randomGridObject);
                 gridObjectPool.Remove(randomGridObject);
             }
@@ -56,7 +57,7 @@ namespace DarkwoodRandomizer
         internal static void RandomizeGridObjectRotation(GameObject __instance)
         {
             if (Settings.GridObjects_RandomizeGridObjectRotation!.Value && __instance.GetComponent<Location>()?.isGridObject == true)
-                __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
+                __instance.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
         }
     }
 }

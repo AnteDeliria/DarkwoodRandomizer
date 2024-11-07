@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Plugin
 {
     internal static class Utils
     {
@@ -22,7 +22,11 @@ namespace DarkwoodRandomizer
 
 
 
+
         private static List<PredicateActionTuple> runOnUpdate = new();
+
+
+
 
         internal static void RunWhenPredicateMet(Func<bool> predicate, Action action, bool exclusive = false)
         {

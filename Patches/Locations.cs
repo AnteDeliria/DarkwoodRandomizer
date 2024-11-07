@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Plugin;
+using HarmonyLib;
 using Pathfinding;
 using System;
 using System.Collections;
@@ -7,7 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
     internal static class Locations
@@ -17,7 +18,7 @@ namespace DarkwoodRandomizer
 
         // "med_cottage_tree_01" beginner hideout
         internal static List<string> HideoutsCh1 = ["med_cottage_tree_01", "big_farm_02", "big_hideout_03"];
-        
+
         internal static List<string> HideoutsCh2 = ["med_hideout_04", "med_hideout_05"];
 
         internal static List<string> MustSpawnCh1 =
@@ -63,16 +64,22 @@ namespace DarkwoodRandomizer
 
         internal static List<string> OutsideLocationsCh1 =
             ["outside_bunker_underground_02", "outside_church_underground_01", "outside_church_underground_02",
-            "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"]; // "outsider_doctor_house_01",
+            "outside_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
 
+
+        internal static bool OutsideLocationsLoaded = false;
 
 
         // Simply calling OutsideLocations.createLocation doesn't work, so we have to visit them one by one
-        // 
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPostfix]
         internal static void PreloadOutsideLocations()
         {
+            if (OutsideLocationsLoaded)
+                return;
+
+
+
             // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
             foreach (string locationName in OutsideLocationsCh1.Except(["outside_bunker_underground_02"]))
                 Utils.RunWhenPredicateMet
@@ -94,16 +101,16 @@ namespace DarkwoodRandomizer
                 predicate: () => OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
                 action: () =>
                 {
-                    GameEvents? component = Singleton<OutsideLocations>.Instance.spawnedLocations[Singleton<OutsideLocations>.Instance.currentLocationName].gameObject
-                    .GetComponentsInChildren(typeof(GameEvents))
-                    .FirstOrDefault
-                    (
-                        x => x.GetComponent<GameEvents>().events.Any(evnt => evnt.type == GameEvent.Type.returnToWorld)
-                    )
-                    ?.GetComponent<GameEvents>();
-
-                    DarkwoodRandomizerPlugin.Logger.LogInfo(component?.name);
+                    GameEvents? component =
+                        Singleton<OutsideLocations>.Instance
+                        .spawnedLocations[Singleton<OutsideLocations>.Instance.currentLocationName]
+                        .gameObject
+                        .GetComponentsInChildren<GameEvents>()
+                        .FirstOrDefault(x => x.events.Any(evnt => evnt.type == GameEvent.Type.returnToWorld))
+                        ?.GetComponent<GameEvents>();
                     component?.fire();
+
+                    OutsideLocationsLoaded = true;
                 },
                 exclusive: true
             );
@@ -138,8 +145,8 @@ namespace DarkwoodRandomizer
 
             if (availableToSpawn.Count == 0)
                 return;
-            
-            __instance.locationName = availableToSpawn[UnityEngine.Random.Range(0, availableToSpawn.Count)];
+
+            __instance.locationName = availableToSpawn.RandomIndex();
             locationsAlreadySpawned.Add(__instance.locationName);
         }
 
@@ -153,7 +160,7 @@ namespace DarkwoodRandomizer
             if (Settings.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
 
-            if (Settings.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Contains(__instance.name.Replace("_done", "")))
+            if (Settings.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Concat(OutsideLocationsCh1).Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
     }

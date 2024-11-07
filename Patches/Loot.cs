@@ -1,8 +1,9 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Plugin;
+using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
     internal static class Loot
@@ -44,7 +45,7 @@ namespace DarkwoodRandomizer
 
                     Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
 
-                    Inventory randomInventory = inventoriesPool[UnityEngine.Random.Range(0, inventoriesPool.Count)];
+                    Inventory randomInventory = inventoriesPool[Random.Range(0, inventoriesPool.Count)];
                     inventoriesPool.Remove(randomInventory);
 
                     // I don't know if setting all of them is necessary
@@ -84,7 +85,7 @@ namespace DarkwoodRandomizer
                     Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
 
                     List<Inventory> biomePool = inventoriesPool[location.biomeType];
-                    Inventory randomInventory = biomePool[UnityEngine.Random.Range(0, biomePool.Count)];
+                    Inventory randomInventory = biomePool[Random.Range(0, biomePool.Count)];
                     inventoriesPool[location.biomeType].Remove(randomInventory);
 
                     // I don't know if setting all of them is necessary

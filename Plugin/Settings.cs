@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Plugin
 {
     internal static class Settings
     {
@@ -35,11 +35,11 @@ namespace DarkwoodRandomizer
         // internal static ConfigEntry<string>? Enemies_LocationEnemiesDryMeadowPool;
         // internal static ConfigEntry<string>? Enemies_LocationEnemiesSilentForestPool;
         // internal static ConfigEntry<string>? Enemies_LocationEnemiesOldWoodsPool;
-        
+
         internal static ConfigEntry<bool>? Enemies_RandomizeStaticCharacters;
 
         internal static ConfigEntry<bool>? Enemies_RandomizeNPCs;
-        
+
 
         internal static ConfigEntry<bool>? Night_RandomizeEnemies;
 
@@ -51,9 +51,9 @@ namespace DarkwoodRandomizer
         internal static ConfigEntry<bool>? Map_RandomizeBorders;
 
         internal static ConfigEntry<bool>? Map_RevealAllMapElements;
-        
-        
-        
+
+
+
         internal static void InitializeConfigs(ConfigFile config)
         {
             World_RandomizeChunkBiomes = config.Bind
@@ -70,8 +70,8 @@ namespace DarkwoodRandomizer
                     defaultValue: "forest,forest_dense,forest_mutated,meadow",
                     description: "The biomes to choose from when randomizing chunk biomes. Valid values are \"forest\", \"forest_dense\", \"forest_mutated\", \"swamp\", \"meadow\", and \"empty\". Will default to all if no value is specified"
                 );
-    
-    
+
+
             World_RandomizeChunkGroundSprites = config.Bind
                 (
                     section: "World",
@@ -86,8 +86,8 @@ namespace DarkwoodRandomizer
                     defaultValue: "forest,forest_dense,forest_mutated,swamp,meadow,empty",
                     description: "COSMETIC: The biomes to choose from when randomizing chunk ground sprites. Valid values are \"forest\", \"forest_dense\", \"forest_mutated\", \"swamp\", \"meadow\", and \"empty\". Will default to all if no value is specified"
                 );
-    
-    
+
+
             Locations_RandomizeLocationPosition = config.Bind
                 (
                     section: "Locations",
@@ -116,8 +116,8 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize hideout rotation. Also makes vaulting a little janky."
                 );
-    
-    
+
+
             GridObjects_RandomizeGridObjects = config.Bind
                 (
                     section: "Grid Objects",
@@ -139,8 +139,8 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize grid object rotation"
                 );
-    
-    
+
+
             MiscObjects_RandomizeMiscObjects = config.Bind
                 (
                     section: "Misc Objects",
@@ -155,8 +155,8 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to allow chapter 2 (swamp) prefabs to be generated. These are significantly larger in size than chapter 1 prefabs"
                 );
-    
-    
+
+
             Enemies_RandomizeFreeRoamingEnemies = config.Bind
                 (
                     section: "Characters",
@@ -164,7 +164,7 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize free roaming enemy spawns"
                 );
-    
+
             Enemies_RandomizeLocationEnemies = config.Bind
                 (
                     section: "Characters",
@@ -172,7 +172,7 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize location enemy spawns"
                 );
-            
+
             Enemies_RandomizeStaticCharacters = config.Bind
                 (
                     section: "Characters",
@@ -180,7 +180,7 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize static characters spawns"
                 );
-            
+
             //Enemies_RandomizeNPCs = config.Bind
             //    (
             //        section: "Characters",
@@ -188,8 +188,8 @@ namespace DarkwoodRandomizer
             //        defaultValue: false,
             //        description: "Whether to randomize NPCs"
             //    );
-    
-    
+
+
             Night_RandomizeEnemies = config.Bind
                 (
                     section: "Night",
@@ -197,8 +197,8 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize night enemies"
                 );
-    
-    
+
+
             Loot_RandomizeItemContainers = config.Bind
                 (
                     section: "Loot",
@@ -213,9 +213,9 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to randomize item containers within their respective biomes only"
                 );
-    
-    
-    
+
+
+
             Map_RevealAllMapElements = config.Bind
                 (
                     section: "Map",
@@ -223,8 +223,8 @@ namespace DarkwoodRandomizer
                     defaultValue: false,
                     description: "Whether to show all locations on the map. Use this for testing out the mod"
                 );
-    
-    
+
+
             Map_RandomizeBorders = config.Bind
                 (
                     section: "Map",

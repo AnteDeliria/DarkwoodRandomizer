@@ -3,7 +3,7 @@ using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DarkwoodRandomizer
+namespace DarkwoodRandomizer.Patches
 {
     internal static class Biomes
     {
