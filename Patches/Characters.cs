@@ -118,12 +118,12 @@ namespace DarkwoodRandomizer.Patches
                 {
                     foreach (Character character in location.charactersList.ToArray())
                     {
-                        List<string>? characterPool = null;
+                        IEnumerable<string>? characterPool = null;
 
                         if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && character.npc == null && CharacterPools.ActiveCharacters.Keys.Contains(character.name))
-                            characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType)?.ToList();
+                            characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
                         else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && character.npc == null && CharacterPools.StaticCharacters.Keys.Contains(character.name))
-                            characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType)?.ToList();
+                            characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
                         if (characterPool == null)
                             continue;
@@ -132,12 +132,18 @@ namespace DarkwoodRandomizer.Patches
                         Object.Destroy(character.gameObject);
 
                         Character component = Core.AddPrefab(characterPool.RandomItem(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                        Core.addToSaveable(component.gameObject, true, true);
                         location.charactersList.Add(component);
                     }
 
                     foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
                     {
-                        List<string>? characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType)?.ToList();
+                        IEnumerable<string>? characterPool = null;
+
+                        if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && CharacterPools.ActiveCharacters.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
+                            characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
+                        if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && CharacterPools.StaticCharacters.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
+                            characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
                         if (characterPool == null)
                             continue;
@@ -146,6 +152,7 @@ namespace DarkwoodRandomizer.Patches
                         Object.Destroy(characterSpawnPoint.gameObject);
 
                         Character component = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
+                        Core.addToSaveable(component.gameObject, true, true);
                         location.charactersList.Add(component);
                     }
                 }
