@@ -1,0 +1,5 @@
+bed_npc  
+maciek  
+scarecrow  
+stove_npc  
+wardrobe_npc

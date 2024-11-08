@@ -26,19 +26,13 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<bool>? MiscObjects_IncludeSwampObjectsInPool;
 
 
-        internal static ConfigEntry<bool>? Enemies_RandomizeFreeRoamingEnemies;
-        // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesDryMeadowPool;
-        // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesSilentForestPool;
-        // internal static ConfigEntry<string>? Enemies_FreeRoamingEnemiesOldWoodsPool;
+        internal static ConfigEntry<bool>? Characters_RandomizeFreeRoamingCharacters;
 
-        internal static ConfigEntry<bool>? Enemies_RandomizeLocationEnemies;
-         internal static ConfigEntry<string>? Enemies_LocationEnemiesDryMeadowPool;
-         internal static ConfigEntry<string>? Enemies_LocationEnemiesSilentForestPool;
-         internal static ConfigEntry<string>? Enemies_LocationEnemiesOldWoodsPool;
+        internal static ConfigEntry<bool>? Characters_RandomizeLocationCharacters;
 
-        internal static ConfigEntry<bool>? Enemies_RandomizeStaticCharacters;
+        internal static ConfigEntry<bool>? Characters_RandomizeStaticCharacters;
 
-        internal static ConfigEntry<bool>? Enemies_RandomizeNPCs;
+        internal static ConfigEntry<bool>? Characters_RandomizeNPCs;
 
 
         internal static ConfigEntry<bool>? Night_RandomizeEnemies;
@@ -157,7 +151,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 );
 
 
-            Enemies_RandomizeFreeRoamingEnemies = config.Bind
+            Characters_RandomizeFreeRoamingCharacters = config.Bind
                 (
                     section: "Characters",
                     key: "Randomize free roaming enemies",
@@ -165,36 +159,21 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     description: "Whether to randomize free roaming enemy spawns"
                 );
 
-            Enemies_RandomizeLocationEnemies = config.Bind
+            Characters_RandomizeLocationCharacters = config.Bind
                 (
                     section: "Characters",
                     key: "Randomize location enemies",
                     defaultValue: false,
                     description: "Whether to randomize location enemy spawns"
                 );
-            //Enemies_LocationEnemiesDryMeadowPool = config.Bind
-            //    (
-            //        section: "Characters",
-            //        key: "Location enemies Dry Meadow pool",
-            //        defaultValue: CharacterPool.,
-            //        description: "Whether to randomize location enemy spawns"
-            //    );
-
-            Enemies_RandomizeStaticCharacters = config.Bind
+            
+            Characters_RandomizeStaticCharacters = config.Bind
                 (
                     section: "Characters",
                     key: "Randomize static characters",
                     defaultValue: false,
                     description: "Whether to randomize static characters spawns"
                 );
-
-            //Enemies_RandomizeNPCs = config.Bind
-            //    (
-            //        section: "Characters",
-            //        key: "Randomize NPCs",
-            //        defaultValue: false,
-            //        description: "Whether to randomize NPCs"
-            //    );
 
 
             Night_RandomizeEnemies = config.Bind

@@ -33,7 +33,11 @@
     </Reference>
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="CharacterPools\" />
+  </ItemGroup>
+  
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;C:\Users\User\Desktop\Modding\Darkwood\DarkwoodRandomizer\bin\Debug\netstandard2.0\DarkwoodRandomizer.dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Darkwood\BepInEx\plugins\DarkwoodRandomizer.dll&quot;" />
+    <Exec Command="copy &quot;C:\Users\User\Desktop\Modding\Darkwood\DarkwoodRandomizer\bin\Debug\netstandard2.0\DarkwoodRandomizer.dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Darkwood\BepInEx\plugins\DarkwoodRandomizer\DarkwoodRandomizer.dll&quot;&#xD;&#xA;copy &quot;C:\Users\User\Desktop\Modding\Darkwood\DarkwoodRandomizer\CharacterPools&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Darkwood\BepInEx\plugins\DarkwoodRandomizer\CharacterPools&quot;" />
   </Target>
 </Project>

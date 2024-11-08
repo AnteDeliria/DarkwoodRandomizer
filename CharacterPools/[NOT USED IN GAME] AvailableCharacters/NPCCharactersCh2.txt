@@ -1,0 +1,13 @@
+child  
+cripple  
+doctor_act2  
+elephants  
+figurine_doctor  
+mushroomgranny  
+muzyk_duzy  
+shrine_mushroomgranny  
+shrine_treevillage  
+snail  
+thethree  
+tree_dry_medium_deadpig_01_villagersswamp  
+valve

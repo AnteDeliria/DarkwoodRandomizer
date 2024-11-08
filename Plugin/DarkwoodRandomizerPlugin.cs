@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System.Reflection;
 using DarkwoodRandomizer.Plugin.Settings;
+using System.IO;
 
 namespace DarkwoodRandomizer.Plugin;
 
@@ -10,6 +11,8 @@ namespace DarkwoodRandomizer.Plugin;
 [BepInProcess("Darkwood.exe")]
 public class DarkwoodRandomizerPlugin : BaseUnityPlugin
 {
+    internal static string PluginPath => Path.Combine(Paths.PluginPath, "DarkwoodRandomizer");
+
     internal new static ManualLogSource Logger;
 
 

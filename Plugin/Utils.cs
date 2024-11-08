@@ -1,9 +1,10 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DarkwoodRandomizer.Plugin
 {
+    [HarmonyPatch]
     internal static class Utils
     {
         private class PredicateActionTuple
@@ -20,11 +21,9 @@ namespace DarkwoodRandomizer.Plugin
             internal bool Exclusive;
         }
 
-
-
-
         private static List<PredicateActionTuple> runOnUpdate = new();
 
+        internal static bool IsNewSave;
 
 
 
@@ -57,6 +56,13 @@ namespace DarkwoodRandomizer.Plugin
                 predicateActionTuple.Action();
                 runOnUpdate.Remove(predicateActionTuple);
             }
+        }
+
+        [HarmonyPatch(typeof(WorldGenerator), "generateWorld")]
+        [HarmonyPrefix]
+        internal static void RegisterIsNewSave()
+        {
+            IsNewSave = !Core.doLoadChapterSave;
         }
     }
 }

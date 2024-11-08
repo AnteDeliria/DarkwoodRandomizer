@@ -16,17 +16,19 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeItemContainers(WorldGenerator __instance)
         {
+            if (!Plugin.Utils.IsNewSave)
+                return;
             if (!SettingsManager.Loot_RandomizeItemContainers!.Value)
                 return;
 
             if (SettingsManager.Loot_RandomizeItemContainersWithinBiomes!.Value)
-                Utils.RunWhenPredicateMet
+                Plugin.Utils.RunWhenPredicateMet
                 (
                     predicate: () => Locations.OutsideLocationsLoaded,
                     action: RandomizeItemContainersWithinBiomes
                 );
             else
-                Utils.RunWhenPredicateMet
+                Plugin.Utils.RunWhenPredicateMet
                 (
                     predicate: () => Locations.OutsideLocationsLoaded,
                     action: RandomizeItemContainersGlobally

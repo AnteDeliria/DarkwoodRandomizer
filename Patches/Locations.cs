@@ -78,28 +78,28 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         internal static void PreloadOutsideLocations()
         {
-            if (OutsideLocationsLoaded)
+            if (OutsideLocationsLoaded || !Plugin.Utils.IsNewSave)
                 return;
 
 
 
             // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
             foreach (string locationName in OutsideLocationsCh1.Except(["outside_bunker_underground_02"]))
-                Utils.RunWhenPredicateMet
+                Plugin.Utils.RunWhenPredicateMet
                 (
                     predicate: () => !Singleton<OutsideLocations>.Instance.loading,
                     action: () => Singleton<OutsideLocations>.Instance.prepareLocation(locationName),
                     exclusive: true
                 );
 
-            Utils.RunWhenPredicateMet
+            Plugin.Utils.RunWhenPredicateMet
             (
                 predicate: () => OutsideLocationsCh1.Count - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
                 action: () => Singleton<OutsideLocations>.Instance.prepareLocation("outside_bunker_underground_02"),
                 exclusive: true
             );
 
-            Utils.RunWhenPredicateMet
+            Plugin.Utils.RunWhenPredicateMet
             (
                 predicate: () => OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
                 action: () =>
@@ -137,6 +137,8 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeLocations(WorldChunk __instance)
         {
+            if (!Plugin.Utils.IsNewSave)
+                return;
             if (string.IsNullOrEmpty(__instance.locationName)) // Empty chunk
                 return;
             if (__instance.isBorderChunk) // Don't want to clip locations into the wall
@@ -170,6 +172,9 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeLocationRotation(GameObject __instance)
         {
+            if (!Plugin.Utils.IsNewSave)
+                return;
+
             if (SettingsManager.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
 
