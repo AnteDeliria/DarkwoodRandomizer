@@ -29,7 +29,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static bool RandomizeFreeRoamingCharacters(WorldChunk __instance, GameObject ___CharactersFreeRoaming, List<GameObject> ___freeRoamingChars)
         {
-            if (!Utils.IsNewSave)
+            if (!Plugin.Controller.IsNewSave)
                 return true;
             if (!SettingsManager.Characters_RandomizeFreeRoamingCharacters!.Value)
                 return true;
@@ -78,7 +78,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         internal static void RandomizeLocationCharacters(WorldGenerator __instance)
         {
-            if (!Utils.IsNewSave)
+            if (!Plugin.Controller.IsNewSave)
                 return;
 
             // TODO: fix this not randomizing all NPCs
@@ -105,7 +105,7 @@ namespace DarkwoodRandomizer.Patches
             //        }
             //}
 
-            Plugin.Utils.RunWhenPredicateMet
+            Plugin.Controller.RunWhenPredicateMet
             (
                 predicate: () => Locations.OutsideLocationsLoaded,
                 action: RandomizeLocationCharacters
@@ -116,24 +116,29 @@ namespace DarkwoodRandomizer.Patches
             {
                 foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                 {
-                    foreach (Character character in location.charactersList.ToArray())
+                    foreach (Character oldCharacter in location.charactersList.ToArray())
                     {
                         IEnumerable<string>? characterPool = null;
 
-                        if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && character.npc == null && CharacterPools.ActiveCharacters.Keys.Contains(character.name))
+                        if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && oldCharacter.npc == null && CharacterPools.ActiveCharacters.Keys.Contains(oldCharacter.name.ToLower()))
                             characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
-                        else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && character.npc == null && CharacterPools.StaticCharacters.Keys.Contains(character.name))
+                        else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.StaticCharacters.Keys.Contains(oldCharacter.name.ToLower()))
                             characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
                         if (characterPool == null)
                             continue;
 
-                        location.charactersList.Remove(character);
-                        Object.Destroy(character.gameObject);
+                        location.charactersList.Remove(oldCharacter);
+                        
+                        GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                        Core.addToSaveable(newCharacterObject, true, true);
+                        Object.Destroy(oldCharacter.gameObject);
 
-                        Character component = Core.AddPrefab(characterPool.RandomItem(), character.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
-                        Core.addToSaveable(component.gameObject, true, true);
-                        location.charactersList.Add(component);
+                        Character? component = newCharacterObject.GetComponent<Character>();
+                        if (component == null)
+                            continue;
+                        else
+                            location.charactersList.Add(component);
                     }
 
                     foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
@@ -149,11 +154,16 @@ namespace DarkwoodRandomizer.Patches
                             continue;
 
                         location.spawnPoints.Remove(characterSpawnPoint);
+
+                        GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                        Core.addToSaveable(newCharacterObject, true, true);
                         Object.Destroy(characterSpawnPoint.gameObject);
 
-                        Character component = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false).GetComponent<Character>();
-                        Core.addToSaveable(component.gameObject, true, true);
-                        location.charactersList.Add(component);
+                        Character? component = newCharacterObject.GetComponent<Character>();
+                        if (component == null)
+                            continue;
+                        else
+                            location.charactersList.Add(component);
                     }
                 }
             }

@@ -33,7 +33,7 @@ namespace DarkwoodRandomizer.Patches
                 foreach (BiomePrefabsPreset prefab in biome.miscPrefabs)
                     miscPrefabPool.Add(prefab);
 
-            if (worldGenerator.chapterID == 1 && SettingsManager.MiscObjects_IncludeSwampObjectsInPool!.Value)
+            if (worldGenerator.chapterID == 1 && SettingsManager.MiscObjects_IncludeSwampObjectsInCh1Pool!.Value)
                 foreach (BiomePrefabsPreset prefab in worldGenerator.biomePresets.First(x => x.type == Biome.Type.swamp).miscPrefabs)
                     miscPrefabPool.Add(prefab);
 

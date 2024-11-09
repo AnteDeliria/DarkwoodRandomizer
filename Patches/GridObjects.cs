@@ -12,18 +12,18 @@ namespace DarkwoodRandomizer.Patches
     {
         [HarmonyPatch(typeof(WorldGenerator), "onConnectedRoads")]
         [HarmonyPrefix]
-        internal static void RandomizeGridObjects(WorldGenerator __instance)
+        internal static void ShuffleGridObjects(WorldGenerator __instance)
         {
-            if (!SettingsManager.GridObjects_RandomizeGridObjects!.Value)
+            if (!SettingsManager.GridObjects_ShuffleGridObjects!.Value)
                 return;
 
 
-            List<Biome> biomes;
+            IEnumerable<Biome> biomes;
 
             if (__instance.chapterID == 1)
-                biomes = __instance.biomePresets.Where(x => x.type == Biome.Type.meadow || x.type == Biome.Type.forest || x.type == Biome.Type.forest_mutated).ToList();
+                biomes = __instance.biomePresets.Where(x => x.type == Biome.Type.meadow || x.type == Biome.Type.forest || x.type == Biome.Type.forest_mutated);
             else if (__instance.chapterID == 2)
-                biomes = __instance.biomePresets.Where(x => x.type == Biome.Type.swamp).ToList();
+                biomes = __instance.biomePresets.Where(x => x.type == Biome.Type.swamp);
             else
                 return; // unknown chapter ID
 
@@ -38,13 +38,13 @@ namespace DarkwoodRandomizer.Patches
                 biome.gObjects.Clear();
             }
 
-            if (__instance.chapterID == 1 && SettingsManager.GridObjects_IncludeSwampObjectsInPool!.Value)
+            if (__instance.chapterID == 1 && SettingsManager.GridObjects_IncludeSwampObjectsInCh1Pool!.Value)
                 foreach (GridObject gObject in __instance.biomePresets.First(x => x.type == Biome.Type.swamp).gObjects)
                     gridObjectPool.Add(gObject);
 
             while (gridObjectPool.Count > 0)
             {
-                GridObject randomGridObject = gridObjectPool[Random.Range(0, gridObjectPool.Count)];
+                GridObject randomGridObject = gridObjectPool.RandomItem();
                 Biome biome = biomes.RandomItem();
 
                 biome.gObjects.Add(randomGridObject);

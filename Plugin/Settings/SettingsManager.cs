@@ -17,13 +17,13 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<bool>? Locations_RandomizeHideoutRotation;
 
 
-        internal static ConfigEntry<bool>? GridObjects_RandomizeGridObjects;
-        internal static ConfigEntry<bool>? GridObjects_IncludeSwampObjectsInPool;
+        internal static ConfigEntry<bool>? GridObjects_ShuffleGridObjects;
+        internal static ConfigEntry<bool>? GridObjects_IncludeSwampObjectsInCh1Pool;
         internal static ConfigEntry<bool>? GridObjects_RandomizeGridObjectRotation;
 
 
         internal static ConfigEntry<bool>? MiscObjects_RandomizeMiscObjects;
-        internal static ConfigEntry<bool>? MiscObjects_IncludeSwampObjectsInPool;
+        internal static ConfigEntry<bool>? MiscObjects_IncludeSwampObjectsInCh1Pool;
 
 
         internal static ConfigEntry<bool>? Characters_RandomizeFreeRoamingCharacters;
@@ -112,14 +112,14 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 );
 
 
-            GridObjects_RandomizeGridObjects = config.Bind
+            GridObjects_ShuffleGridObjects = config.Bind
                 (
                     section: "Grid Objects",
                     key: "Randomize grid objects between biomes",
                     defaultValue: false,
                     description: "Whether to randomize the biome spawning of grid objects (e.g.: shrines, tank wrecks, log piles etc.)"
                 );
-            GridObjects_IncludeSwampObjectsInPool = config.Bind
+            GridObjects_IncludeSwampObjectsInCh1Pool = config.Bind
                 (
                     section: "Grid Objects",
                     key: "Include swamp prefabs in grid objects pool",
@@ -142,7 +142,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     defaultValue: false,
                     description: "Whether to randomize the biome spawning of miscellaneous objects (e.g.: crates, rocks, mushrooms etc.)"
                 );
-            MiscObjects_IncludeSwampObjectsInPool = config.Bind
+            MiscObjects_IncludeSwampObjectsInCh1Pool = config.Bind
                 (
                     section: "Misc Objects",
                     key: "Include swamp prefabs in miscellaneous objects pool",

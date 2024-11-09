@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DarkwoodRandomizer.Plugin
 {
     [HarmonyPatch]
-    internal static class Utils
+    internal static class Controller
     {
         private class PredicateActionTuple
         {

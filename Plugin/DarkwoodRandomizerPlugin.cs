@@ -26,6 +26,6 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
 
     private void Update()
     {
-        Utils.Update();
+        Controller.Update();
     }
 }
