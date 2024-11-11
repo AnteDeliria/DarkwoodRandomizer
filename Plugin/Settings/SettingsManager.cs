@@ -4,11 +4,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
 {
     internal static class SettingsManager
     {
-        internal static ConfigEntry<bool>? World_RandomizeChunkBiomes;
-        internal static ConfigEntry<string>? World_RandomizeChunkBiomesPool;
-
-        internal static ConfigEntry<bool>? World_RandomizeChunkGroundSprites;
-        internal static ConfigEntry<string>? World_RandomizeChunkGroundSpritesPool;
+        internal static ConfigEntry<bool>? Decals_RandomizeChunkGroundSprites;
 
 
         internal static ConfigEntry<bool>? Locations_RandomizeLocationPosition;
@@ -27,15 +23,19 @@ namespace DarkwoodRandomizer.Plugin.Settings
 
 
         internal static ConfigEntry<bool>? Characters_RandomizeFreeRoamingCharacters;
-
         internal static ConfigEntry<bool>? Characters_RandomizeLocationCharacters;
-
         internal static ConfigEntry<bool>? Characters_RandomizeStaticCharacters;
-
         internal static ConfigEntry<bool>? Characters_RandomizeNPCs;
 
 
         internal static ConfigEntry<bool>? Night_RandomizeEnemies;
+
+
+        internal static ConfigEntry<bool>? Traders_RandomizeTraderInventory;
+        internal static ConfigEntry<bool>? Traders_TraderInventoryEnsureStaples;
+        internal static ConfigEntry<TraderInventoryRandomizationType>? Traders_TraderInventoryRandomizationType;
+        internal static ConfigEntry<int>? Traders_TraderInventoryMinRandomSlots;
+        internal static ConfigEntry<int>? Traders_TraderInventoryMaxRandomSlots;
 
 
         internal static ConfigEntry<bool>? Loot_RandomizeItemContainers;
@@ -43,44 +43,19 @@ namespace DarkwoodRandomizer.Plugin.Settings
 
 
         internal static ConfigEntry<bool>? Map_RandomizeBorders;
-
         internal static ConfigEntry<bool>? Map_RevealAllMapElements;
 
 
 
         internal static void InitializeConfigs(ConfigFile config)
         {
-            World_RandomizeChunkBiomes = config.Bind
+            Decals_RandomizeChunkGroundSprites = config.Bind
                 (
-                    section: "World",
-                    key: "Randomize chunk biomes",
-                    defaultValue: false,
-                    description: "Whether to randomize chunk biomes. Results in a lot of downstream effects, including randomizing biome specific objects, monsters, and decals"
-                );
-            World_RandomizeChunkBiomesPool = config.Bind
-                (
-                    section: "World",
-                    key: "Chunk biomes selection",
-                    defaultValue: "forest,forest_dense,forest_mutated,meadow",
-                    description: "The biomes to choose from when randomizing chunk biomes. Valid values are \"forest\", \"forest_dense\", \"forest_mutated\", \"swamp\", \"meadow\", and \"empty\". Will default to all if no value is specified"
-                );
-
-
-            World_RandomizeChunkGroundSprites = config.Bind
-                (
-                    section: "World",
+                    section: "Decals",
                     key: "Randomize chunk ground sprites",
                     defaultValue: false,
                     description: "COSMETIC: Whether to randomize chunk ground sprites"
                 );
-            World_RandomizeChunkGroundSpritesPool = config.Bind
-                (
-                    section: "World",
-                    key: "Biome ground sprites pool",
-                    defaultValue: "forest,forest_dense,forest_mutated,swamp,meadow,empty",
-                    description: "COSMETIC: The biomes to choose from when randomizing chunk ground sprites. Valid values are \"forest\", \"forest_dense\", \"forest_mutated\", \"swamp\", \"meadow\", and \"empty\". Will default to all if no value is specified"
-                );
-
 
             Locations_RandomizeLocationPosition = config.Bind
                 (
@@ -182,6 +157,43 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     key: "Randomize night enemies",
                     defaultValue: false,
                     description: "Whether to randomize night enemies"
+                );
+
+
+            Traders_RandomizeTraderInventory = config.Bind
+                (
+                    section: "Traders",
+                    key: "Randomize trader inventory",
+                    defaultValue: false,
+                    description: "Whether to randomize trader inventory contents"
+                );
+            Traders_TraderInventoryEnsureStaples = config.Bind
+                (
+                    section: "Traders",
+                    key: "Ensure staple items in trader inventories",
+                    defaultValue: false,
+                    description: "Ensure key/staple items are always available in trader inventories"
+                );
+            Traders_TraderInventoryRandomizationType = config.Bind
+                (
+                    section: "Traders",
+                    key: "Trader inventory randomization type",
+                    defaultValue: TraderInventoryRandomizationType.Themed,
+                    description: ""
+                );
+            Traders_TraderInventoryMinRandomSlots = config.Bind
+                (
+                    section: "Traders",
+                    key: "Trader inventory minimum number of random slots",
+                    defaultValue: 6,
+                    description: ""
+                );
+            Traders_TraderInventoryMaxRandomSlots = config.Bind
+                (
+                    section: "Traders",
+                    key: "Trader inventory maximum number of random slots",
+                    defaultValue: 18,
+                    description: ""
                 );
 
 

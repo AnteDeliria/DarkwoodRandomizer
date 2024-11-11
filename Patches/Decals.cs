@@ -1,5 +1,8 @@
-﻿using DarkwoodRandomizer.Plugin.Settings;
+﻿using DarkwoodRandomizer.Plugin;
+using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -13,17 +16,18 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeGroundSpritesPrefix(WorldChunk __instance, ref Biome __state)
         {
-            if (!SettingsManager.World_RandomizeChunkGroundSprites!.Value)
+            if (!SettingsManager.Decals_RandomizeChunkGroundSprites!.Value)
                 return;
 
             __state = __instance.biome;
-            __instance.biome = Biomes.GetRandomBiome(SettingsManager.World_RandomizeChunkGroundSpritesPool!);
+            List<Biome> biomes = (List<Biome>)AccessTools.Field(typeof(WorldGenerator), "biomePresets").GetValue(Singleton<WorldGenerator>.Instance);
+            __instance.biome = biomes.Where(biome => biome.type != Biome.Type.empty).RandomItem();
         }
         [HarmonyPatch(typeof(WorldChunk), "createGroundSprites")]
         [HarmonyPostfix]
         internal static void RandomizeGroundSpritesPostfix(WorldChunk __instance, ref Biome __state)
         {
-            if (!SettingsManager.World_RandomizeChunkGroundSprites!.Value)
+            if (!SettingsManager.Decals_RandomizeChunkGroundSprites!.Value)
                 return;
 
             __instance.biome = __state;
