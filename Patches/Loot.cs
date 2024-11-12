@@ -10,6 +10,55 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Loot
     {
+        [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
+        [HarmonyPrefix]
+        internal static void RandomizeCharacterLoot(GameObject ___WorldChunksGO)
+        {
+            if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
+                return;
+            if (Locations.OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
+                return;
+
+            Plugin.Controller.RunWhenPredicateMet
+            (
+                predicate: () => Locations.OutsideLocationsLoaded,
+                action: () =>
+                {
+                    IEnumerable<Inventory> deathDrops = ___WorldChunksGO
+                        .GetComponentsInChildren<Inventory>(includeInactive: true)
+                        .Where(inv => inv.invType == Inventory.InvType.deathDrop);
+
+                    foreach (Inventory inventory in deathDrops)
+                        foreach (InvSlot slot in inventory.slots.Where(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
+                        {
+                            string itemName = Singleton<ItemsDatabase>.Instance.itemsDict.Keys
+                                .Except(ItemPools.BackendItems.Keys)
+                                .Except(ItemPools.KeyItems.Keys)
+                                .Except(ItemPools.QuestItems.Keys)
+                                .RandomItem();
+
+                            InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
+
+                            int amount;
+                            if (item.hasAmmo)
+                                amount = UnityEngine.Random.Range(0, item.clipSize + 1);
+                            else if (item.stackable)
+                                amount = UnityEngine.Random.Range(1, item.maxAmount + 1);
+                            else
+                                amount = 1;
+
+                            float durability;
+                            if (item.hasDurability)
+                                durability = UnityEngine.Random.Range(0.7f, 1f);
+                            else
+                                durability = 1;
+
+                            slot.createItem(itemName, amount, durability);
+                        }
+                },
+                exclusive: false
+            );
+        }
 
 
         [HarmonyPatch(typeof(WorldGenerator), "distributeMustSpawnItems")]
@@ -18,10 +67,10 @@ namespace DarkwoodRandomizer.Patches
         {
             if (!Plugin.Controller.IsNewSave)
                 return;
-            if (!SettingsManager.Loot_RandomizeItemContainers!.Value)
+            if (!SettingsManager.Loot_ShuffleItemContainers!.Value)
                 return;
 
-            if (SettingsManager.Loot_RandomizeItemContainersWithinBiomes!.Value)
+            if (SettingsManager.Loot_ShuffleItemContainersWithinBiomes!.Value)
                 Plugin.Controller.RunWhenPredicateMet
                 (
                     predicate: () => Locations.OutsideLocationsLoaded,

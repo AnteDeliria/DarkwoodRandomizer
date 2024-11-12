@@ -38,8 +38,9 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<int>? Traders_TraderInventoryMaxRandomSlots;
 
 
-        internal static ConfigEntry<bool>? Loot_RandomizeItemContainers;
-        internal static ConfigEntry<bool>? Loot_RandomizeItemContainersWithinBiomes;
+        internal static ConfigEntry<bool>? Loot_ShuffleItemContainers;
+        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersWithinBiomes;
+        internal static ConfigEntry<bool>? Loot_RandomizeCharacterDrops;
 
 
         internal static ConfigEntry<bool>? Map_RandomizeBorders;
@@ -197,19 +198,26 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 );
 
 
-            Loot_RandomizeItemContainers = config.Bind
+            Loot_ShuffleItemContainers = config.Bind
                 (
                     section: "Loot",
                     key: "Randomize item containers",
                     defaultValue: false,
                     description: "Whether to randomize item containers by swapping their inventory contents"
                 );
-            Loot_RandomizeItemContainersWithinBiomes = config.Bind
+            Loot_ShuffleItemContainersWithinBiomes = config.Bind
                 (
                     section: "Loot",
                     key: "Apply item container randomization within biomes",
                     defaultValue: false,
                     description: "Whether to randomize item containers within their respective biomes only"
+                );
+            Loot_RandomizeCharacterDrops = config.Bind
+                (
+                    section: "Loot",
+                    key: "Randomize character drops",
+                    defaultValue: false,
+                    description: "Whether to randomize character drops"
                 );
 
 

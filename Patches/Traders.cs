@@ -34,6 +34,11 @@ namespace DarkwoodRandomizer.Patches
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
                     assignedSlots += 2;
                 }
+                else if (npcName == "wolfman")
+                {
+                    ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
+                    assignedSlots += 1;
+                }
                 else if (npcName == "nightTrader" || npcName == "theThree")
                 {
                     ___inventory.addItem(new InvItemClass("gasoline", UnityEngine.Random.Range(0.7f, 1f), 1), true);
