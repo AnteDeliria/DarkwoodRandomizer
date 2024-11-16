@@ -1,13 +1,9 @@
 ﻿using DarkwoodRandomizer.Plugin;
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
-using Pathfinding;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -68,19 +64,13 @@ namespace DarkwoodRandomizer.Patches
             "outside_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
 
 
-        internal static bool OutsideLocationsLoaded =>
-            OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
-            !Singleton<OutsideLocations>.Instance.playerInOutsideLocation;
-
-
         // Simply calling OutsideLocations.createLocation doesn't work, so we have to visit them one by one
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPostfix]
-        internal static void PreloadOutsideLocations()
+        private static void PreloadOutsideLocations()
         {
-            if (OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
+            if (Plugin.Controller.OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
                 return;
-
 
 
             // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
@@ -135,7 +125,7 @@ namespace DarkwoodRandomizer.Patches
         // Randomize location position
         [HarmonyPatch(typeof(WorldChunk), "populate")]
         [HarmonyPrefix]
-        internal static void RandomizeLocations(WorldChunk __instance)
+        private static void RandomizeLocations(WorldChunk __instance)
         {
             if (!Plugin.Controller.IsNewSave)
                 return;
@@ -170,9 +160,11 @@ namespace DarkwoodRandomizer.Patches
         // Does not affect border locations
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         [HarmonyPrefix]
-        internal static void RandomizeLocationRotation(GameObject __instance)
+        private static void RandomizeLocationRotation(GameObject __instance)
         {
             if (!Plugin.Controller.IsNewSave)
+                return;
+            if (__instance.GetComponentInParent<WorldChunk>()?.isBorderChunk == true)
                 return;
 
             if (SettingsManager.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
@@ -180,6 +172,39 @@ namespace DarkwoodRandomizer.Patches
 
             if (SettingsManager.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Concat(OutsideLocationsCh1).Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
+        }
+
+        // Fixes vaulting
+        [HarmonyPatch(typeof(CharBase), "getJumpRotation")]
+        [HarmonyPrefix]
+        private static bool FixJumpRotation(CharBase __instance, GameObject ___touchedJumpableObject)
+        {
+            // Unrotate objects so that we can apply relative position check
+            // Rotation is reapplied when assigning to __instance.jumpingThroughWindowRotation
+            Vector3 unrotatedJumpableObjectPosition = Quaternion.Euler(0, -___touchedJumpableObject.transform.rotation.eulerAngles.y + ___touchedJumpableObject.transform.localEulerAngles.z, 0) * ___touchedJumpableObject.transform.position;
+            Vector3 unrotatedPlayerPosition = Quaternion.Euler(0, -___touchedJumpableObject.transform.rotation.eulerAngles.y + ___touchedJumpableObject.transform.localEulerAngles.z, 0) * __instance.transform.position;
+
+
+            if (___touchedJumpableObject != null)
+            {
+                float y = ___touchedJumpableObject.transform.localEulerAngles.z;
+                if ((y > 89f && y < 91f) || (y > 269f && y < 271f) || (y < -89f && y > -91f) || (y < -269f && y > -271f))
+                {
+                    if (unrotatedJumpableObjectPosition.x > unrotatedPlayerPosition.x)
+                        __instance.jumpingThroughWindowRotation = new Vector3(0f, 90f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
+                    if (unrotatedJumpableObjectPosition.x < unrotatedPlayerPosition.x)
+                        __instance.jumpingThroughWindowRotation = new Vector3(0f, -90f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
+                }
+                else
+                {
+                    if (unrotatedJumpableObjectPosition.z > unrotatedPlayerPosition.z)
+                        __instance.jumpingThroughWindowRotation = new Vector3(0f, 0f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
+                    if (unrotatedJumpableObjectPosition.z < unrotatedPlayerPosition.z)
+                        __instance.jumpingThroughWindowRotation = new Vector3(0f, 180f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
+                }
+            }
+
+            return false;
         }
     }
 }

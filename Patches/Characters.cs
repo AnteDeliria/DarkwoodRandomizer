@@ -107,7 +107,7 @@ namespace DarkwoodRandomizer.Patches
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => Locations.OutsideLocationsLoaded,
+                predicate: () => Plugin.Controller.OutsideLocationsLoaded,
                 action: RandomizeLocationCharacters
             );
 

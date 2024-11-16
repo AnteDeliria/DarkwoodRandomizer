@@ -19,8 +19,8 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
     private void Awake()
     {
         Logger = base.Logger;
-
         SettingsManager.InitializeConfigs(Config);
+
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
     }
 

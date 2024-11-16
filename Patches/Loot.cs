@@ -16,12 +16,12 @@ namespace DarkwoodRandomizer.Patches
         {
             if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
                 return;
-            if (Locations.OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
+            if (Plugin.Controller.OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => Locations.OutsideLocationsLoaded,
+                predicate: () => Plugin.Controller.OutsideLocationsLoaded,
                 action: () =>
                 {
                     IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
@@ -73,13 +73,13 @@ namespace DarkwoodRandomizer.Patches
             if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
                 Plugin.Controller.RunWhenPredicateMet
                 (
-                    predicate: () => Locations.OutsideLocationsLoaded,
+                    predicate: () => Plugin.Controller.OutsideLocationsLoaded,
                     action: RandomizeItemContainersWithinBiomes
                 );
             else if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
                 Plugin.Controller.RunWhenPredicateMet
                 (
-                    predicate: () => Locations.OutsideLocationsLoaded,
+                    predicate: () => Plugin.Controller.OutsideLocationsLoaded,
                     action: RandomizeItemContainersGlobally
                 );
         }

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Patches;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +24,13 @@ namespace DarkwoodRandomizer.Plugin
 
         private static List<PredicateActionTuple> runOnUpdate = new();
 
-        internal static bool IsNewSave;
+        internal static bool IsNewSave { get; private set; }
+
+        internal static bool OutsideLocationsLoaded =>
+            Locations.OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
+            !Singleton<OutsideLocations>.Instance.playerInOutsideLocation;
+
+        internal static bool RandomizationFinished { get; set; }
 
 
 
