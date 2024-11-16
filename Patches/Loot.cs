@@ -24,6 +24,10 @@ namespace DarkwoodRandomizer.Patches
                 predicate: () => Locations.OutsideLocationsLoaded,
                 action: () =>
                 {
+                    IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
+                    if (itemPool == null)
+                        return;
+
                     IEnumerable<Inventory> deathDrops = ___WorldChunksGO
                         .GetComponentsInChildren<Inventory>(includeInactive: true)
                         .Where(inv => inv.invType == Inventory.InvType.deathDrop);
@@ -31,11 +35,7 @@ namespace DarkwoodRandomizer.Patches
                     foreach (Inventory inventory in deathDrops)
                         foreach (InvSlot slot in inventory.slots.Where(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
                         {
-                            string itemName = Singleton<ItemsDatabase>.Instance.itemsDict.Keys
-                                .Except(ItemPools.BackendItems.Keys)
-                                .Except(ItemPools.KeyItems.Keys)
-                                .Except(ItemPools.QuestItems.Keys)
-                                .RandomItem();
+                            string itemName = itemPool.RandomItem();
 
                             InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
 
@@ -70,13 +70,13 @@ namespace DarkwoodRandomizer.Patches
             if (!SettingsManager.Loot_ShuffleItemContainers!.Value)
                 return;
 
-            if (SettingsManager.Loot_ShuffleItemContainersWithinBiomes!.Value)
+            if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
                 Plugin.Controller.RunWhenPredicateMet
                 (
                     predicate: () => Locations.OutsideLocationsLoaded,
                     action: RandomizeItemContainersWithinBiomes
                 );
-            else
+            else if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
                 Plugin.Controller.RunWhenPredicateMet
                 (
                     predicate: () => Locations.OutsideLocationsLoaded,

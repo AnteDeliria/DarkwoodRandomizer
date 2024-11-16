@@ -1,0 +1,13 @@
+map
+map_bio2
+map_bio3
+map_borderBurned
+map_doctor_ch2
+map_doctorEntrance
+map_dziury
+map_mushrooms
+map_pigShed
+map_piotrekPigsheds
+map_radioTower
+map_trainWreck
+map_villageTree

@@ -1,0 +1,11 @@
+book
+home_apple
+home_chemical_bottle_01
+home_chemical_bottle_02
+home_chemical_spray_01
+home_clothes
+home_money
+home_pear
+home_scissor
+home_shirt
+home_towel

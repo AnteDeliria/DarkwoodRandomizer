@@ -1,6 +1,7 @@
 ﻿using DarkwoodRandomizer.Plugin;
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,39 +19,37 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
 
-            IEnumerable<Biome> biomes;
+            IEnumerable<Biome> biomesSource;
 
             if (__instance.chapterID == 1)
-                biomes = __instance.biomePresets.Where(x => x.type == Biome.Type.meadow || x.type == Biome.Type.forest || x.type == Biome.Type.forest_mutated);
+                biomesSource = __instance.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated }.Contains(x.type));
             else if (__instance.chapterID == 2)
-                biomes = __instance.biomePresets.Where(x => x.type == Biome.Type.swamp);
+                biomesSource = __instance.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated, Biome.Type.swamp }.Contains(x.type));
             else
                 return; // unknown chapter ID
+
+            IEnumerable<Biome> biomesDestination = __instance.bigBiomes.Select(biome => __instance.getBiomePreset(biome.type));
 
 
             List<GridObject> gridObjectPool = new();
 
-            foreach (Biome biome in biomes)
-            {
+            foreach (Biome biome in biomesSource)
                 foreach (GridObject gObject in biome.gObjects)
                     gridObjectPool.Add(gObject);
 
+            foreach (Biome biome in biomesDestination)
                 biome.gObjects.Clear();
-            }
-
-            if (__instance.chapterID == 1 && SettingsManager.GridObjects_IncludeSwampObjectsInCh1Pool!.Value)
-                foreach (GridObject gObject in __instance.biomePresets.First(x => x.type == Biome.Type.swamp).gObjects)
-                    gridObjectPool.Add(gObject);
 
             while (gridObjectPool.Count > 0)
             {
                 GridObject randomGridObject = gridObjectPool.RandomItem();
-                Biome biome = biomes.RandomItem();
+                Biome randomBiome = biomesDestination.RandomItem();
 
-                biome.gObjects.Add(randomGridObject);
+                randomBiome.gObjects.Add(randomGridObject);
                 gridObjectPool.Remove(randomGridObject);
             }
         }
+
 
 
         [HarmonyPatch(typeof(GameObject), "SetActive")]

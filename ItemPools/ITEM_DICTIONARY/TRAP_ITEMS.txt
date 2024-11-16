@@ -1,0 +1,7 @@
+barrelExploding
+beartrap
+bottle
+brokenGlass
+chainTrap
+fartPillow
+gasBottle

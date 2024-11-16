@@ -10,37 +10,84 @@ namespace DarkwoodRandomizer.Plugin.Settings
     {
         private static readonly string CharacterPoolsDirectory = Path.Combine(DarkwoodRandomizerPlugin.PluginPath, "CharacterPools");
 
-        internal static IEnumerable<string> LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
-        internal static IEnumerable<string> LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));
-        internal static IEnumerable<string> LocationActiveCharactersOldWoods => GetPoolFromFile(nameof(LocationActiveCharactersOldWoods));
-        internal static IEnumerable<string> LocationActiveCharactersSwamp => GetPoolFromFile(nameof(LocationActiveCharactersSwamp));
+        internal static IEnumerable<string>? LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
+        internal static IEnumerable<string>? LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));
+        internal static IEnumerable<string>? LocationActiveCharactersOldWoods => GetPoolFromFile(nameof(LocationActiveCharactersOldWoods));
+        internal static IEnumerable<string>? LocationActiveCharactersSwamp => GetPoolFromFile(nameof(LocationActiveCharactersSwamp));
 
-        internal static IEnumerable<string> LocationStaticCharactersDryMeadow => GetPoolFromFile(nameof(LocationStaticCharactersDryMeadow));
-        internal static IEnumerable<string> LocationStaticCharactersSilentForest => GetPoolFromFile(nameof(LocationStaticCharactersSilentForest));
-        internal static IEnumerable<string> LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
-        internal static IEnumerable<string> LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
+        internal static IEnumerable<string>? LocationStaticCharactersDryMeadow => GetPoolFromFile(nameof(LocationStaticCharactersDryMeadow));
+        internal static IEnumerable<string>? LocationStaticCharactersSilentForest => GetPoolFromFile(nameof(LocationStaticCharactersSilentForest));
+        internal static IEnumerable<string>? LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
+        internal static IEnumerable<string>? LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
 
-        internal static IEnumerable<string> FreeRoamingCharactersDryMeadow => GetPoolFromFile(nameof(FreeRoamingCharactersDryMeadow));
-        internal static IEnumerable<string> FreeRoamingCharactersSilentForest => GetPoolFromFile(nameof(FreeRoamingCharactersSilentForest));
-        internal static IEnumerable<string> FreeRoamingCharactersOldWoods => GetPoolFromFile(nameof(FreeRoamingCharactersOldWoods));
-        internal static IEnumerable<string> FreeRoamingCharactersSwamp => GetPoolFromFile(nameof(FreeRoamingCharactersSwamp));
+        internal static IEnumerable<string>? FreeRoamingCharactersDryMeadow => GetPoolFromFile(nameof(FreeRoamingCharactersDryMeadow));
+        internal static IEnumerable<string>? FreeRoamingCharactersSilentForest => GetPoolFromFile(nameof(FreeRoamingCharactersSilentForest));
+        internal static IEnumerable<string>? FreeRoamingCharactersOldWoods => GetPoolFromFile(nameof(FreeRoamingCharactersOldWoods));
+        internal static IEnumerable<string>? FreeRoamingCharactersSwamp => GetPoolFromFile(nameof(FreeRoamingCharactersSwamp));
 
-        private static IEnumerable<string> GetPoolFromFile(string poolName)
+        // Returns paths to character prefabs
+        private static IEnumerable<string>? GetPoolFromFile(string poolName)
         {
-            StreamReader reader = new StreamReader(Path.Combine(CharacterPoolsDirectory, $"{poolName}.txt"));
+            string path = Path.Combine(CharacterPoolsDirectory, $"{poolName}.txt");
+            if (!File.Exists(path))
+                return null;
+
+            StreamReader reader = new StreamReader(path);
             List<string> characterPaths = new();
             while (!reader.EndOfStream)
             {
-                string characterName = reader.ReadLine().Trim();
-                string characterPath;
-                if (AllCharacters.TryGetValue(characterName, out characterPath))
-                    characterPaths.Add(characterPath);
+                string[] tokens = reader.ReadLine().Trim().Split();
+                if (tokens.Length == 0)
+                    continue;
+
+                if (ALL_CHARACTERS.TryGetValue(tokens[0], out string characterPath))
+                    if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
+                        for (int i = 0; i < timesToAdd; i++)
+                            characterPaths.Add(characterPath);
+                    else
+                        characterPaths.Add(characterPath);
             }
             reader.Close();
             return characterPaths;
         }
 
-        internal static readonly Dictionary<string, string> AllCharacters = new()
+        internal static IEnumerable<string>? GetLocationActivePoolForBiome(Biome.Type biome)
+        {
+            return biome switch
+            {
+                Biome.Type.meadow => LocationActiveCharactersDryMeadow,
+                Biome.Type.forest => LocationActiveCharactersSilentForest,
+                Biome.Type.forest_mutated => LocationActiveCharactersOldWoods,
+                Biome.Type.swamp => LocationActiveCharactersSwamp,
+                _ => null,
+            };
+        }
+
+        internal static IEnumerable<string>? GetLocationStaticPoolForBiome(Biome.Type biome)
+        {
+            return biome switch
+            {
+                Biome.Type.meadow => LocationStaticCharactersDryMeadow,
+                Biome.Type.forest => LocationStaticCharactersSilentForest,
+                Biome.Type.forest_mutated => LocationStaticCharactersOldWoods,
+                Biome.Type.swamp => LocationStaticCharactersSwamp,
+                _ => null,
+            };
+        }
+
+        internal static IEnumerable<string>? GetFreeRoamingPoolForBiome(Biome.Type biome)
+        {
+            return biome switch
+            {
+                Biome.Type.meadow => FreeRoamingCharactersDryMeadow,
+                Biome.Type.forest => FreeRoamingCharactersSilentForest,
+                Biome.Type.forest_mutated => FreeRoamingCharactersOldWoods,
+                Biome.Type.swamp => FreeRoamingCharactersSwamp,
+                _ => null,
+            };
+        }
+
+        internal static readonly Dictionary<string, string> ALL_CHARACTERS = new()
         {
             ["character_dummy_02"] = "characters/_test/character_dummy_02",
             ["event_spawn_swamper1"] = "characters/_test/event_spawn_swamper1",
@@ -239,7 +286,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["villagertorch"] = "characters/villagertorch"
         };
 
-        internal static readonly Dictionary<string, string> NonBrokenCharacters = new()
+        internal static readonly Dictionary<string, string> NON_BROKEN_CHARACTERS = new()
         {
             ["character_dummy_02"] = "characters/_test/character_dummy_02",
             ["forestspirit_onechance_02"] = "characters/_test/forestspirit_onechance_02",
@@ -416,7 +463,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["villagertorch"] = "characters/villagertorch"
         };
 
-        internal static readonly Dictionary<string, string> ActiveCharacters = new()
+        internal static readonly Dictionary<string, string> ACTIVE_CHARACTERS = new()
         {
             ["forestspirit_onechance_02"] = "characters/_test/forestspirit_onechance_02",
             ["villager3_plank_burning"] = "characters/_test/villager3_plank_burning",
@@ -463,18 +510,18 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["villagertorch"] = "characters/villagertorch"
         };
 
-        internal static readonly Dictionary<string, string> ColossalCharacters = new()
+        internal static readonly Dictionary<string, string> COLOSSAL_CHARACTERS = new()
         {
-            ["larva_big_01"] = "characters/fakechars/larva_big_01",
+            ["larva_big_01"] = "characters/fakechars/larva_big_01", // Larva Ch2
             ["pig_big_mutant"] = "characters/fakechars/pig_big_mutant", // The Sow
             ["istota_lv1"] = "characters/npc/istota_lv1", // The Being
-            ["muzyk_huge"] = "characters/npc/muzyk_huge",
+            ["muzyk_huge"] = "characters/npc/muzyk_huge", // Musician Ch2
             ["talkingtree"] = "characters/npc/talkingtree", // Ch2 Big tree
             ["talkingtree_burned_roadtohome"] = "characters/npc/talkingtree_burned_roadtohome", // Ch2 Big tree
             ["talkingtree_darkside"] = "characters/npc/talkingtree_darkside" // Ch2 Big tree
         };
 
-        internal static readonly Dictionary<string, string> StaticCharacters = new()
+        internal static readonly Dictionary<string, string> STATIC_CHARACTERS = new()
         {
             ["character_dummy_02"] = "characters/_test/character_dummy_02",
             ["clone_villager_01"] = "characters/clones/clone_villager_01",
@@ -560,7 +607,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["villager_normal9"] = "characters/villagers/villager_normal9"
         };
 
-        internal static readonly Dictionary<string, string> NPCCharactersCh1 = new()
+        internal static readonly Dictionary<string, string> NPC_CHARACTERS_CH1 = new()
         {
             ["baba"] = "characters/npc/baba",
             ["doctor_confronted"] = "characters/npc/doctor_confronted",
@@ -583,7 +630,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["wolfman_att"] = "characters/npc/wolfman_att"
         };
 
-        internal static readonly Dictionary<string, string> NPCCharactersCh2 = new()
+        internal static readonly Dictionary<string, string> NPC_CHARACTERS_CH2 = new()
         {
             ["child"] = "characters/npc/child",
             ["cripple"] = "characters/npc/cripple",
@@ -600,7 +647,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["valve"] = "characters/npc/valve"
         };
 
-        internal static readonly Dictionary<string, string> NPCCharactersEpilogue = new()
+        internal static readonly Dictionary<string, string> NPC_CHARACTERS_EPILOGUE = new()
         {
             ["bed_npc"] = "characters/npc/bed_npc",
             ["maciek"] = "characters/npc/maciek",
@@ -608,42 +655,5 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["stove_npc"] = "characters/npc/stove_npc",
             ["wardrobe_npc"] = "characters/npc/wardrobe_npc"
         };
-
-
-        internal static IEnumerable<string>? GetLocationActivePoolForBiome(Biome.Type biome)
-        {
-            return biome switch
-            {
-                Biome.Type.meadow => LocationActiveCharactersDryMeadow,
-                Biome.Type.forest => LocationActiveCharactersSilentForest,
-                Biome.Type.forest_mutated => LocationActiveCharactersOldWoods,
-                Biome.Type.swamp => LocationActiveCharactersSwamp,
-                _ => null,
-            };
-        }
-
-        internal static IEnumerable<string>? GetLocationStaticPoolForBiome(Biome.Type biome)
-        {
-            return biome switch
-            {
-                Biome.Type.meadow => LocationStaticCharactersDryMeadow,
-                Biome.Type.forest => LocationStaticCharactersSilentForest,
-                Biome.Type.forest_mutated => LocationStaticCharactersOldWoods,
-                Biome.Type.swamp => LocationStaticCharactersSwamp,
-                _ => null,
-            };
-        }
-
-        internal static IEnumerable<string>? GetFreeRoamingPoolForBiome(Biome.Type biome)
-        {
-            return biome switch
-            {
-                Biome.Type.meadow => FreeRoamingCharactersDryMeadow,
-                Biome.Type.forest => FreeRoamingCharactersSilentForest,
-                Biome.Type.forest_mutated => FreeRoamingCharactersOldWoods,
-                Biome.Type.swamp => FreeRoamingCharactersSwamp,
-                _ => null,
-            };
-        }
     }
 }

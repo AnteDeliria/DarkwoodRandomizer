@@ -14,7 +14,6 @@ namespace DarkwoodRandomizer.Plugin.Settings
 
 
         internal static ConfigEntry<bool>? GridObjects_ShuffleGridObjects;
-        internal static ConfigEntry<bool>? GridObjects_IncludeSwampObjectsInCh1Pool;
         internal static ConfigEntry<bool>? GridObjects_RandomizeGridObjectRotation;
 
 
@@ -33,13 +32,12 @@ namespace DarkwoodRandomizer.Plugin.Settings
 
         internal static ConfigEntry<bool>? Traders_RandomizeTraderInventory;
         internal static ConfigEntry<bool>? Traders_TraderInventoryEnsureStaples;
-        internal static ConfigEntry<TraderInventoryRandomizationType>? Traders_TraderInventoryRandomizationType;
         internal static ConfigEntry<int>? Traders_TraderInventoryMinRandomSlots;
         internal static ConfigEntry<int>? Traders_TraderInventoryMaxRandomSlots;
 
 
         internal static ConfigEntry<bool>? Loot_ShuffleItemContainers;
-        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersWithinBiomes;
+        internal static ConfigEntry<BiomeRandomizationType>? Loot_ShuffleItemContainersType;
         internal static ConfigEntry<bool>? Loot_RandomizeCharacterDrops;
 
 
@@ -94,13 +92,6 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     key: "Randomize grid objects between biomes",
                     defaultValue: false,
                     description: "Whether to randomize the biome spawning of grid objects (e.g.: shrines, tank wrecks, log piles etc.)"
-                );
-            GridObjects_IncludeSwampObjectsInCh1Pool = config.Bind
-                (
-                    section: "Grid Objects",
-                    key: "Include swamp prefabs in grid objects pool",
-                    defaultValue: false,
-                    description: "Whether to allow chapter 2 (swamp) prefabs to be generated. These are significantly larger in size than chapter 1 prefabs"
                 );
             GridObjects_RandomizeGridObjectRotation = config.Bind
                 (
@@ -175,13 +166,6 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     defaultValue: false,
                     description: "Ensure key/staple items are always available in trader inventories"
                 );
-            Traders_TraderInventoryRandomizationType = config.Bind
-                (
-                    section: "Traders",
-                    key: "Trader inventory randomization type",
-                    defaultValue: TraderInventoryRandomizationType.Themed,
-                    description: ""
-                );
             Traders_TraderInventoryMinRandomSlots = config.Bind
                 (
                     section: "Traders",
@@ -205,12 +189,12 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     defaultValue: false,
                     description: "Whether to randomize item containers by swapping their inventory contents"
                 );
-            Loot_ShuffleItemContainersWithinBiomes = config.Bind
+            Loot_ShuffleItemContainersType = config.Bind
                 (
                     section: "Loot",
-                    key: "Apply item container randomization within biomes",
-                    defaultValue: false,
-                    description: "Whether to randomize item containers within their respective biomes only"
+                    key: "How to shuffle item containers",
+                    defaultValue: BiomeRandomizationType.WithinBiome,
+                    description: "Global - Shuffle item containers globally\nWithin Biome - Shuffle item containers within each biome"
                 );
             Loot_RandomizeCharacterDrops = config.Bind
                 (

@@ -1,0 +1,12 @@
+exp_bio2_meat_mutated
+exp_bio2_mushroom_01
+exp_bio2_nightMushroom_01
+exp_bio3_meat_mutated
+exp_bio3_mushroom_meat_01
+exp_bio3_nightMushroom_01
+exp_cockroach_mutated
+exp_epickiEXP
+exp_meat_mutated
+exp_mushroom
+exp_nightMushroom
+exp_piskle

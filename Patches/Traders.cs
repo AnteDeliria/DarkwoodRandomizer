@@ -24,6 +24,18 @@ namespace DarkwoodRandomizer.Patches
                 return true;
 
             string npcName = __instance.gameObject.GetComponent<NPC>().name;
+
+            IEnumerable<string>? iremPool = npcName switch
+            {
+                "piotrek" => ItemPools.VendorPiotrek,
+                "wolfman" => ItemPools.VendorWolfman,
+                "nightTrader" => ItemPools.VendorNightTrader,
+                "theThree" => ItemPools.VendorNightTrader,
+                _ => null
+            };
+            if (iremPool == null)
+                return true;
+
             int assignedSlots = 0;
 
             if (SettingsManager.Traders_TraderInventoryEnsureStaples!.Value)
@@ -60,39 +72,7 @@ namespace DarkwoodRandomizer.Patches
                 if (nextFreeSlot == null)
                     break;
 
-                string itemName;
-                switch (SettingsManager.Traders_TraderInventoryRandomizationType!.Value)
-                {
-                    case TraderInventoryRandomizationType.Themed:
-                        if (npcName == "piotrek")
-                            itemName = ItemPools.TrapItems.Keys
-                                .Concat(ItemPools.UtilityItems.Keys)
-                                .Concat(ItemPools.MiscItems.Keys)
-                                .Concat(ItemPools.MaterialItems.Keys)
-                                .RandomItem();
-                        else if (npcName == "wolfman")
-                            itemName = ItemPools.WeaponItems.Keys
-                                .Concat(ItemPools.AmmoItems.Keys)
-                                .Concat(ItemPools.ThrownItems.Keys)
-                                .Concat(ItemPools.MaterialItems.Keys)
-                                .RandomItem();
-                        else
-                            itemName = Singleton<ItemsDatabase>.Instance.itemsDict.Keys
-                                .Except(ItemPools.BackendItems.Keys)
-                                .Except(ItemPools.KeyItems.Keys)
-                                .Except(ItemPools.QuestItems.Keys)
-                                .RandomItem();
-                        break;
-
-                    default:
-                        itemName = Singleton<ItemsDatabase>.Instance.itemsDict.Keys
-                            .Except(ItemPools.BackendItems.Keys)
-                            .Except(ItemPools.KeyItems.Keys)
-                            .Except(ItemPools.QuestItems.Keys)
-                            .RandomItem();
-                        break;
-                }
-
+                string itemName = iremPool.RandomItem();
                 InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
 
                 int amount;

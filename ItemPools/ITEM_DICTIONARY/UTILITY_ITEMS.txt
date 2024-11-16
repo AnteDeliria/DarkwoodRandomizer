@@ -1,0 +1,9 @@
+armor_light
+flashlight
+flashlight_02
+flashlight_rechargable
+gasoline
+hotbarPlus_01
+invPlus_01
+lantern
+watch

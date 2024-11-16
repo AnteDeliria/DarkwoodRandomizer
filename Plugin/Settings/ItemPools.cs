@@ -1,10 +1,46 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace DarkwoodRandomizer.Plugin.Settings
 {
     internal static class ItemPools
     {
-        internal static Dictionary<string, string> AllItems = new()
+        private static readonly string ItemPoolsDirectory = Path.Combine(DarkwoodRandomizerPlugin.PluginPath, "ItemPools");
+
+        internal static IEnumerable<string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
+        internal static IEnumerable<string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));
+        internal static IEnumerable<string>? VendorWolfman => GetPoolFromFile(nameof(VendorWolfman));
+
+        internal static IEnumerable<string>? CharacterLoot => GetPoolFromFile(nameof(CharacterLoot));
+
+        // Returns item names
+        private static IEnumerable<string>? GetPoolFromFile(string poolName)
+        {
+            string path = Path.Combine(ItemPoolsDirectory, $"{poolName}.txt");
+            if (!File.Exists(path))
+                return null;
+
+            StreamReader reader = new StreamReader(path);
+            List<string> itemNames = new();
+            while (!reader.EndOfStream)
+            {
+                string[] tokens = reader.ReadLine().Trim().Split();
+                if (tokens.Length == 0)
+                    continue;
+
+                if (ALL_ITEMS.ContainsKey(tokens[0]))
+                    if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
+                        for (int i = 0; i < timesToAdd; i++)
+                            itemNames.Add(tokens[0]);
+                    else
+                        itemNames.Add(tokens[0]);
+            }
+            reader.Close();
+            return itemNames;
+        }
+
+
+        internal static Dictionary<string, string> ALL_ITEMS = new()
         {
             ["fists"] = "InventoryItems/_other/fists",
             ["hammer"] = "InventoryItems/_other/hammer",
@@ -386,7 +422,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["watch"] = "InventoryItems/useable/watch"
         };
 
-        internal static Dictionary<string, string> JournalItems = new()
+        internal static Dictionary<string, string> JOURNAL_ITEMS = new()
         {
             ["aw_artur_drawings"] = "InventoryItems/journalItems/aw_artur_drawings",
             ["aw_grzegorz"] = "InventoryItems/journalItems/aw_grzegorz",
@@ -542,7 +578,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["white_dress"] = "InventoryItems/journalItems/white_dress"
         };
 
-        internal static Dictionary<string, string> KeyItems = new()
+        internal static Dictionary<string, string> KEY_ITEMS = new()
         {
             ["box_church_key"] = "InventoryItems/journalItems/box_church_key",
             ["key_21"] = "InventoryItems/journalItems/key_21",
@@ -571,7 +607,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["key_wolfmanHideout_01"] = "InventoryItems/journalItems/key_wolfmanHideout_01"
         };
 
-        internal static Dictionary<string, string> WeaponItems = new()
+        internal static Dictionary<string, string> WEAPON_ITEMS = new()
         {
 
             ["firecraft_boltHandle"] = "InventoryItems/firearms/firecraft_boltHandle",
@@ -606,7 +642,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["torch"] = "InventoryItems/meleeWeapons/torch"
         };
 
-        internal static Dictionary<string, string> ConsumableItems = new()
+        internal static Dictionary<string, string> CONSUMABLE_ITEMS = new()
         {
             ["acid"] = "InventoryItems/consumables/acid",
             ["alcohol"] = "InventoryItems/consumables/alcohol",
@@ -625,7 +661,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["soup_01"] = "InventoryItems/consumables/soup_01"
         };
 
-        internal static Dictionary<string, string> HomeItems = new()
+        internal static Dictionary<string, string> HOME_ITEMS = new()
         {
             ["book"] = "InventoryItems/home/book",
             ["home_apple"] = "InventoryItems/home/home_apple",
@@ -640,7 +676,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["home_towel"] = "InventoryItems/home/home_towel"
         };
 
-        internal static Dictionary<string, string> BackendItems = new()
+        internal static Dictionary<string, string> DEBUG_ITEMS = new()
         {
             ["fists"] = "InventoryItems/_other/fists",
             ["hammer"] = "InventoryItems/_other/hammer",
@@ -658,7 +694,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["workbenchUpgrade_08"] = "InventoryItems/_other/workbenchUpgrade_08"
         };
 
-        internal static Dictionary<string, string> XPItems = new()
+        internal static Dictionary<string, string> XP_ITEMS = new()
         {
             ["exp_bio2_meat_mutated"] = "InventoryItems/expObjs/exp_bio2_meat_mutated",
             ["exp_bio2_mushroom_01"] = "InventoryItems/expObjs/exp_bio2_mushroom_01",
@@ -674,7 +710,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["exp_piskle"] = "InventoryItems/expObjs/exp_piskle"
         };
 
-        internal static Dictionary<string, string> MapItems = new()
+        internal static Dictionary<string, string> MAP_ITEMS = new()
         {
             ["map"] = "InventoryItems/maps/map",
             ["map_bio2"] = "InventoryItems/maps/map_bio2",
@@ -691,7 +727,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["map_villageTree"] = "InventoryItems/maps/map_villageTree"
         };
 
-        internal static Dictionary<string, string> AmmoItems = new()
+        internal static Dictionary<string, string> AMMO_ITEMS = new()
         {
             ["ammo_clip_mediumCal"] = "InventoryItems/ammo/ammo_clip_mediumCal",
             ["ammo_clip_smallCal"] = "InventoryItems/ammo/ammo_clip_smallCal",
@@ -701,7 +737,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["battery9v"] = "InventoryItems/ammo/battery9v"
         };
 
-        internal static Dictionary<string, string> MaterialItems = new()
+        internal static Dictionary<string, string> MATERIAL_ITEMS = new()
         {
             ["axe_edge"] = "InventoryItems/materials/axe_edge",
             ["chitin"] = "InventoryItems/materials/chitin",
@@ -724,7 +760,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["woodLog"] = "InventoryItems/materials/woodLog"
         };
 
-        internal static Dictionary<string, string> MiscItems = new()
+        internal static Dictionary<string, string> MISC_ITEMS = new()
         {
             ["antler"] = "InventoryItems/misc/antler",
             ["bark_01"] = "InventoryItems/misc/bark_01",
@@ -773,7 +809,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["zenit_mud"] = "InventoryItems/misc/zenit_mud"
         };
 
-        internal static Dictionary<string, string> UtilityItems = new()
+        internal static Dictionary<string, string> UTILITY_ITEMS = new()
         {
             ["armor_light"] = "InventoryItems/useable/armor_light",
             ["flashlight"] = "InventoryItems/useable/flashlight",
@@ -786,7 +822,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["watch"] = "InventoryItems/useable/watch"
         };
 
-        internal static Dictionary<string, string> TrapItems = new()
+        internal static Dictionary<string, string> TRAP_ITEMS = new()
         {
             ["barrelExploding"] = "InventoryItems/traps/barrelExploding",
             ["beartrap"] = "InventoryItems/traps/beartrap",
@@ -797,7 +833,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["gasBottle"] = "InventoryItems/traps/gasBottle"
         };
 
-        internal static Dictionary<string, string> ThrownItems = new()
+        internal static Dictionary<string, string> THROWN_ITEMS = new()
         {
             ["flare"] = "InventoryItems/thrownItems/flare",
             ["gasBomb"] = "InventoryItems/thrownItems/gasBomb",
@@ -809,7 +845,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
             ["stone"] = "InventoryItems/thrownItems/stone"
         };
 
-        internal static Dictionary<string, string> QuestItems = new()
+        internal static Dictionary<string, string> QUEST_ITEMS = new()
         {
             ["hat_brother"] = "InventoryItems/questItems/hat_brother",
             ["note_musicianCard1"] = "InventoryItems/questItems/note_musicianCard1",

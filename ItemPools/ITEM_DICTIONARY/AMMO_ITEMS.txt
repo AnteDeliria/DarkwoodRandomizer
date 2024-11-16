@@ -1,0 +1,6 @@
+ammo_clip_mediumCal
+ammo_clip_smallCal
+ammo_single_mediumCal
+ammo_single_pellet
+ammo_single_shotgun
+battery9v

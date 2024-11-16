@@ -1,0 +1,15 @@
+acid
+alcohol
+antidote_poison
+bandages
+bandages_alcohol
+bread
+chicken_egg
+chicken_egg_red
+dead_rat
+fish
+lifePotion
+pills
+pills_02
+potato_01
+soup_01
