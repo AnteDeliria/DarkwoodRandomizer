@@ -21,7 +21,7 @@ namespace DarkwoodRandomizer.Patches
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => Plugin.Controller.OutsideLocationsLoaded,
+                predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.FreeRoamingCharactersRandomized && Plugin.Controller.LocationCharactersRandomized,
                 action: () =>
                 {
                     IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
@@ -30,6 +30,8 @@ namespace DarkwoodRandomizer.Patches
 
                     IEnumerable<Inventory> deathDrops = ___WorldChunksGO
                         .GetComponentsInChildren<Inventory>(includeInactive: true)
+                        .Concat(Singleton<OutsideLocations>.Instance.gameObject
+                            .GetComponentsInChildren<Inventory>(includeInactive: true))
                         .Where(inv => inv.invType == Inventory.InvType.deathDrop);
 
                     foreach (Inventory inventory in deathDrops)
@@ -63,91 +65,87 @@ namespace DarkwoodRandomizer.Patches
 
         [HarmonyPatch(typeof(WorldGenerator), "distributeMustSpawnItems")]
         [HarmonyPrefix]
-        internal static void RandomizeItemContainers(WorldGenerator __instance)
+        internal static void RandomizeItemContainers(WorldGenerator __instance, GameObject ___WorldChunksGO)
         {
             if (!Plugin.Controller.IsNewSave)
                 return;
             if (!SettingsManager.Loot_ShuffleItemContainers!.Value)
                 return;
 
-            if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
-                Plugin.Controller.RunWhenPredicateMet
-                (
-                    predicate: () => Plugin.Controller.OutsideLocationsLoaded,
-                    action: RandomizeItemContainersWithinBiomes
-                );
-            else if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
-                Plugin.Controller.RunWhenPredicateMet
-                (
-                    predicate: () => Plugin.Controller.OutsideLocationsLoaded,
-                    action: RandomizeItemContainersGlobally
-                );
+            Plugin.Controller.RunWhenPredicateMet
+            (
+                predicate: () => Plugin.Controller.OutsideLocationsLoaded,
+                action: () =>
+                {
+                    if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
+                        RandomizeItemContainersWithinBiomes();
+                    else if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
+                        RandomizeItemContainersGlobally();
+                }
+            );
         }
 
         private static void RandomizeItemContainersGlobally()
         {
-            List<Inventory> inventoriesPool = new();
+            GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
 
-            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
-                foreach (Item itemContainer in location.inventoriesList) // Sublocations don't have containers in inventoriesList, it is instead tied to the main location
-                {
-                    if (itemContainer.name.Contains("workbench"))
-                        continue;
+            List<Inventory> inventoriesPool = worldChunksGO
+                        .GetComponentsInChildren<Inventory>(includeInactive: true)
+                        .Concat(Singleton<OutsideLocations>.Instance.gameObject
+                            .GetComponentsInChildren<Inventory>(includeInactive: true))
+                        .Where(inv => inv.invType == Inventory.InvType.itemInv)
+                        .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
+                        .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
+                        .ToList();
 
-                    Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
-                    inventoriesPool.Add(inventory);
-                }
+            foreach (Inventory inventory in inventoriesPool.ToArray())
+            {
+                Inventory randomInventory = inventoriesPool.RandomItem();
+                inventoriesPool.Remove(randomInventory);
 
-            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
-                foreach (Item itemContainer in location.inventoriesList)
-                {
-                    if (itemContainer.name.Contains("workbench"))
-                        continue;
-
-                    Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
-
-                    Inventory randomInventory = inventoriesPool.RandomItem();
-                    inventoriesPool.Remove(randomInventory);
-
-                    // I don't know if setting all of them is necessary
-                    inventory.maxColumns = randomInventory.maxColumns;
-                    inventory.currentColumn = randomInventory.currentColumn;
-                    inventory.currentRow = randomInventory.currentRow;
-                    AccessTools.Field(typeof(Inventory), "slotSize").SetValue(inventory, AccessTools.Field(typeof(Inventory), "slotSize").GetValue(randomInventory));
-                    inventory.position = randomInventory.position;
-                    inventory.slots = randomInventory.slots;
-                }
+                // I don't know if setting all of them is necessary
+                inventory.maxColumns = randomInventory.maxColumns;
+                inventory.currentColumn = randomInventory.currentColumn;
+                inventory.currentRow = randomInventory.currentRow;
+                AccessTools.Field(typeof(Inventory), "slotSize").SetValue(inventory, AccessTools.Field(typeof(Inventory), "slotSize").GetValue(randomInventory));
+                inventory.position = randomInventory.position;
+                inventory.slots = randomInventory.slots;
+            }
         }
 
         private static void RandomizeItemContainersWithinBiomes()
         {
-            Dictionary<Biome.Type, List<Inventory>> inventoriesPool = new();
+            GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
 
-            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
-                foreach (Item itemContainer in location.inventoriesList)
+            IEnumerable<Inventory> inventoriesList = worldChunksGO
+                        .GetComponentsInChildren<Inventory>(includeInactive: true)
+                        .Concat(Singleton<OutsideLocations>.Instance.gameObject
+                            .GetComponentsInChildren<Inventory>(includeInactive: true))
+                        .Where(inv => inv.invType == Inventory.InvType.itemInv)
+                        .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
+                        .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
+                        .ToList();
+
+            Dictionary<Biome.Type, List<Inventory>> inventoriesPool = new()
+            {
+                [Biome.Type.meadow] = new(),
+                [Biome.Type.forest] = new(),
+                [Biome.Type.forest_mutated] = new(),
+                [Biome.Type.swamp] = new(),
+            };
+
+            foreach (Inventory inventory in inventoriesList)
+            {
+                Biome.Type? biome = inventory.gameObject.GetComponentInParent<WorldChunk>()?.biome?.type ?? inventory.gameObject.GetComponentInParent<Location>()?.biomeType;
+                if (biome != null)
+                    inventoriesPool[(Biome.Type)biome].Add(inventory);
+            }
+
+            foreach (Biome.Type biome in inventoriesPool.Keys)
+                foreach (Inventory inventory in inventoriesPool[biome].ToArray())
                 {
-                    if (itemContainer.name.Contains("workbench"))
-                        continue;
-
-                    Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
-
-                    if (!inventoriesPool.ContainsKey(location.biomeType))
-                        inventoriesPool.Add(location.biomeType, new List<Inventory>());
-
-                    inventoriesPool[location.biomeType].Add(inventory);
-                }
-
-            foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
-                foreach (Item itemContainer in location.inventoriesList)
-                {
-                    if (itemContainer.name.Contains("workbench"))
-                        continue;
-
-                    Inventory inventory = (Inventory)AccessTools.Field(typeof(Item), "inventory").GetValue(itemContainer);
-
-                    List<Inventory> biomePool = inventoriesPool[location.biomeType];
-                    Inventory randomInventory = biomePool.RandomItem();
-                    inventoriesPool[location.biomeType].Remove(randomInventory);
+                    Inventory randomInventory = inventoriesPool[biome].RandomItem();
+                    inventoriesPool[biome].Remove(randomInventory);
 
                     // I don't know if setting all of them is necessary
                     inventory.maxColumns = randomInventory.maxColumns;

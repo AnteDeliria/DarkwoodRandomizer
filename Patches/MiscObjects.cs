@@ -17,24 +17,21 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
             WorldGenerator worldGenerator = Singleton<WorldGenerator>.Instance;
-            List<Biome> biomes;
+
+            IEnumerable<Biome> biomesSource;
 
             if (worldGenerator.chapterID == 1)
-                biomes = worldGenerator.biomePresets.Where(x => x.type == Biome.Type.meadow || x.type == Biome.Type.forest || x.type == Biome.Type.forest_mutated).ToList();
+                biomesSource = worldGenerator.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated }.Contains(x.type));
             else if (worldGenerator.chapterID == 2)
-                biomes = worldGenerator.biomePresets.Where(x => x.type == Biome.Type.swamp).ToList();
+                biomesSource = worldGenerator.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated, Biome.Type.swamp }.Contains(x.type));
             else
                 return; // unknown chapter ID
 
 
             List<BiomePrefabsPreset> miscPrefabPool = new();
 
-            foreach (Biome biome in biomes)
+            foreach (Biome biome in biomesSource)
                 foreach (BiomePrefabsPreset prefab in biome.miscPrefabs)
-                    miscPrefabPool.Add(prefab);
-
-            if (worldGenerator.chapterID == 1 && SettingsManager.MiscObjects_IncludeSwampObjectsInCh1Pool!.Value)
-                foreach (BiomePrefabsPreset prefab in worldGenerator.biomePresets.First(x => x.type == Biome.Type.swamp).miscPrefabs)
                     miscPrefabPool.Add(prefab);
 
 

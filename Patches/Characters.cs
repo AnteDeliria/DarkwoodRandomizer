@@ -1,8 +1,10 @@
 ﻿using DarkwoodRandomizer.Plugin;
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace DarkwoodRandomizer.Patches
@@ -24,6 +26,41 @@ namespace DarkwoodRandomizer.Patches
         //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
         //}
 
+
+        private static void RandomizeCharacterProperties(Character character)
+        {
+            foreach (Character.EnemyType enemyType in character.enemyTypes)
+            {
+                bool randomBool = UnityEngine.Random.Range(0f, 1f) > 0.5f;
+                enemyType.attacks = randomBool;
+                enemyType.runsAwayFrom = !randomBool;
+            }
+            character.seekerType = Enum.GetValues(typeof(Character.SeekerType)).Cast<Character.SeekerType>().RandomItem();
+            //character.blind
+            //character.deaf
+            //character.ethereal
+            //character.fieldOfViewRange
+            //character.wantToAttackDistance
+            //character.wantToRangedAttackDistance
+            //character.accuracy
+            //character.enemyInSightCounterTarget
+            //character.enemyInSightCounterFade
+            //character.hearingQuality
+
+            //foreach (FieldInfo field in typeof(Character).GetFields())
+            //{
+            //    if (field.FieldType == typeof(bool))
+            //        field.SetValue(character, UnityEngine.Random.Range(0f, 1f) > 0.5f);
+            //    else if (field.FieldType == typeof(float))
+            //        field.SetValue(character, (float)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f));
+            //    else if (field.FieldType == typeof(double))
+            //        field.SetValue(character, (double)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f));
+            //    else if (field.FieldType == typeof(int))
+            //        field.SetValue(character, (int)((int)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f)));
+            //    else if (field.FieldType == typeof(Enum))
+            //        field.SetValue(character, Enum.GetValues(field.FieldType).Cast<Enum>().RandomItem());
+            //}
+        }
 
         [HarmonyPatch(typeof(WorldChunk), "spawnFreeRoamingCharacters")]
         [HarmonyPrefix]
@@ -50,9 +87,15 @@ namespace DarkwoodRandomizer.Patches
                             Character? component = null;
                             if (characterPool != null)
                                 component = Core.AddPrefab(characterPool.RandomItem(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
-                            // End injection
+                            
                             if (component != null)
                             {
+                                if (SettingsManager.Characters_PreventInfighting!.Value)
+                                    foreach (Character.EnemyType enemyType in component.enemyTypes)
+                                        if (enemyType.faction != Faction.player)
+                                            enemyType.attacks = false;
+                                // End injection
+
                                 component.noWaypoints = true;
                                 ___freeRoamingChars.Add(component.gameObject);
                                 Core.addToSaveable(component.gameObject, true, true);
@@ -70,6 +113,7 @@ namespace DarkwoodRandomizer.Patches
                 num = i;
             }
 
+            Plugin.Controller.FreeRoamingCharactersRandomized = true;
             return false;
         }
 
@@ -108,7 +152,11 @@ namespace DarkwoodRandomizer.Patches
             Plugin.Controller.RunWhenPredicateMet
             (
                 predicate: () => Plugin.Controller.OutsideLocationsLoaded,
-                action: RandomizeLocationCharacters
+                action: () =>
+                {
+                    RandomizeLocationCharacters();
+                    Plugin.Controller.LocationCharactersRandomized = true;
+                }
             );
 
 
@@ -132,13 +180,18 @@ namespace DarkwoodRandomizer.Patches
                         
                         GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
                         Core.addToSaveable(newCharacterObject, true, true);
-                        Object.Destroy(oldCharacter.gameObject);
+                        UnityEngine.Object.Destroy(oldCharacter.gameObject);
 
                         Character? component = newCharacterObject.GetComponent<Character>();
                         if (component == null)
                             continue;
-                        else
-                            location.charactersList.Add(component);
+
+                        if (SettingsManager.Characters_PreventInfighting!.Value)
+                            foreach (Character.EnemyType enemyType in component.enemyTypes)
+                                if (enemyType.faction != Faction.player)
+                                    enemyType.attacks = false;
+
+                        location.charactersList.Add(component);
                     }
 
                     foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
@@ -157,13 +210,18 @@ namespace DarkwoodRandomizer.Patches
 
                         GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
                         Core.addToSaveable(newCharacterObject, true, true);
-                        Object.Destroy(characterSpawnPoint.gameObject);
+                        UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
 
                         Character? component = newCharacterObject.GetComponent<Character>();
                         if (component == null)
                             continue;
-                        else
-                            location.charactersList.Add(component);
+
+                        if (SettingsManager.Characters_PreventInfighting!.Value)
+                            foreach (Character.EnemyType enemyType in component.enemyTypes)
+                                if (enemyType.faction != Faction.player)
+                                    enemyType.attacks = false;
+
+                        location.charactersList.Add(component);
                     }
                 }
             }

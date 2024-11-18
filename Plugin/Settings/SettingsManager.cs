@@ -18,13 +18,13 @@ namespace DarkwoodRandomizer.Plugin.Settings
 
 
         internal static ConfigEntry<bool>? MiscObjects_RandomizeMiscObjects;
-        internal static ConfigEntry<bool>? MiscObjects_IncludeSwampObjectsInCh1Pool;
 
 
         internal static ConfigEntry<bool>? Characters_RandomizeFreeRoamingCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeLocationCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeStaticCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeNPCs;
+        internal static ConfigEntry<bool>? Characters_PreventInfighting;
 
 
         internal static ConfigEntry<bool>? Night_RandomizeEnemies;
@@ -109,13 +109,6 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     defaultValue: false,
                     description: "Whether to randomize the biome spawning of miscellaneous objects (e.g.: crates, rocks, mushrooms etc.)"
                 );
-            MiscObjects_IncludeSwampObjectsInCh1Pool = config.Bind
-                (
-                    section: "Misc Objects",
-                    key: "Include swamp prefabs in miscellaneous objects pool",
-                    defaultValue: false,
-                    description: "Whether to allow chapter 2 (swamp) prefabs to be generated. These are significantly larger in size than chapter 1 prefabs"
-                );
 
 
             Characters_RandomizeFreeRoamingCharacters = config.Bind
@@ -125,7 +118,6 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     defaultValue: false,
                     description: "Whether to randomize free roaming enemy spawns"
                 );
-
             Characters_RandomizeLocationCharacters = config.Bind
                 (
                     section: "Characters",
@@ -133,13 +125,19 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     defaultValue: false,
                     description: "Whether to randomize location enemy spawns"
                 );
-            
             Characters_RandomizeStaticCharacters = config.Bind
                 (
                     section: "Characters",
                     key: "Randomize static characters",
                     defaultValue: false,
                     description: "Whether to randomize static characters spawns"
+                );
+            Characters_PreventInfighting = config.Bind
+                (
+                    section: "Characters",
+                    key: "Prevent infighting",
+                    defaultValue: false,
+                    description: "Prevent characters from fighting each other"
                 );
 
 

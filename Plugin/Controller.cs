@@ -24,13 +24,14 @@ namespace DarkwoodRandomizer.Plugin
 
         private static List<PredicateActionTuple> runOnUpdate = new();
 
-        internal static bool IsNewSave { get; private set; }
+        internal static bool IsNewSave { get; private set; } = false;
 
         internal static bool OutsideLocationsLoaded =>
             Locations.OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
             !Singleton<OutsideLocations>.Instance.playerInOutsideLocation;
 
-        internal static bool RandomizationFinished { get; set; }
+        internal static bool LocationCharactersRandomized { get; set; } = false;
+        internal static bool FreeRoamingCharactersRandomized { get; set; } = false;
 
 
 
