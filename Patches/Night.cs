@@ -1,16 +1,13 @@
 ﻿using DarkwoodRandomizer.Plugin;
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
-using System;
+using System.Collections.Generic;
 
 namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
-    internal class Night
+    internal static class Night
     {
-        private static CharacterType[] possibleCharacters = (CharacterType[])Enum.GetValues(typeof(CharacterType));
-
-
         [HarmonyPatch(typeof(CharacterSpawner), "spawnCharacterAround")]
         [HarmonyPrefix]
         internal static void RandomizeNightEnemies(ref string type)
@@ -18,7 +15,11 @@ namespace DarkwoodRandomizer.Patches
             if (!SettingsManager.Night_RandomizeEnemies!.Value)
                 return;
 
-            type = possibleCharacters.RandomItem().ToString();
+            IEnumerable<string>? characterPool = CharacterPools.NightCharacters;
+            if (characterPool == null)
+                return;
+
+            type = characterPool.RandomItem().ToString();
         }
     }
 }

@@ -13,6 +13,8 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeMiscObjects(ref List<UnityEngine.Object> objectsToDistribute, ref float height, ref int density, ref int gridSize)
         {
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
             if (!SettingsManager.MiscObjects_RandomizeMiscObjects!.Value)
                 return;
 

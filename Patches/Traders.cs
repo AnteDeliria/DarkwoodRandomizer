@@ -2,7 +2,6 @@
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -12,18 +11,21 @@ namespace DarkwoodRandomizer.Patches
         private static int MaxNPCSlots = 42;
 
 
-        // TODO: tweak stack size for each item individually
-        // Do not randomize for some NPCs?
         [HarmonyPatch(typeof(InventoryRandom), "randomize")]
         [HarmonyPrefix]
-        internal static bool RandomizeTraderInventory(InventoryRandom __instance, Inventory? ___inventory)
+        private static bool RandomizeTraderInventory(InventoryRandom __instance, Inventory? ___inventory)
         {
-            if (!SettingsManager.Traders_RandomizeTraderInventory!.Value)
-                return true;
             if (___inventory == null || __instance.gameObject?.GetComponent<NPC>() == null)
                 return true;
 
             string npcName = __instance.gameObject.GetComponent<NPC>().name;
+
+            if (npcName == "piotrek" || npcName == "wolfman")
+                if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                    return true;
+            if (!SettingsManager.Traders_RandomizeTraderInventory!.Value)
+                return true;
+
 
             IEnumerable<string>? iremPool = npcName switch
             {

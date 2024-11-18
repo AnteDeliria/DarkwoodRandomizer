@@ -9,7 +9,7 @@ namespace DarkwoodRandomizer.Plugin;
 
 [BepInPlugin("deliria.darkwood.darkwoodrandomizer", "Darkwood Randomizer", "1.0.0")]
 [BepInProcess("Darkwood.exe")]
-public class DarkwoodRandomizerPlugin : BaseUnityPlugin
+public class DarkwoodRandomizer : BaseUnityPlugin
 {
     internal static string PluginPath => Path.Combine(Paths.PluginPath, "DarkwoodRandomizer");
 

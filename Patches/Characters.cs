@@ -4,7 +4,6 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace DarkwoodRandomizer.Patches
@@ -25,6 +24,7 @@ namespace DarkwoodRandomizer.Patches
         //    Index++;
         //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
         //}
+
 
 
         private static void RandomizeCharacterProperties(Character character)
@@ -62,11 +62,13 @@ namespace DarkwoodRandomizer.Patches
             //}
         }
 
+
+
         [HarmonyPatch(typeof(WorldChunk), "spawnFreeRoamingCharacters")]
         [HarmonyPrefix]
-        internal static bool RandomizeFreeRoamingCharacters(WorldChunk __instance, GameObject ___CharactersFreeRoaming, List<GameObject> ___freeRoamingChars)
+        private static bool RandomizeFreeRoamingCharacters(WorldChunk __instance, GameObject ___CharactersFreeRoaming, List<GameObject> ___freeRoamingChars)
         {
-            if (!Plugin.Controller.IsNewSave)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return true;
             if (!SettingsManager.Characters_RandomizeFreeRoamingCharacters!.Value)
                 return true;
@@ -118,14 +120,14 @@ namespace DarkwoodRandomizer.Patches
         }
 
 
+
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPostfix]
-        internal static void RandomizeLocationCharacters(WorldGenerator __instance)
+        private static void RandomizeLocationCharacters(WorldGenerator __instance)
         {
-            if (!Plugin.Controller.IsNewSave)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
 
-            // TODO: fix this not randomizing all NPCs
             //if (Settings.Enemies_RandomizeNPCs!.Value)
             //{
             //    List<NPC> npcPool = new();
@@ -151,80 +153,75 @@ namespace DarkwoodRandomizer.Patches
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => Plugin.Controller.OutsideLocationsLoaded,
+                predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.LocationPositionsRandomized,
                 action: () =>
                 {
-                    RandomizeLocationCharacters();
+                    foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
+                    {
+                        foreach (Character oldCharacter in location.charactersList.ToArray())
+                        {
+                            IEnumerable<string>? characterPool = null;
+
+                            if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
+                                characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
+                            else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
+                                characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
+
+                            if (characterPool == null)
+                                continue;
+
+                            location.charactersList.Remove(oldCharacter);
+
+                            GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                            Core.addToSaveable(newCharacterObject, true, true);
+                            UnityEngine.Object.Destroy(oldCharacter.gameObject);
+
+                            Character? component = newCharacterObject.GetComponent<Character>();
+                            if (component == null)
+                                continue;
+
+                            if (SettingsManager.Characters_PreventInfighting!.Value)
+                                foreach (Character.EnemyType enemyType in component.enemyTypes)
+                                    if (enemyType.faction != Faction.player)
+                                        enemyType.attacks = false;
+
+                            location.charactersList.Add(component);
+                        }
+
+                        foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
+                        {
+                            IEnumerable<string>? characterPool = null;
+
+                            if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
+                                characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
+                            if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && CharacterPools.STATIC_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
+                                characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
+
+                            if (characterPool == null)
+                                continue;
+
+                            location.spawnPoints.Remove(characterSpawnPoint);
+
+                            GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                            Core.addToSaveable(newCharacterObject, true, true);
+                            UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
+
+                            Character? component = newCharacterObject.GetComponent<Character>();
+                            if (component == null)
+                                continue;
+
+                            if (SettingsManager.Characters_PreventInfighting!.Value)
+                                foreach (Character.EnemyType enemyType in component.enemyTypes)
+                                    if (enemyType.faction != Faction.player)
+                                        enemyType.attacks = false;
+
+                            location.charactersList.Add(component);
+                        }
+                    }
+
                     Plugin.Controller.LocationCharactersRandomized = true;
                 }
             );
-
-
-            static void RandomizeLocationCharacters()
-            {
-                foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
-                {
-                    foreach (Character oldCharacter in location.charactersList.ToArray())
-                    {
-                        IEnumerable<string>? characterPool = null;
-
-                        if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                            characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
-                        else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                            characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
-
-                        if (characterPool == null)
-                            continue;
-
-                        location.charactersList.Remove(oldCharacter);
-                        
-                        GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
-                        Core.addToSaveable(newCharacterObject, true, true);
-                        UnityEngine.Object.Destroy(oldCharacter.gameObject);
-
-                        Character? component = newCharacterObject.GetComponent<Character>();
-                        if (component == null)
-                            continue;
-
-                        if (SettingsManager.Characters_PreventInfighting!.Value)
-                            foreach (Character.EnemyType enemyType in component.enemyTypes)
-                                if (enemyType.faction != Faction.player)
-                                    enemyType.attacks = false;
-
-                        location.charactersList.Add(component);
-                    }
-
-                    foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
-                    {
-                        IEnumerable<string>? characterPool = null;
-
-                        if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
-                            characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
-                        if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && CharacterPools.STATIC_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
-                            characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
-
-                        if (characterPool == null)
-                            continue;
-
-                        location.spawnPoints.Remove(characterSpawnPoint);
-
-                        GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
-                        Core.addToSaveable(newCharacterObject, true, true);
-                        UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
-
-                        Character? component = newCharacterObject.GetComponent<Character>();
-                        if (component == null)
-                            continue;
-
-                        if (SettingsManager.Characters_PreventInfighting!.Value)
-                            foreach (Character.EnemyType enemyType in component.enemyTypes)
-                                if (enemyType.faction != Faction.player)
-                                    enemyType.attacks = false;
-
-                        location.charactersList.Add(component);
-                    }
-                }
-            }
         }
     }
 }

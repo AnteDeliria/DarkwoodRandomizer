@@ -12,11 +12,13 @@ namespace DarkwoodRandomizer.Patches
     {
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPrefix]
-        internal static void RandomizeCharacterLoot(GameObject ___WorldChunksGO)
+        private static void RandomizeCharacterLoot(GameObject ___WorldChunksGO)
         {
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
             if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
                 return;
-            if (Plugin.Controller.OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
+            if (Plugin.Controller.OutsideLocationsLoaded)
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
@@ -57,6 +59,8 @@ namespace DarkwoodRandomizer.Patches
 
                             slot.createItem(itemName, amount, durability);
                         }
+
+                    Plugin.Controller.CharacterLootRandomized = true;
                 },
                 exclusive: false
             );
@@ -65,22 +69,24 @@ namespace DarkwoodRandomizer.Patches
 
         [HarmonyPatch(typeof(WorldGenerator), "distributeMustSpawnItems")]
         [HarmonyPrefix]
-        internal static void RandomizeItemContainers(WorldGenerator __instance, GameObject ___WorldChunksGO)
+        private static void RandomizeItemContainers(WorldGenerator __instance, GameObject ___WorldChunksGO)
         {
-            if (!Plugin.Controller.IsNewSave)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.Loot_ShuffleItemContainers!.Value)
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => Plugin.Controller.OutsideLocationsLoaded,
+                predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.LocationPositionsRandomized,
                 action: () =>
                 {
                     if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
                         RandomizeItemContainersWithinBiomes();
                     else if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
                         RandomizeItemContainersGlobally();
+
+                    Plugin.Controller.ItemContainersRandomized = true;
                 }
             );
         }

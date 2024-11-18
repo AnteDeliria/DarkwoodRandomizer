@@ -10,6 +10,8 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         internal static void RevealAllMapElements(MapElement __instance)
         {
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
             if (!SettingsManager.Map_RevealAllMapElements!.Value)
                 return;
 

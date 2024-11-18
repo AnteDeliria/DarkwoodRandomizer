@@ -14,6 +14,8 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void ShuffleGridObjects(WorldGenerator __instance)
         {
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
             if (!SettingsManager.GridObjects_ShuffleGridObjects!.Value)
                 return;
 
@@ -47,6 +49,8 @@ namespace DarkwoodRandomizer.Patches
                 randomBiome.gObjects.Add(randomGridObject);
                 gridObjectPool.Remove(randomGridObject);
             }
+
+            Plugin.Controller.GridObjectsShuffled = true;
         }
 
 
@@ -55,7 +59,12 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeGridObjectRotation(GameObject __instance)
         {
-            if (SettingsManager.GridObjects_RandomizeGridObjectRotation!.Value && __instance.GetComponent<Location>()?.isGridObject == true)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
+            if (SettingsManager.GridObjects_RandomizeGridObjectRotation!.Value)
+                return;
+
+            if (__instance.GetComponent<Location>()?.isGridObject == true)
                 __instance.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
         }
     }

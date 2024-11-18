@@ -5,7 +5,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
 {
     internal static class ItemPools
     {
-        private static readonly string ItemPoolsDirectory = Path.Combine(DarkwoodRandomizerPlugin.PluginPath, "ItemPools");
+        private static readonly string ItemPoolsDirectory = Path.Combine(DarkwoodRandomizer.PluginPath, "ItemPools");
 
         internal static IEnumerable<string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
         internal static IEnumerable<string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));

@@ -12,8 +12,6 @@ namespace DarkwoodRandomizer.Patches
     {
         // Need to recheck
         // Some are missing like village entrance, zone connections, road to doctor etc
-
-        // "med_cottage_tree_01" beginner hideout
         internal static List<string> HideoutsCh1 = ["med_cottage_tree_01", "big_farm_02", "big_hideout_03"];
 
         internal static List<string> HideoutsCh2 = ["med_hideout_04", "med_hideout_05"];
@@ -64,12 +62,16 @@ namespace DarkwoodRandomizer.Patches
             "outside_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
 
 
+
+
         // Simply calling OutsideLocations.createLocation doesn't work, so we have to visit them one by one
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPostfix]
         private static void PreloadOutsideLocations()
         {
-            if (Plugin.Controller.OutsideLocationsLoaded || !Plugin.Controller.IsNewSave)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
+            if (Plugin.Controller.OutsideLocationsLoaded)
                 return;
 
 
@@ -125,9 +127,9 @@ namespace DarkwoodRandomizer.Patches
         // Randomize location position
         [HarmonyPatch(typeof(WorldChunk), "populate")]
         [HarmonyPrefix]
-        private static void RandomizeLocations(WorldChunk __instance)
+        private static void RandomizeLocationPosition(WorldChunk __instance)
         {
-            if (!Plugin.Controller.IsNewSave)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
             if (string.IsNullOrEmpty(__instance.locationName)) // Empty chunk
                 return;
@@ -146,14 +148,19 @@ namespace DarkwoodRandomizer.Patches
             if (SettingsManager.Locations_RandomizeHideoutPosition.Value)
                 availableToSpawn = availableToSpawn.Concat(HideoutsCh1).ToList();
 
-            availableToSpawn = availableToSpawn.Except(locationsAlreadySpawned).ToList();
+            List<string> remainingAvailableToSpawn = availableToSpawn.Except(locationsAlreadySpawned).ToList();
 
-            if (availableToSpawn.Count == 0)
+            if (remainingAvailableToSpawn.Count == 0)
                 return;
 
-            __instance.locationName = availableToSpawn.RandomItem();
+            __instance.locationName = remainingAvailableToSpawn.RandomItem();
             locationsAlreadySpawned.Add(__instance.locationName);
+
+            if (availableToSpawn.Count == locationsAlreadySpawned.Count)
+                Plugin.Controller.LocationPositionsRandomized = true;
         }
+
+
 
         // Randomizes location rotation
         // Also makes vaulting a little scuffed
@@ -162,7 +169,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void RandomizeLocationRotation(GameObject __instance)
         {
-            if (!Plugin.Controller.IsNewSave)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
             if (__instance.GetComponentInParent<WorldChunk>()?.isBorderChunk == true)
                 return;
@@ -173,6 +180,8 @@ namespace DarkwoodRandomizer.Patches
             if (SettingsManager.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Concat(OutsideLocationsCh1).Contains(__instance.name.Replace("_done", "")))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
+
+
 
         // Fixes vaulting
         [HarmonyPatch(typeof(CharBase), "getJumpRotation")]
