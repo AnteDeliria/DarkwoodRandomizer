@@ -10,22 +10,25 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Locations
     {
-        // Need to recheck
-        // Some are missing like village entrance, zone connections, road to doctor etc
-        internal static List<string> HideoutsCh1 = ["med_cottage_tree_01", "big_farm_02", "big_hideout_03"];
+        internal static List<string> HIDEOUTS_CH1 = ["med_cottage_tree_01", "big_farm_02", "big_hideout_03"];
 
-        internal static List<string> HideoutsCh2 = ["med_hideout_04", "med_hideout_05"];
+        internal static List<string> HIDEOUTS_CH2 = ["med_hideout_04", "med_hideout_05"];
 
-        internal static List<string> MustSpawnCh1 =
-            ["big_burned_houses_01", "med_bunker_enter_01",
-                "big_pigsheds_01", "big_piotrek_01", "med_musicianHideout_01", "big_church_ruins_01",
-                "big_hunter_01", "med_musican_house_01"];
+        internal static List<string> NON_BORDER_LOCATIONS_CH1 =
+            ["big_farm_02", "med_bunker_enter_01", "big_hunter_01", "med_musican_house_01",
+                "big_burned_houses_01", "big_hideout_03", "big_church_ruins_01", "big_piotrek_01",
+                "med_musicianHideout_01", "big_pigsheds_01", "med_cottage_tree_01"];
 
-        internal static List<string> WolfCamps = ["med_wolfman_camp_01", "med_wolfman_camp_02"]; // Spawned separately
+        internal static List<string> NON_BORDER_LOCATIONS_CH2 =
+            ["med_mushroomGranny_01", "med_hideout_05", "med_junkyard_01", "med_maskFamily_01", "big_swamp_lake_02"];
 
-        internal static List<string> BorderLocationsCh1 = ["med_wolfmanHideout_01"]; // unfinished
+        internal static List<string> WOLF_CAMPS_CH1 = ["med_wolfman_camp_01", "med_wolfman_camp_02"];
 
-        internal static List<string> MustSpawnCh2 =
+        internal static List<string> BORDER_LOCATIONS_CH1 = ["med_wolfmanHideout_01"]; // unfinished
+
+        internal static List<string> BORDER_LOCATIONS_CH2 = []; // unfinished
+
+        internal static List<string> MustSpawnCh2 = // Remove
             ["big_swamp_lake_02", "big_village_tree_01",
                 "med_junkyard", "med_maskFamily_01", "med_mushroomGranny_01", "med_undergroundCh2Entrance_01",
                 "big_baba_01", "big_farm_03", "big_pigmen_cottage_01", "big_trainWreck_01",
@@ -33,33 +36,23 @@ namespace DarkwoodRandomizer.Patches
                 "mini_bodies_01", "mini_burned_house_01", "mini_mutated_roots_01", "mini_mutated_roots_02",
                 "mini_rocks_01", "mini_rocks_02", "mini_tank_wreck_01", "mini_tank_wreck_02", "mini_tent_camp"];
 
-        internal static List<string> DreamPresets =
+        internal static List<string> DREAMS =
             ["dream_undergroundCh2_01", "dream_bunker_underground_01", "dream_church_ruins_01", "dream_doctor_01",
                 "dream_doctor_02", "dream_grave_meadow", "dream_oneChance_01_2", "dream_village_cellar"];
 
-        internal static List<string> Tutorial = ["dream_tutorial_00", "dream_tutorial_01"];
+        internal static List<string> TUTORIAL = ["dream_tutorial_00", "dream_tutorial_01"];
 
-        internal static List<string> Epilog = ["epilog_part1b_corridor_dream", "epilog_part2_crater"];
+        internal static List<string> EPILOGUE = ["epilog_part1b_corridor_dream", "epilog_part2_crater"];
 
-        internal static List<string> InstancePresets =
-            ["outside_bunker_underground_03", "outside_bunker_underground_part2_01", "outside_cottage_snail_01", "outside_oneChance_01",
-                "outside_roadToHome_01", "outside_undergroundCh2_01", "outside_village_ch2_cellar_01", "outside_bunker_underground_02",
-                "outside_church_underground_01", "outside_church_underground_02", "outside_doctor_house_01", "outside_village_ch1_01",
-                "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
-
-        internal static List<string> LoadedChTwoPresets =
-            ["dream_village_cellar", "dream_church_ruins_01", "med_mushroomGranny_01", "outside_cottage_snail_01",
-                "outside_village_ch2_cellar_01", "outside_well_underground_01"];
-
-        internal static List<string> UnloadedPresets =
-            ["big_baba_01", "big_trainWreck_01", "med_wolfmanHideout_01", "mini_rocks_02", "med_cottage_tree_02",
-                "big_village_tree_01", "mini_burned_house_01", "med_cottage_dogs_01", "big_farm_03", "big_pigmen_cottage_01",
-                "outside_bunker_underground_03", "outside_undergroundCh2_01", "dream_undergroundCh2_01", "mini_rocks_01",
-                "med_undergroundCh2Entrance_01", "mini_tent_camp"];
-
-        internal static List<string> OutsideLocationsCh1 =
+        internal static List<string> OUTSIDE_LOCATIONS_CH1 =
             ["outside_bunker_underground_02", "outside_church_underground_01", "outside_church_underground_02",
             "outside_doctor_house_01", "outside_village_ch1_01", "outside_village_ch1_cottage01_underground_01", "outside_well_underground_01"];
+
+        internal static List<string> OUTSIDE_LOCATIONS_CH2 =
+            ["outside_bunker_underground_03", "outside_cottage_snail_01", "outside_oneChance_01", "outside_roadToHome_01",
+                "outside_undergroundCh2_01", "outside_village_ch2_cellar_01"];
+
+        internal static string OUTSIDE_LOCATION_TRANSITION = "outside_bunker_underground_part2_01";
 
 
 
@@ -67,7 +60,7 @@ namespace DarkwoodRandomizer.Patches
         // Simply calling OutsideLocations.createLocation doesn't work, so we have to visit them one by one
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPostfix]
-        private static void PreloadOutsideLocations()
+        private static void PreloadOutsideLocations(WorldGenerator __instance)
         {
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
@@ -75,8 +68,25 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
 
+            IEnumerable<string> locationsToGenerate;
+            string LastLocation;
+            
+            switch (__instance.chapterID)
+            {
+                case 1:
+                    locationsToGenerate = OUTSIDE_LOCATIONS_CH1;
+                    LastLocation = "outside_bunker_underground_02";
+                    break;
+                case 2:
+                    locationsToGenerate = OUTSIDE_LOCATIONS_CH2;
+                    LastLocation = null; // TODO
+                    break;
+                default:
+                    return;
+            }
+
             // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
-            foreach (string locationName in OutsideLocationsCh1.Except(["outside_bunker_underground_02"]))
+            foreach (string locationName in locationsToGenerate.Except([LastLocation]))
                 Plugin.Controller.RunWhenPredicateMet
                 (
                     predicate: () => !Singleton<OutsideLocations>.Instance.loading,
@@ -86,14 +96,14 @@ namespace DarkwoodRandomizer.Patches
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => OutsideLocationsCh1.Count - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
-                action: () => Singleton<OutsideLocations>.Instance.prepareLocation("outside_bunker_underground_02"),
+                predicate: () => locationsToGenerate.Count() - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                action: () => Singleton<OutsideLocations>.Instance.prepareLocation(LastLocation),
                 exclusive: true
             );
 
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                predicate: () => locationsToGenerate.Count() == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
                 action: () =>
                 {
                     GameEvents? component =
@@ -133,31 +143,40 @@ namespace DarkwoodRandomizer.Patches
                 return;
             if (string.IsNullOrEmpty(__instance.locationName)) // Empty chunk
                 return;
-            if (__instance.isBorderChunk) // Don't want to clip locations into the wall
+
+            if (!SettingsManager.Locations_RandomizeLocationPosition!.Value && NON_BORDER_LOCATIONS_CH1.Concat(NON_BORDER_LOCATIONS_CH2).Contains(__instance.locationName))
                 return;
-            if (!SettingsManager.Locations_RandomizeLocationPosition!.Value && MustSpawnCh1.Contains(__instance.locationName))
-                return;
-            if (!SettingsManager.Locations_RandomizeHideoutPosition!.Value && HideoutsCh1.Contains(__instance.locationName))
+            if (!SettingsManager.Locations_RandomizeHideoutPosition!.Value && HIDEOUTS_CH1.Concat(HIDEOUTS_CH2).Contains(__instance.locationName))
                 return;
 
 
             List<string> availableToSpawn = new();
 
             if (SettingsManager.Locations_RandomizeLocationPosition.Value)
-                availableToSpawn = availableToSpawn.Concat(MustSpawnCh1).ToList();
+            {
+                if (Plugin.Controller.GameState == GameState.GeneratingCh1)
+                    availableToSpawn = availableToSpawn.Concat(NON_BORDER_LOCATIONS_CH1).ToList();
+                else if (Plugin.Controller.GameState == GameState.GeneratingCh2)
+                    availableToSpawn = availableToSpawn.Concat(NON_BORDER_LOCATIONS_CH2).ToList();
+            }
             if (SettingsManager.Locations_RandomizeHideoutPosition.Value)
-                availableToSpawn = availableToSpawn.Concat(HideoutsCh1).ToList();
+            {
+                if (Plugin.Controller.GameState == GameState.GeneratingCh1)
+                    availableToSpawn = availableToSpawn.Concat(HIDEOUTS_CH1).ToList();
+                else if (Plugin.Controller.GameState == GameState.GeneratingCh2)
+                    availableToSpawn = availableToSpawn.Concat(HIDEOUTS_CH2).ToList();
+            }
 
             List<string> remainingAvailableToSpawn = availableToSpawn.Except(locationsAlreadySpawned).ToList();
 
             if (remainingAvailableToSpawn.Count == 0)
+            {
+                Plugin.Controller.LocationPositionsRandomized = true;
                 return;
+            }
 
             __instance.locationName = remainingAvailableToSpawn.RandomItem();
             locationsAlreadySpawned.Add(__instance.locationName);
-
-            if (availableToSpawn.Count == locationsAlreadySpawned.Count)
-                Plugin.Controller.LocationPositionsRandomized = true;
         }
 
 
@@ -174,10 +193,12 @@ namespace DarkwoodRandomizer.Patches
             if (__instance.GetComponentInParent<WorldChunk>()?.isBorderChunk == true)
                 return;
 
-            if (SettingsManager.Locations_RandomizeHideoutRotation!.Value && HideoutsCh1.Contains(__instance.name.Replace("_done", "")))
+            string locationName = __instance.name.Replace("_done", "");
+
+            if (SettingsManager.Locations_RandomizeHideoutRotation!.Value && HIDEOUTS_CH1.Concat(HIDEOUTS_CH2).Contains(locationName))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
 
-            if (SettingsManager.Locations_RandomizeLocationRotation!.Value && MustSpawnCh1.Concat(OutsideLocationsCh1).Contains(__instance.name.Replace("_done", "")))
+            if (SettingsManager.Locations_RandomizeLocationRotation!.Value && NON_BORDER_LOCATIONS_CH1.Concat(OUTSIDE_LOCATIONS_CH1).Concat(NON_BORDER_LOCATIONS_CH2.Concat(OUTSIDE_LOCATIONS_CH2)).Contains(locationName))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
 

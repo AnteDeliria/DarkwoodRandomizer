@@ -5,7 +5,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
 {
     internal static class CharacterPools
     {
-        private static readonly string CharacterPoolsDirectory = Path.Combine(DarkwoodRandomizer.PluginPath, "CharacterPools");
+        private static readonly string CharacterPoolsDirectory = Path.Combine(DarkwoodRandomizerPlugin.PluginPath, "CharacterPools");
 
         internal static IEnumerable<string>? LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
         internal static IEnumerable<string>? LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));

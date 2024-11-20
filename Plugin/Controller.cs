@@ -12,7 +12,7 @@ namespace DarkwoodRandomizer.Plugin
         internal static GameState GameState { get; private set; } = GameState.Unknown;
 
         internal static bool OutsideLocationsLoaded =>
-            Locations.OutsideLocationsCh1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
+            Locations.OUTSIDE_LOCATIONS_CH1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
             !Singleton<OutsideLocations>.Instance.playerInOutsideLocation;
 
         internal static bool LocationCharactersRandomized { get; set; } = false;
@@ -28,22 +28,29 @@ namespace DarkwoodRandomizer.Plugin
         internal static bool ItemContainersRandomized { get; set; } = false;
 
 
-        [HarmonyPatch(typeof(WorldGenerator), "generateWorld")]
+
+        [HarmonyPatch(typeof(WorldGenerator), "Start")]
         [HarmonyPrefix]
-        internal static void RegisterGameState()
+        private static void RegisterGameState2(WorldGenerator __instance)
         {
             GameState = GameState.Unknown;
 
-            if (Core.doLoadChapterSave)
-                if (Singleton<WorldGenerator>.Instance.chapterID == 1)
+            if (Core.loadingGame)
+            {
+                if (__instance.chapterID == 1)
                     GameState = GameState.LoadingCh1;
-                else if (Singleton<WorldGenerator>.Instance.chapterID == 2)
+                else if (__instance.chapterID == 2)
                     GameState = GameState.LoadingCh2;
+            }
             else
-                if (Singleton<WorldGenerator>.Instance.chapterID == 1)
+            {
+                if (__instance.chapterID == 1)
                     GameState = GameState.GeneratingCh1;
-                else if (Singleton<WorldGenerator>.Instance.chapterID == 2)
+                else if (__instance.chapterID == 2)
                     GameState = GameState.GeneratingCh2;
+            }
+
+            DarkwoodRandomizerPlugin.Logger.LogInfo($"GameState: {GameState}");
         }
 
 
