@@ -33,6 +33,8 @@ namespace DarkwoodRandomizer.Plugin
         [HarmonyPrefix]
         private static void RegisterGameState2(WorldGenerator __instance)
         {
+            //__instance.chapterID = 2;
+
             GameState = GameState.Unknown;
 
             if (Core.loadingGame)
