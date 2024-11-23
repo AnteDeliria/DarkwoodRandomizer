@@ -127,9 +127,7 @@ namespace DarkwoodRandomizer.Patches
                             location.biomeType = Biome.Type.swamp;
                     }
 
-                    //GameObject WorldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
-                    //foreach (Location location in WorldChunksGO.GetComponentsInChildren<Location>(includeInactive: true).Where(x => !x.isGridObject).Where(x => x.gameObject.transform.parent.GetComponentInParent<Location>(includeInactive: true) == null))
-                    //    DarkwoodRandomizerPlugin.Logger.LogInfo($"{location.name}");
+                    Plugin.Controller.OutsideLocationsLoaded = true;
                 },
                 exclusive: true
             );
@@ -170,6 +168,8 @@ namespace DarkwoodRandomizer.Patches
                     randomWorldChunk.locationName = randomLocationName;
                 }
             }
+
+            Plugin.Controller.LocationPositionsRandomized = true;
         }
 
 

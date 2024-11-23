@@ -3,8 +3,10 @@ using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
+using Random = System.Random;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -24,6 +26,49 @@ namespace DarkwoodRandomizer.Patches
         //    Index++;
         //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
         //}
+
+
+        private static void AdjustCharacterHealth(Character character, Biome.Type biome)
+        {
+            if (!SettingsManager.CharacterScaling_AdjustHealth!.Value)
+                return;
+
+            float? mean = biome switch
+            {
+                Biome.Type.meadow => SettingsManager.CharacterScaling_MeanHealthDryMeadow!.Value,
+                Biome.Type.forest => SettingsManager.CharacterScaling_MeanHealthSilentForest!.Value,
+                Biome.Type.forest_mutated => SettingsManager.CharacterScaling_MeanHealthOldWoods!.Value,
+                Biome.Type.swamp => SettingsManager.CharacterScaling_MeanHealthSwamp!.Value,
+                _ => null
+            };
+            float? stdev = biome switch
+            {
+                Biome.Type.meadow => SettingsManager.CharacterScaling_StdevHealthDryMeadow!.Value,
+                Biome.Type.forest => SettingsManager.CharacterScaling_StdevHealthSilentForest!.Value,
+                Biome.Type.forest_mutated => SettingsManager.CharacterScaling_StdevHealthOldWoods!.Value,
+                Biome.Type.swamp => SettingsManager.CharacterScaling_StdevHealthSwamp!.Value,
+                _ => null
+            };
+            if (mean == null || stdev == null)
+                return;
+
+            Random rand = new Random();
+            double u1 = 1.0 - rand.NextDouble();
+            double u2 = 1.0 - rand.NextDouble();
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+            double health = (float)mean + (float)stdev * randStdNormal;
+
+            character.maxHealth = (float)health;
+            character.health = (float)health;
+        }
+
+        private static void PreventInfighting(Character character)
+        {
+            if (SettingsManager.Characters_PreventInfighting!.Value)
+                foreach (Character.EnemyType enemyType in character.enemyTypes)
+                    if (enemyType.faction != Faction.player)
+                        enemyType.attacks = false;
+        }
 
 
 
@@ -73,7 +118,7 @@ namespace DarkwoodRandomizer.Patches
             if (!SettingsManager.Characters_RandomizeFreeRoamingCharacters!.Value)
                 return true;
 
-            int num;
+            int num = 0;
             for (int i = 0; i < __instance.biome.characters.Count; i = num + 1)
             {
                 CharacterToSpawn charToSpawn = __instance.biome.characters[i];
@@ -92,10 +137,8 @@ namespace DarkwoodRandomizer.Patches
                             
                             if (component != null)
                             {
-                                if (SettingsManager.Characters_PreventInfighting!.Value)
-                                    foreach (Character.EnemyType enemyType in component.enemyTypes)
-                                        if (enemyType.faction != Faction.player)
-                                            enemyType.attacks = false;
+                                PreventInfighting(component);
+                                AdjustCharacterHealth(component, __instance.biome.type);
                                 // End injection
 
                                 component.noWaypoints = true;
@@ -167,25 +210,24 @@ namespace DarkwoodRandomizer.Patches
                             else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
                                 characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
+                            Character? newCharacter;
+
                             if (characterPool == null)
-                                continue;
+                                newCharacter = oldCharacter;
+                            else
+                            {
+                                GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                                Core.addToSaveable(newCharacterObject, true, true);
+                                UnityEngine.Object.Destroy(oldCharacter.gameObject);
+
+                                newCharacter = newCharacterObject.GetComponent<Character>();
+                            }
+
+                            PreventInfighting(newCharacter);
+                            AdjustCharacterHealth(newCharacter, location.biomeType);
 
                             location.charactersList.Remove(oldCharacter);
-
-                            GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
-                            Core.addToSaveable(newCharacterObject, true, true);
-                            UnityEngine.Object.Destroy(oldCharacter.gameObject);
-
-                            Character? component = newCharacterObject.GetComponent<Character>();
-                            if (component == null)
-                                continue;
-
-                            if (SettingsManager.Characters_PreventInfighting!.Value)
-                                foreach (Character.EnemyType enemyType in component.enemyTypes)
-                                    if (enemyType.faction != Faction.player)
-                                        enemyType.attacks = false;
-
-                            location.charactersList.Add(component);
+                            location.charactersList.Add(newCharacter);
                         }
 
                         foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
@@ -197,25 +239,24 @@ namespace DarkwoodRandomizer.Patches
                             if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && CharacterPools.STATIC_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
                                 characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
+                            string newCharacterName;
+
                             if (characterPool == null)
-                                continue;
+                                newCharacterName = characterSpawnPoint.type.ToString().ToLower();
+                            else
+                                newCharacterName = characterPool.RandomItem();
 
-                            location.spawnPoints.Remove(characterSpawnPoint);
-
-                            GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                            GameObject newCharacterObject = Core.AddPrefab(newCharacterName, characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
                             Core.addToSaveable(newCharacterObject, true, true);
                             UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
 
-                            Character? component = newCharacterObject.GetComponent<Character>();
-                            if (component == null)
-                                continue;
+                            Character? newCharacter = newCharacterObject.GetComponent<Character>();
 
-                            if (SettingsManager.Characters_PreventInfighting!.Value)
-                                foreach (Character.EnemyType enemyType in component.enemyTypes)
-                                    if (enemyType.faction != Faction.player)
-                                        enemyType.attacks = false;
+                            PreventInfighting(newCharacter);
+                            AdjustCharacterHealth(newCharacter, location.biomeType);
 
-                            location.charactersList.Add(component);
+                            location.spawnPoints.Remove(characterSpawnPoint);
+                            location.charactersList.Add(newCharacter);
                         }
                     }
 

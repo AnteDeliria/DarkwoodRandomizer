@@ -11,9 +11,7 @@ namespace DarkwoodRandomizer.Plugin
     {
         internal static GameState GameState { get; private set; } = GameState.Unknown;
 
-        internal static bool OutsideLocationsLoaded =>
-            Locations.OUTSIDE_LOCATIONS_CH1.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count &&
-            !Singleton<OutsideLocations>.Instance.playerInOutsideLocation;
+        internal static bool OutsideLocationsLoaded { get; set; } = false;
 
         internal static bool LocationCharactersRandomized { get; set; } = false;
 

@@ -26,6 +26,16 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<bool>? Characters_RandomizeNPCs;
         internal static ConfigEntry<bool>? Characters_PreventInfighting;
 
+        internal static ConfigEntry<bool>? CharacterScaling_AdjustHealth;
+        internal static ConfigEntry<float>? CharacterScaling_MeanHealthDryMeadow;
+        internal static ConfigEntry<float>? CharacterScaling_MeanHealthSilentForest;
+        internal static ConfigEntry<float>? CharacterScaling_MeanHealthOldWoods;
+        internal static ConfigEntry<float>? CharacterScaling_MeanHealthSwamp;
+        internal static ConfigEntry<float>? CharacterScaling_StdevHealthDryMeadow;
+        internal static ConfigEntry<float>? CharacterScaling_StdevHealthSilentForest;
+        internal static ConfigEntry<float>? CharacterScaling_StdevHealthOldWoods;
+        internal static ConfigEntry<float>? CharacterScaling_StdevHealthSwamp;
+
 
         internal static ConfigEntry<bool>? Night_RandomizeEnemies;
 
@@ -138,6 +148,71 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     key: "Prevent infighting",
                     defaultValue: false,
                     description: "Prevent characters from fighting each other"
+                );
+
+
+            CharacterScaling_AdjustHealth = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Adjust health by biome",
+                    defaultValue: false,
+                    description: "Adjust character health according to biome"
+                );
+            CharacterScaling_MeanHealthDryMeadow = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Mean character health - Dry Meadow",
+                    defaultValue: 20f,
+                    description: ""
+                );
+            CharacterScaling_MeanHealthSilentForest = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Mean character health - Silent Forest",
+                    defaultValue: 60f,
+                    description: ""
+                );
+            CharacterScaling_MeanHealthOldWoods = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Mean character health - Old Woods",
+                    defaultValue: 90f,
+                    description: ""
+                );
+            CharacterScaling_MeanHealthSwamp = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Mean character health - Swamp",
+                    defaultValue: 120f,
+                    description: ""
+                );
+            CharacterScaling_StdevHealthDryMeadow = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Standard deviation of character health - Dry Meadow",
+                    defaultValue: 5f,
+                    description: ""
+                );
+            CharacterScaling_StdevHealthSilentForest = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Standard deviation of character health - Silent Forest",
+                    defaultValue: 10f,
+                    description: ""
+                );
+            CharacterScaling_StdevHealthOldWoods = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Standard deviation of character health - Old Woods",
+                    defaultValue: 15f,
+                    description: ""
+                );
+            CharacterScaling_StdevHealthSwamp = config.Bind
+                (
+                    section: "Character Scaling",
+                    key: "Standard deviation of character health - Swamp",
+                    defaultValue: 20f,
+                    description: ""
                 );
 
 
