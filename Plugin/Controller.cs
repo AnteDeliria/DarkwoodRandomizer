@@ -21,8 +21,6 @@ namespace DarkwoodRandomizer.Plugin
 
         internal static bool LocationPositionsRandomized { get; set; }
 
-        internal static bool CharacterLootRandomized { get; set; }
-
         internal static bool ItemContainersRandomized { get; set; }
         
 
@@ -38,7 +36,6 @@ namespace DarkwoodRandomizer.Plugin
             FreeRoamingCharactersRandomized = false;
             GridObjectsShuffled = false;
             LocationPositionsRandomized = false;
-            CharacterLootRandomized = false;
             ItemContainersRandomized = false;
 
             GameState = GameState.Unknown;

@@ -67,69 +67,75 @@ namespace DarkwoodRandomizer.Patches
             if (Plugin.Controller.OutsideLocationsLoaded)
                 return;
 
-
-            IEnumerable<string> locationsToGenerate;
-            string LastLocation;
-            
-            switch (__instance.chapterID)
-            {
-                case 1:
-                    locationsToGenerate = OUTSIDE_LOCATIONS_CH1;
-                    LastLocation = "outside_bunker_underground_02";
-                    break;
-                case 2:
-                    locationsToGenerate = OUTSIDE_LOCATIONS_CH2;
-                    LastLocation = "outside_village_ch2_cellar_01";
-                    break;
-                default:
-                    return;
-            }
-
-            // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
-            foreach (string locationName in locationsToGenerate.Except([LastLocation]))
-                Plugin.Controller.RunWhenPredicateMet
-                (
-                    predicate: () => !Singleton<OutsideLocations>.Instance.loading,
-                    action: () => Singleton<OutsideLocations>.Instance.prepareLocation(locationName),
-                    exclusive: true
-                );
-
             Plugin.Controller.RunWhenPredicateMet
             (
-                predicate: () => locationsToGenerate.Count() - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
-                action: () => Singleton<OutsideLocations>.Instance.prepareLocation(LastLocation),
-                exclusive: true
-            );
-
-            Plugin.Controller.RunWhenPredicateMet
-            (
-                predicate: () => locationsToGenerate.Count() == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                predicate: () => !Singleton<OutsideLocations>.Instance.playerInOutsideLocation,
                 action: () =>
                 {
-                    GameEvents? component =
-                        Singleton<OutsideLocations>.Instance
-                        .spawnedLocations[Singleton<OutsideLocations>.Instance.currentLocationName]
-                        .gameObject
-                        .GetComponentsInChildren<GameEvents>()
-                        .FirstOrDefault(x => x.events.Any(evnt => evnt.type == GameEvent.Type.returnToWorld))
-                        ?.GetComponent<GameEvents>();
-                    component?.fire();
+                    IEnumerable<string> locationsToGenerate;
+                    string LastLocation;
 
-                    foreach (Location location in Singleton<OutsideLocations>.Instance.spawnedLocations.Values)
+                    switch (__instance.chapterID)
                     {
-                        string locationName = location.name.Replace("_done", "");
-
-                        if (locationName == "outside_village_ch1_01" || locationName == "outside_village_ch1_cottage01_underground_01" || locationName == "outside_well_underground_01")
-                            location.biomeType = Biome.Type.forest;
-                        else if (locationName == "outside_bunker_underground_02" || locationName == "outside_church_underground_01" || locationName == "outside_church_underground_02" || locationName == "outside_doctor_house_01")
-                            location.biomeType = Biome.Type.forest_mutated;
-                        else
-                            location.biomeType = Biome.Type.swamp;
+                        case 1:
+                            locationsToGenerate = OUTSIDE_LOCATIONS_CH1;
+                            LastLocation = "outside_bunker_underground_02";
+                            break;
+                        case 2:
+                            locationsToGenerate = OUTSIDE_LOCATIONS_CH2;
+                            LastLocation = "outside_village_ch2_cellar_01";
+                            break;
+                        default:
+                            return;
                     }
 
-                    Plugin.Controller.OutsideLocationsLoaded = true;
-                },
-                exclusive: true
+                    // Generate outside_bunker_underground_02 last to remove issues with leaving nested locations
+                    foreach (string locationName in locationsToGenerate.Except([LastLocation]))
+                        Plugin.Controller.RunWhenPredicateMet
+                        (
+                            predicate: () => !Singleton<OutsideLocations>.Instance.loading,
+                            action: () => Singleton<OutsideLocations>.Instance.prepareLocation(locationName),
+                            exclusive: true
+                        );
+
+                    Plugin.Controller.RunWhenPredicateMet
+                    (
+                        predicate: () => locationsToGenerate.Count() - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                        action: () => Singleton<OutsideLocations>.Instance.prepareLocation(LastLocation),
+                        exclusive: true
+                    );
+
+                    Plugin.Controller.RunWhenPredicateMet
+                    (
+                        predicate: () => locationsToGenerate.Count() == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                        action: () =>
+                        {
+                            GameEvents? component =
+                                Singleton<OutsideLocations>.Instance
+                                .spawnedLocations[Singleton<OutsideLocations>.Instance.currentLocationName]
+                                .gameObject
+                                .GetComponentsInChildren<GameEvents>()
+                                .FirstOrDefault(x => x.events.Any(evnt => evnt.type == GameEvent.Type.returnToWorld))
+                                ?.GetComponent<GameEvents>();
+                            component?.fire();
+
+                            foreach (Location location in Singleton<OutsideLocations>.Instance.spawnedLocations.Values)
+                            {
+                                string locationName = location.name.Replace("_done", "");
+
+                                if (locationName == "outside_village_ch1_01" || locationName == "outside_village_ch1_cottage01_underground_01" || locationName == "outside_well_underground_01")
+                                    location.biomeType = Biome.Type.forest;
+                                else if (locationName == "outside_bunker_underground_02" || locationName == "outside_church_underground_01" || locationName == "outside_church_underground_02" || locationName == "outside_doctor_house_01")
+                                    location.biomeType = Biome.Type.forest_mutated;
+                                else
+                                    location.biomeType = Biome.Type.swamp;
+                            }
+
+                            Plugin.Controller.OutsideLocationsLoaded = true;
+                        },
+                        exclusive: true
+                    );
+                }
             );
         }
 

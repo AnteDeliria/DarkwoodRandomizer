@@ -10,61 +10,98 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Loot
     {
-        [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
+        [HarmonyPatch(typeof(Character), "die")]
         [HarmonyPrefix]
-        private static void RandomizeCharacterLoot(GameObject ___WorldChunksGO)
+        private static void RandomizeCharacterLoot(Character __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
-                return;
             if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
                 return;
-            if (Plugin.Controller.OutsideLocationsLoaded)
+
+            Inventory? inventory = __instance.gameObject.GetComponent<Inventory>();
+            if (inventory == null || inventory.invType != Inventory.InvType.deathDrop)
                 return;
 
-            Plugin.Controller.RunWhenPredicateMet
-            (
-                predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.FreeRoamingCharactersRandomized && Plugin.Controller.LocationCharactersRandomized,
-                action: () =>
-                {
-                    IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
-                    if (itemPool == null)
-                        return;
+            IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
+            if (itemPool == null)
+                return;
 
-                    IEnumerable<Inventory> deathDrops = ___WorldChunksGO
-                        .GetComponentsInChildren<Inventory>(includeInactive: true)
-                        .Concat(Singleton<OutsideLocations>.Instance.gameObject
-                            .GetComponentsInChildren<Inventory>(includeInactive: true))
-                        .Where(inv => inv.invType == Inventory.InvType.deathDrop);
+            foreach (InvSlot slot in inventory.slots.Where(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
+            {
+                string itemName = itemPool.RandomItem();
 
-                    foreach (Inventory inventory in deathDrops)
-                        foreach (InvSlot slot in inventory.slots.Where(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
-                        {
-                            string itemName = itemPool.RandomItem();
+                InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
 
-                            InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
+                int amount;
+                if (item.hasAmmo)
+                    amount = UnityEngine.Random.Range(0, item.clipSize + 1);
+                else
+                    amount = 1;
 
-                            int amount;
-                            if (item.hasAmmo)
-                                amount = UnityEngine.Random.Range(0, item.clipSize + 1);
-                            else if (item.stackable)
-                                amount = UnityEngine.Random.Range(1, item.maxAmount + 1);
-                            else
-                                amount = 1;
+                float durability;
+                if (item.hasDurability)
+                    durability = UnityEngine.Random.Range(0.1f, 0.4f);
+                else
+                    durability = 1;
 
-                            float durability;
-                            if (item.hasDurability)
-                                durability = UnityEngine.Random.Range(0.7f, 1f);
-                            else
-                                durability = 1;
-
-                            slot.createItem(itemName, amount, durability);
-                        }
-
-                    Plugin.Controller.CharacterLootRandomized = true;
-                },
-                exclusive: false
-            );
+                slot.createItem(itemName, amount, durability);
+            }
         }
+
+        //[HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
+        //[HarmonyPrefix]
+        //private static void RandomizeCharacterLootOld(GameObject ___WorldChunksGO)
+        //{
+        //    if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+        //        return;
+        //    if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
+        //        return;
+        //    if (Plugin.Controller.OutsideLocationsLoaded)
+        //        return;
+
+        //    Plugin.Controller.RunWhenPredicateMet
+        //    (
+        //        predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.FreeRoamingCharactersRandomized && Plugin.Controller.LocationCharactersRandomized,
+        //        action: () =>
+        //        {
+        //            IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
+        //            if (itemPool == null)
+        //                return;
+
+        //            IEnumerable<Inventory> deathDrops = ___WorldChunksGO
+        //                .GetComponentsInChildren<Inventory>(includeInactive: true)
+        //                .Concat(Singleton<OutsideLocations>.Instance.gameObject
+        //                    .GetComponentsInChildren<Inventory>(includeInactive: true))
+        //                .Where(inv => inv.invType == Inventory.InvType.deathDrop);
+
+        //            foreach (Inventory inventory in deathDrops)
+        //                foreach (InvSlot slot in inventory.slots.Where(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
+        //                {
+        //                    string itemName = itemPool.RandomItem();
+
+        //                    InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
+
+        //                    int amount;
+        //                    if (item.hasAmmo)
+        //                        amount = UnityEngine.Random.Range(0, item.clipSize + 1);
+        //                    else if (item.stackable)
+        //                        amount = UnityEngine.Random.Range(1, item.maxAmount + 1);
+        //                    else
+        //                        amount = 1;
+
+        //                    float durability;
+        //                    if (item.hasDurability)
+        //                        durability = UnityEngine.Random.Range(0.7f, 1f);
+        //                    else
+        //                        durability = 1;
+
+        //                    slot.createItem(itemName, amount, durability);
+        //                }
+
+        //            Plugin.Controller.CharacterLootRandomized = true;
+        //        },
+        //        exclusive: false
+        //    );
+        //}
 
 
         [HarmonyPatch(typeof(WorldGenerator), "distributeMustSpawnItems")]

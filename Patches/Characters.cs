@@ -137,6 +137,9 @@ namespace DarkwoodRandomizer.Patches
                             
                             if (component != null)
                             {
+                                if (component.name.ToLower() == "doppelganger")
+                                    AccessTools.Field(typeof(Character), "deathAnim").SetValue(component, null);
+
                                 PreventInfighting(component);
                                 AdjustCharacterHealth(component, __instance.biome.type);
                                 // End injection
@@ -223,8 +226,14 @@ namespace DarkwoodRandomizer.Patches
                                 newCharacter = newCharacterObject.GetComponent<Character>();
                             }
 
-                            PreventInfighting(newCharacter);
-                            AdjustCharacterHealth(newCharacter, location.biomeType);
+                            if (newCharacter != null)
+                            {
+                                if (newCharacter.name.ToLower() == "doppelganger")
+                                    AccessTools.Field(typeof(Character), "deathAnim").SetValue(newCharacter, null);
+
+                                PreventInfighting(newCharacter);
+                                AdjustCharacterHealth(newCharacter, location.biomeType);
+                            }
 
                             location.charactersList.Remove(oldCharacter);
                             location.charactersList.Add(newCharacter);
@@ -252,8 +261,14 @@ namespace DarkwoodRandomizer.Patches
 
                             Character? newCharacter = newCharacterObject.GetComponent<Character>();
 
-                            PreventInfighting(newCharacter);
-                            AdjustCharacterHealth(newCharacter, location.biomeType);
+                            if (newCharacter != null)
+                            {
+                                if (newCharacter.name.ToLower() == "doppelganger")
+                                    AccessTools.Field(typeof(Character), "deathAnim").SetValue(newCharacter, null);
+
+                                PreventInfighting(newCharacter);
+                                AdjustCharacterHealth(newCharacter, location.biomeType);
+                            }
 
                             location.spawnPoints.Remove(characterSpawnPoint);
                             location.charactersList.Add(newCharacter);
