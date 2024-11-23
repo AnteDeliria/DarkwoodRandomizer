@@ -11,27 +11,35 @@ namespace DarkwoodRandomizer.Plugin
     {
         internal static GameState GameState { get; private set; } = GameState.Unknown;
 
-        internal static bool OutsideLocationsLoaded { get; set; } = false;
+        internal static bool OutsideLocationsLoaded { get; set; }
 
-        internal static bool LocationCharactersRandomized { get; set; } = false;
+        internal static bool LocationCharactersRandomized { get; set; }
 
-        internal static bool FreeRoamingCharactersRandomized { get; set; } = false;
+        internal static bool FreeRoamingCharactersRandomized { get; set; }
 
-        internal static bool GridObjectsShuffled { get; set; } = false;
+        internal static bool GridObjectsShuffled { get; set; }
 
-        internal static bool LocationPositionsRandomized { get; set; } = false;
+        internal static bool LocationPositionsRandomized { get; set; }
 
-        internal static bool CharacterLootRandomized { get; set; } = false;
+        internal static bool CharacterLootRandomized { get; set; }
 
-        internal static bool ItemContainersRandomized { get; set; } = false;
-
+        internal static bool ItemContainersRandomized { get; set; }
+        
 
 
         [HarmonyPatch(typeof(WorldGenerator), "Start")]
         [HarmonyPrefix]
-        private static void RegisterGameState2(WorldGenerator __instance)
+        private static void ResetState(WorldGenerator __instance)
         {
             //__instance.chapterID = 2;
+
+            OutsideLocationsLoaded = false;
+            LocationCharactersRandomized = false;
+            FreeRoamingCharactersRandomized = false;
+            GridObjectsShuffled = false;
+            LocationPositionsRandomized = false;
+            CharacterLootRandomized = false;
+            ItemContainersRandomized = false;
 
             GameState = GameState.Unknown;
 

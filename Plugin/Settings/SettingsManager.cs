@@ -37,7 +37,8 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<float>? CharacterScaling_StdevHealthSwamp;
 
 
-        internal static ConfigEntry<bool>? Night_RandomizeEnemies;
+        internal static ConfigEntry<bool>? Night_RandomizeCharacters;
+        internal static ConfigEntry<bool>? Night_RandomizeScenarioDifficulty;
 
 
         internal static ConfigEntry<bool>? Traders_RandomizeTraderInventory;
@@ -216,12 +217,19 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 );
 
 
-            Night_RandomizeEnemies = config.Bind
+            Night_RandomizeCharacters = config.Bind
                 (
                     section: "Night",
                     key: "Randomize night enemies",
                     defaultValue: false,
                     description: "Whether to randomize night enemies"
+                );
+            Night_RandomizeScenarioDifficulty = config.Bind
+                (
+                    section: "Night",
+                    key: "Randomize scenario difficulty",
+                    defaultValue: false,
+                    description: "Allow night scenarios from any difficulty level to be picked"
                 );
 
 

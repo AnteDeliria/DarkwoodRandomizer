@@ -242,7 +242,7 @@ namespace DarkwoodRandomizer.Patches
                             string newCharacterName;
 
                             if (characterPool == null)
-                                newCharacterName = characterSpawnPoint.type.ToString().ToLower();
+                                newCharacterName = CharacterPools.ALL_CHARACTERS[characterSpawnPoint.type.ToString().ToLower()];
                             else
                                 newCharacterName = characterPool.RandomItem();
 
