@@ -7,7 +7,7 @@ using System.IO;
 
 namespace DarkwoodRandomizer.Plugin;
 
-[BepInPlugin("deliria.darkwood.darkwoodrandomizer", "Darkwood Randomizer", "1.0.0")]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Darkwood.exe")]
 public class DarkwoodRandomizerPlugin : BaseUnityPlugin
 {

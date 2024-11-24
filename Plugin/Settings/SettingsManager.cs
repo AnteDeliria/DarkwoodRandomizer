@@ -253,14 +253,14 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     section: "Vendors",
                     key: "Vendor inventory min random slots",
                     defaultValue: 6,
-                    description: "Minimum number of random inventory slots that will be added to trader inventories"
+                    description: "Minimum number of randomized inventory slots that will be present in trader inventories"
                 );
             Vendors_MaxRandomSlots = config.Bind
                 (
                     section: "Vendors",
                     key: "Trader inventory max random slots",
                     defaultValue: 18,
-                    description: "Maximum number of random inventory slots that will be added to trader inventories"
+                    description: "Maximum number of randomized inventory slots that will be present in trader inventories"
                 );
 
 
