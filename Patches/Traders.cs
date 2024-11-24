@@ -23,7 +23,7 @@ namespace DarkwoodRandomizer.Patches
             if (npcName == "piotrek" || npcName == "wolfman")
                 if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                     return true;
-            if (!SettingsManager.Traders_RandomizeTraderInventory!.Value)
+            if (!SettingsManager.Vendors_RandomizeVendorInventory!.Value)
                 return true;
 
 
@@ -40,7 +40,7 @@ namespace DarkwoodRandomizer.Patches
 
             int assignedSlots = 0;
 
-            if (SettingsManager.Traders_TraderInventoryEnsureStaples!.Value)
+            if (SettingsManager.Vendors_EnsureStaples!.Value)
             {
                 if (npcName == "piotrek")
                 {
@@ -67,7 +67,7 @@ namespace DarkwoodRandomizer.Patches
                 }
             }
 
-            int slotsToAssign = UnityEngine.Random.Range(SettingsManager.Traders_TraderInventoryMinRandomSlots!.Value + assignedSlots, SettingsManager.Traders_TraderInventoryMaxRandomSlots!.Value + assignedSlots + 1);
+            int slotsToAssign = UnityEngine.Random.Range(SettingsManager.Vendors_MinRandomSlots!.Value + assignedSlots, SettingsManager.Vendors_MaxRandomSlots!.Value + assignedSlots + 1);
             while (assignedSlots < slotsToAssign && assignedSlots < MaxNPCSlots)
             {
                 InvSlot? nextFreeSlot = ___inventory.getNextFreeSlot();

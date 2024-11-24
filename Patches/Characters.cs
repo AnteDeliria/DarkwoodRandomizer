@@ -208,9 +208,9 @@ namespace DarkwoodRandomizer.Patches
                         {
                             IEnumerable<string>? characterPool = null;
 
-                            if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
+                            if (SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
                                 characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
-                            else if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
+                            else if (SettingsManager.Characters_RandomizeLocationStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
                                 characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
                             Character? newCharacter;
@@ -243,9 +243,9 @@ namespace DarkwoodRandomizer.Patches
                         {
                             IEnumerable<string>? characterPool = null;
 
-                            if (SettingsManager.Characters_RandomizeLocationCharacters!.Value && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
+                            if (SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
                                 characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
-                            if (SettingsManager.Characters_RandomizeStaticCharacters!.Value && CharacterPools.STATIC_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
+                            if (SettingsManager.Characters_RandomizeLocationStaticCharacters!.Value && CharacterPools.STATIC_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
                                 characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
 
                             string newCharacterName;
