@@ -27,6 +27,14 @@ namespace DarkwoodRandomizer.Patches
         //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
         //}
 
+        [HarmonyPatch(typeof(Character), "init")]
+        [HarmonyPostfix]
+        private static void FixCharacterDeathClip(Character __instance)
+        {
+            if (AccessTools.Field(typeof(Character), "deathAnim").GetValue(__instance) as string == "Death1")
+                AccessTools.Field(typeof(Character), "deathAnim").SetValue(__instance, null);
+        }
+
 
         private static void AdjustCharacterHealth(Character character, Biome.Type biome)
         {
@@ -137,9 +145,6 @@ namespace DarkwoodRandomizer.Patches
                             
                             if (component != null)
                             {
-                                if (component.name.ToLower() == "doppelganger")
-                                    AccessTools.Field(typeof(Character), "deathAnim").SetValue(component, null);
-
                                 PreventInfighting(component);
                                 AdjustCharacterHealth(component, __instance.biome.type);
                                 // End injection
@@ -228,9 +233,6 @@ namespace DarkwoodRandomizer.Patches
 
                             if (newCharacter != null)
                             {
-                                if (newCharacter.name.ToLower() == "doppelganger")
-                                    AccessTools.Field(typeof(Character), "deathAnim").SetValue(newCharacter, null);
-
                                 PreventInfighting(newCharacter);
                                 AdjustCharacterHealth(newCharacter, location.biomeType);
                             }
@@ -263,9 +265,6 @@ namespace DarkwoodRandomizer.Patches
 
                             if (newCharacter != null)
                             {
-                                if (newCharacter.name.ToLower() == "doppelganger")
-                                    AccessTools.Field(typeof(Character), "deathAnim").SetValue(newCharacter, null);
-
                                 PreventInfighting(newCharacter);
                                 AdjustCharacterHealth(newCharacter, location.biomeType);
                             }

@@ -25,26 +25,29 @@ namespace DarkwoodRandomizer.Patches
             if (itemPool == null)
                 return;
 
-            foreach (InvSlot slot in inventory.slots.Where(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
-            {
-                string itemName = itemPool.RandomItem();
+            inventory.clearSlots();
 
-                InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
+            InvSlot? firstSlot = inventory.slots.FirstOrDefault();
+            if (firstSlot == null)
+                return;
 
-                int amount;
-                if (item.hasAmmo)
-                    amount = UnityEngine.Random.Range(0, item.clipSize + 1);
-                else
-                    amount = 1;
+            string itemName = itemPool.RandomItem();
 
-                float durability;
-                if (item.hasDurability)
-                    durability = UnityEngine.Random.Range(0.1f, 0.4f);
-                else
-                    durability = 1;
+            InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
 
-                slot.createItem(itemName, amount, durability);
-            }
+            int amount;
+            if (item.hasAmmo)
+                amount = UnityEngine.Random.Range(0, item.clipSize + 1);
+            else
+                amount = 1;
+
+            float durability;
+            if (item.hasDurability)
+                durability = UnityEngine.Random.Range(0.1f, 0.4f);
+            else
+                durability = 1;
+
+            firstSlot.createItem(itemName, amount, durability);
         }
 
         //[HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
