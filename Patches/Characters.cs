@@ -27,14 +27,6 @@ namespace DarkwoodRandomizer.Patches
         //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
         //}
 
-        [HarmonyPatch(typeof(Character), "init")]
-        [HarmonyPostfix]
-        private static void FixCharacterDeathClip(Character __instance)
-        {
-            if (AccessTools.Field(typeof(Character), "deathAnim").GetValue(__instance) as string == "Death1")
-                AccessTools.Field(typeof(Character), "deathAnim").SetValue(__instance, "");
-        }
-
 
         private static void AdjustCharacterHealth(Character character, Biome.Type biome)
         {

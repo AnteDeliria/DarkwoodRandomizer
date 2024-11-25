@@ -200,40 +200,5 @@ namespace DarkwoodRandomizer.Patches
             if (SettingsManager.Locations_RandomizeLocationRotation!.Value && NON_BORDER_LOCATIONS_CH1.Concat(OUTSIDE_LOCATIONS_CH1).Concat(NON_BORDER_LOCATIONS_CH2.Concat(OUTSIDE_LOCATIONS_CH2)).Contains(locationName))
                 __instance.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
         }
-
-
-
-        // Fixes vaulting
-        [HarmonyPatch(typeof(CharBase), "getJumpRotation")]
-        [HarmonyPrefix]
-        private static bool FixJumpRotation(CharBase __instance, GameObject ___touchedJumpableObject)
-        {
-            // Unrotate objects so that we can apply relative position check
-            // Rotation is reapplied when assigning to __instance.jumpingThroughWindowRotation
-            Vector3 unrotatedJumpableObjectPosition = Quaternion.Euler(0, -___touchedJumpableObject.transform.rotation.eulerAngles.y + ___touchedJumpableObject.transform.localEulerAngles.z, 0) * ___touchedJumpableObject.transform.position;
-            Vector3 unrotatedPlayerPosition = Quaternion.Euler(0, -___touchedJumpableObject.transform.rotation.eulerAngles.y + ___touchedJumpableObject.transform.localEulerAngles.z, 0) * __instance.transform.position;
-
-
-            if (___touchedJumpableObject != null)
-            {
-                float y = ___touchedJumpableObject.transform.localEulerAngles.z;
-                if ((y > 89f && y < 91f) || (y > 269f && y < 271f) || (y < -89f && y > -91f) || (y < -269f && y > -271f))
-                {
-                    if (unrotatedJumpableObjectPosition.x > unrotatedPlayerPosition.x)
-                        __instance.jumpingThroughWindowRotation = new Vector3(0f, 90f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
-                    if (unrotatedJumpableObjectPosition.x < unrotatedPlayerPosition.x)
-                        __instance.jumpingThroughWindowRotation = new Vector3(0f, -90f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
-                }
-                else
-                {
-                    if (unrotatedJumpableObjectPosition.z > unrotatedPlayerPosition.z)
-                        __instance.jumpingThroughWindowRotation = new Vector3(0f, 0f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
-                    if (unrotatedJumpableObjectPosition.z < unrotatedPlayerPosition.z)
-                        __instance.jumpingThroughWindowRotation = new Vector3(0f, 180f - ___touchedJumpableObject.transform.localEulerAngles.z + ___touchedJumpableObject.transform.rotation.eulerAngles.y, 0f);
-                }
-            }
-
-            return false;
-        }
     }
 }

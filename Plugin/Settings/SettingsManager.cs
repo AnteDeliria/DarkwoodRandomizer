@@ -116,7 +116,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 (
                     section: "Misc Objects",
                     key: "Shuffle misc objects",
-                    defaultValue: true,
+                    defaultValue: false,
                     description: "Shuffles the position of misc objects, allowing them to spawn outside their target biome"
                 );
 
@@ -198,7 +198,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     section: "Character.Attributes",
                     key: "Character health variance percentage",
                     defaultValue: 50f,
-                    description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between [BaseHealth * (1 - HealthVarianceRange/100) and BaseHealth * (1 + HealthVarianceRange/100)]"
+                    description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between BaseHealth ± BaseHealth * HealthVarianceRange/100"
                 );
 
 
