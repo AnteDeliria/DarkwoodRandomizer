@@ -28,7 +28,10 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static Dictionary<string, string>? FreeRoamingCharactersOldWoods => GetPoolFromFile(nameof(FreeRoamingCharactersOldWoods));
         internal static Dictionary<string, string>? FreeRoamingCharactersSwamp => GetPoolFromFile(nameof(FreeRoamingCharactersSwamp));
 
-        internal static Dictionary<string, string>? NightCharacters => GetPoolFromFile(nameof(NightCharacters));
+        internal static Dictionary<string, string>? NightCharactersDryMeadow => GetPoolFromFile(nameof(NightCharactersDryMeadow));
+        internal static Dictionary<string, string>? NightCharactersSilentForest => GetPoolFromFile(nameof(NightCharactersSilentForest));
+        internal static Dictionary<string, string>? NightCharactersOldWoods => GetPoolFromFile(nameof(NightCharactersOldWoods));
+        internal static Dictionary<string, string>? NightCharactersSwamp => GetPoolFromFile(nameof(NightCharactersSwamp));
 
 
 
@@ -101,6 +104,18 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 Biome.Type.forest => FreeRoamingCharactersSilentForest?.Values,
                 Biome.Type.forest_mutated => FreeRoamingCharactersOldWoods?.Values,
                 Biome.Type.swamp => FreeRoamingCharactersSwamp?.Values,
+                _ => null,
+            };
+        }
+
+        internal static IEnumerable<string>? GetNightPoolForBiome(Biome.Type biome)
+        {
+            return biome switch
+            {
+                Biome.Type.meadow => NightCharactersDryMeadow?.Values,
+                Biome.Type.forest => NightCharactersSilentForest?.Values,
+                Biome.Type.forest_mutated => NightCharactersOldWoods?.Values,
+                Biome.Type.swamp => NightCharactersSwamp?.Values,
                 _ => null,
             };
         }

@@ -28,7 +28,7 @@ namespace DarkwoodRandomizer.Patches
         //}
 
 
-        private static void AdjustCharacterHealth(Character character, Biome.Type biome)
+        internal static void TryAdjustCharacterHealth(Character character, Biome.Type biome)
         {
             if (!SettingsManager.CharacterAttributes_ScaleHealthByBiome!.Value)
                 return;
@@ -72,7 +72,7 @@ namespace DarkwoodRandomizer.Patches
             }
         }
 
-        private static void PreventInfighting(Character character)
+        internal static void TryPreventInfighting(Character character)
         {
             if (SettingsManager.Characters_PreventInfighting!.Value)
                 foreach (Character.EnemyType enemyType in character.enemyTypes)
@@ -82,7 +82,7 @@ namespace DarkwoodRandomizer.Patches
 
 
 
-        private static void RandomizeCharacterProperties(Character character)
+        internal static void TryRandomizeCharacterProperties(Character character)
         {
             foreach (Character.EnemyType enemyType in character.enemyTypes)
             {
@@ -147,8 +147,8 @@ namespace DarkwoodRandomizer.Patches
                             
                             if (component != null)
                             {
-                                PreventInfighting(component);
-                                AdjustCharacterHealth(component, __instance.biome.type);
+                                TryPreventInfighting(component);
+                                TryAdjustCharacterHealth(component, __instance.biome.type);
                                 // End injection
 
                                 component.noWaypoints = true;
@@ -235,8 +235,8 @@ namespace DarkwoodRandomizer.Patches
 
                             if (newCharacter != null)
                             {
-                                PreventInfighting(newCharacter);
-                                AdjustCharacterHealth(newCharacter, location.biomeType);
+                                TryPreventInfighting(newCharacter);
+                                TryAdjustCharacterHealth(newCharacter, location.biomeType);
                             }
 
                             location.charactersList.Remove(oldCharacter);
@@ -267,8 +267,8 @@ namespace DarkwoodRandomizer.Patches
 
                             if (newCharacter != null)
                             {
-                                PreventInfighting(newCharacter);
-                                AdjustCharacterHealth(newCharacter, location.biomeType);
+                                TryPreventInfighting(newCharacter);
+                                TryAdjustCharacterHealth(newCharacter, location.biomeType);
                             }
 
                             location.spawnPoints.Remove(characterSpawnPoint);

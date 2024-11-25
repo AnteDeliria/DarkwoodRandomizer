@@ -2,7 +2,7 @@
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -11,16 +11,65 @@ namespace DarkwoodRandomizer.Patches
     {
         [HarmonyPatch(typeof(CharacterSpawner), "spawnCharacterAround")]
         [HarmonyPrefix]
-        private static void RandomizeNightEnemies(ref string type)
+        private static bool RandomizeNightEnemies(CharacterSpawner __instance, ref Character? __result, GameObject destGO, Vector3 offset, float distance, string type, bool nocturnal, bool attackPlayer = false, bool relentlessPursuit = false, bool canSpawnInside = false)
         {
             if (!SettingsManager.Night_RandomizeCharacters!.Value)
-                return;
+                return true;
 
-            IEnumerable<string>? characterPool = CharacterPools.NightCharacters?.Values?.Select(path => path.Replace("characters/", ""));
+
+
+            GameObject gameObject = __instance.holder;
+            Vector3 vector = Vector3.zero;
+            if (offset == Vector3.zero)
+            {
+                vector = (Vector3)AccessTools.Method(typeof(CharacterSpawner), "getFreeSpotAround").Invoke(__instance, [destGO, distance, canSpawnInside, 0]);
+                if (vector == Vector3.zero)
+                {
+                    Debug.LogError("Aborting character spawn " + type + " " + destGO.name, destGO);
+                    __result = null;
+                    return false;
+                }
+            }
+            else
+                vector = offset * distance;
+
+            // Injection
+            IEnumerable<string>? characterPool = CharacterPools.GetNightPoolForBiome(Player.Instance.whereAmI.bigLocation.biomeType);
+
             if (characterPool == null)
-                return;
+                return true;
 
-            type = characterPool.RandomItem().ToString();
+            string randomCharacter = characterPool.RandomItem();
+            Character? character = Core.AddPrefab(randomCharacter, vector, Quaternion.Euler(90f, 0f, 0f), gameObject, false).GetComponent<Character>();
+
+            Characters.TryPreventInfighting(character);
+            Characters.TryAdjustCharacterHealth(character, Player.Instance.whereAmI.bigLocation.biomeType);
+            // End Injection
+
+            AccessTools.Field(typeof(Character), "character").SetValue(__instance, character);
+            if (Player.Instance.whereAmI.bigLocation != null)
+                character.setWaypoints(Player.Instance.whereAmI.bigLocation.waypoints);
+            if (attackPlayer)
+                character.attackPlayer();
+            character.relentlessPursuit = relentlessPursuit;
+            character.nocturnal = nocturnal;
+            character.temporarySpawned = true;
+            if (!Singleton<Dreams>.Instance.dreaming)
+            {
+                if (nocturnal && !__instance.nocturnalCharacters.Contains(character.gameObject))
+                {
+                    __instance.nocturnalCharacters.Add(character.gameObject);
+                }
+                if (!__instance.spawnedCharacters.Contains(character.gameObject))
+                {
+                    __instance.spawnedCharacters.Add(character.gameObject);
+                }
+                Core.addToSaveable(character.gameObject, true, false);
+            }
+            character.isActive = true;
+
+            __result = character;
+            return false;
         }
 
 
