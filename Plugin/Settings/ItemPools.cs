@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DarkwoodRandomizer.Plugin.Settings
 {
@@ -7,36 +8,56 @@ namespace DarkwoodRandomizer.Plugin.Settings
     {
         private static readonly string ItemPoolsDirectory = Path.Combine(DarkwoodRandomizerPlugin.PluginPath, "ItemPools");
 
-        internal static IEnumerable<string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
-        internal static IEnumerable<string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));
-        internal static IEnumerable<string>? VendorWolfman => GetPoolFromFile(nameof(VendorWolfman));
+        internal static IEnumerable<string> PoolNames =
+            [nameof(ALL_ITEMS), nameof(AMMO_ITEMS), nameof(CONSUMABLE_ITEMS), nameof(DEBUG_ITEMS),
+                nameof(HOME_ITEMS), nameof(JOURNAL_ITEMS), nameof(KEY_ITEMS), nameof(MAP_ITEMS),
+                nameof(MATERIAL_ITEMS), nameof(MISC_ITEMS), nameof(QUEST_ITEMS), nameof(THROWN_ITEMS),
+                nameof(TRAP_ITEMS), nameof(UTILITY_ITEMS), nameof(WEAPON_ITEMS), nameof(XP_ITEMS)];
 
-        internal static IEnumerable<string>? CharacterLoot => GetPoolFromFile(nameof(CharacterLoot));
 
-        // Returns item names
-        private static IEnumerable<string>? GetPoolFromFile(string poolName)
+        internal static Dictionary<string, string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
+        internal static Dictionary<string, string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));
+        internal static Dictionary<string, string>? VendorWolfman => GetPoolFromFile(nameof(VendorWolfman));
+        
+        internal static Dictionary<string, string>? CharacterLoot => GetPoolFromFile(nameof(CharacterLoot));
+
+
+
+        private static Dictionary<string, string>? GetPoolFromFile(string poolName)
         {
             string path = Path.Combine(ItemPoolsDirectory, $"{poolName}.txt");
             if (!File.Exists(path))
                 return null;
 
             StreamReader reader = new StreamReader(path);
-            List<string> itemNames = new();
+            Dictionary<string, string> items = new();
             while (!reader.EndOfStream)
             {
                 string[] tokens = reader.ReadLine().Trim().Split();
                 if (tokens.Length == 0)
                     continue;
 
-                if (ALL_ITEMS.ContainsKey(tokens[0]))
+                if (PoolNames.Contains(tokens[0]))
+                {
                     if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
                         for (int i = 0; i < timesToAdd; i++)
-                            itemNames.Add(tokens[0]);
+                            foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)typeof(ItemPools).GetField(tokens[0]).GetValue(null))
+                                items.Add(item.Key, item.Value);
                     else
-                        itemNames.Add(tokens[0]);
+                        foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)typeof(ItemPools).GetField(tokens[0]).GetValue(null))
+                            items.Add(item.Key, item.Value);
+                }
+                else if (ALL_ITEMS.ContainsKey(tokens[0]))
+                {
+                    if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
+                        for (int i = 0; i < timesToAdd; i++)
+                            items.Add(tokens[0], ALL_ITEMS[tokens[0]]);
+                    else
+                        items.Add(tokens[0], ALL_ITEMS[tokens[0]]);
+                }
             }
             reader.Close();
-            return itemNames;
+            return items;
         }
 
 

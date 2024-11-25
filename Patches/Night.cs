@@ -16,7 +16,7 @@ namespace DarkwoodRandomizer.Patches
             if (!SettingsManager.Night_RandomizeCharacters!.Value)
                 return;
 
-            IEnumerable<string>? characterPool = CharacterPools.NightCharacters.Select(path => path.Replace("characters/", ""));
+            IEnumerable<string>? characterPool = CharacterPools.NightCharacters?.Values?.Select(path => path.Replace("characters/", ""));
             if (characterPool == null)
                 return;
 

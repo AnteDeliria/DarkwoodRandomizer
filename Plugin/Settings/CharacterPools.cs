@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DarkwoodRandomizer.Plugin.Settings
 {
@@ -7,57 +8,75 @@ namespace DarkwoodRandomizer.Plugin.Settings
     {
         private static readonly string CharacterPoolsDirectory = Path.Combine(DarkwoodRandomizerPlugin.PluginPath, "CharacterPools");
 
-        internal static IEnumerable<string>? LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
-        internal static IEnumerable<string>? LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));
-        internal static IEnumerable<string>? LocationActiveCharactersOldWoods => GetPoolFromFile(nameof(LocationActiveCharactersOldWoods));
-        internal static IEnumerable<string>? LocationActiveCharactersSwamp => GetPoolFromFile(nameof(LocationActiveCharactersSwamp));
+        internal static IEnumerable<string> PoolNames =
+            [nameof(ALL_CHARACTERS), nameof(ACTIVE_CHARACTERS), nameof(STATIC_CHARACTERS), nameof(COLOSSAL_CHARACTERS),
+                nameof(NPC_CHARACTERS_CH1), nameof(NPC_CHARACTERS_CH2), nameof(NPC_CHARACTERS_EPILOGUE)];
 
-        internal static IEnumerable<string>? LocationStaticCharactersDryMeadow => GetPoolFromFile(nameof(LocationStaticCharactersDryMeadow));
-        internal static IEnumerable<string>? LocationStaticCharactersSilentForest => GetPoolFromFile(nameof(LocationStaticCharactersSilentForest));
-        internal static IEnumerable<string>? LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
-        internal static IEnumerable<string>? LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
 
-        internal static IEnumerable<string>? FreeRoamingCharactersDryMeadow => GetPoolFromFile(nameof(FreeRoamingCharactersDryMeadow));
-        internal static IEnumerable<string>? FreeRoamingCharactersSilentForest => GetPoolFromFile(nameof(FreeRoamingCharactersSilentForest));
-        internal static IEnumerable<string>? FreeRoamingCharactersOldWoods => GetPoolFromFile(nameof(FreeRoamingCharactersOldWoods));
-        internal static IEnumerable<string>? FreeRoamingCharactersSwamp => GetPoolFromFile(nameof(FreeRoamingCharactersSwamp));
+        internal static Dictionary<string, string>? LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
+        internal static Dictionary<string, string>? LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));
+        internal static Dictionary<string, string>? LocationActiveCharactersOldWoods => GetPoolFromFile(nameof(LocationActiveCharactersOldWoods));
+        internal static Dictionary<string, string>? LocationActiveCharactersSwamp => GetPoolFromFile(nameof(LocationActiveCharactersSwamp));
 
-        internal static IEnumerable<string>? NightCharacters => GetPoolFromFile(nameof(NightCharacters));
+        internal static Dictionary<string, string>? LocationStaticCharactersDryMeadow => GetPoolFromFile(nameof(LocationStaticCharactersDryMeadow));
+        internal static Dictionary<string, string>? LocationStaticCharactersSilentForest => GetPoolFromFile(nameof(LocationStaticCharactersSilentForest));
+        internal static Dictionary<string, string>? LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
+        internal static Dictionary<string, string>? LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
 
-        // Returns paths to character prefabs
-        private static IEnumerable<string>? GetPoolFromFile(string poolName)
+        internal static Dictionary<string, string>? FreeRoamingCharactersDryMeadow => GetPoolFromFile(nameof(FreeRoamingCharactersDryMeadow));
+        internal static Dictionary<string, string>? FreeRoamingCharactersSilentForest => GetPoolFromFile(nameof(FreeRoamingCharactersSilentForest));
+        internal static Dictionary<string, string>? FreeRoamingCharactersOldWoods => GetPoolFromFile(nameof(FreeRoamingCharactersOldWoods));
+        internal static Dictionary<string, string>? FreeRoamingCharactersSwamp => GetPoolFromFile(nameof(FreeRoamingCharactersSwamp));
+
+        internal static Dictionary<string, string>? NightCharacters => GetPoolFromFile(nameof(NightCharacters));
+
+
+
+        private static Dictionary<string, string>? GetPoolFromFile(string poolName)
         {
             string path = Path.Combine(CharacterPoolsDirectory, $"{poolName}.txt");
             if (!File.Exists(path))
                 return null;
 
             StreamReader reader = new StreamReader(path);
-            List<string> characterPaths = new();
+            Dictionary<string, string> items = new();
             while (!reader.EndOfStream)
             {
                 string[] tokens = reader.ReadLine().Trim().Split();
                 if (tokens.Length == 0)
                     continue;
 
-                if (ALL_CHARACTERS.TryGetValue(tokens[0], out string characterPath))
+                if (PoolNames.Contains(tokens[0]))
+                {
                     if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
                         for (int i = 0; i < timesToAdd; i++)
-                            characterPaths.Add(characterPath);
+                            foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)typeof(ItemPools).GetField(tokens[0]).GetValue(null))
+                                items.Add(item.Key, item.Value);
                     else
-                        characterPaths.Add(characterPath);
+                        foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)typeof(ItemPools).GetField(tokens[0]).GetValue(null))
+                            items.Add(item.Key, item.Value);
+                }
+                else if (ALL_CHARACTERS.ContainsKey(tokens[0]))
+                {
+                    if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
+                        for (int i = 0; i < timesToAdd; i++)
+                            items.Add(tokens[0], ALL_CHARACTERS[tokens[0]]);
+                    else
+                        items.Add(tokens[0], ALL_CHARACTERS[tokens[0]]);
+                }
             }
             reader.Close();
-            return characterPaths;
+            return items;
         }
 
         internal static IEnumerable<string>? GetLocationActivePoolForBiome(Biome.Type biome)
         {
             return biome switch
             {
-                Biome.Type.meadow => LocationActiveCharactersDryMeadow,
-                Biome.Type.forest => LocationActiveCharactersSilentForest,
-                Biome.Type.forest_mutated => LocationActiveCharactersOldWoods,
-                Biome.Type.swamp => LocationActiveCharactersSwamp,
+                Biome.Type.meadow => LocationActiveCharactersDryMeadow?.Values,
+                Biome.Type.forest => LocationActiveCharactersSilentForest?.Values,
+                Biome.Type.forest_mutated => LocationActiveCharactersOldWoods?.Values,
+                Biome.Type.swamp => LocationActiveCharactersSwamp?.Values,
                 _ => null,
             };
         }
@@ -66,10 +85,10 @@ namespace DarkwoodRandomizer.Plugin.Settings
         {
             return biome switch
             {
-                Biome.Type.meadow => LocationStaticCharactersDryMeadow,
-                Biome.Type.forest => LocationStaticCharactersSilentForest,
-                Biome.Type.forest_mutated => LocationStaticCharactersOldWoods,
-                Biome.Type.swamp => LocationStaticCharactersSwamp,
+                Biome.Type.meadow => LocationStaticCharactersDryMeadow?.Values,
+                Biome.Type.forest => LocationStaticCharactersSilentForest?.Values,
+                Biome.Type.forest_mutated => LocationStaticCharactersOldWoods?.Values,
+                Biome.Type.swamp => LocationStaticCharactersSwamp?.Values,
                 _ => null,
             };
         }
@@ -78,10 +97,10 @@ namespace DarkwoodRandomizer.Plugin.Settings
         {
             return biome switch
             {
-                Biome.Type.meadow => FreeRoamingCharactersDryMeadow,
-                Biome.Type.forest => FreeRoamingCharactersSilentForest,
-                Biome.Type.forest_mutated => FreeRoamingCharactersOldWoods,
-                Biome.Type.swamp => FreeRoamingCharactersSwamp,
+                Biome.Type.meadow => FreeRoamingCharactersDryMeadow?.Values,
+                Biome.Type.forest => FreeRoamingCharactersSilentForest?.Values,
+                Biome.Type.forest_mutated => FreeRoamingCharactersOldWoods?.Values,
+                Biome.Type.swamp => FreeRoamingCharactersSwamp?.Values,
                 _ => null,
             };
         }

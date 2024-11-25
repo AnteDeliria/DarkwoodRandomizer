@@ -21,7 +21,7 @@ namespace DarkwoodRandomizer.Patches
             if (inventory == null || inventory.invType != Inventory.InvType.deathDrop)
                 return;
 
-            IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
+            IEnumerable<string>? itemPool = ItemPools.CharacterLoot?.Keys;
             if (itemPool == null)
                 return;
 
