@@ -39,6 +39,9 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<bool>? Night_RandomizeScenarioDifficulty;
 
 
+        internal static ConfigEntry<bool>? Dreams_RandomizeDreams;
+
+
         internal static ConfigEntry<bool>? Vendors_RandomizeVendorInventory;
         internal static ConfigEntry<bool>? Vendors_EnsureStaples;
         internal static ConfigEntry<int>? Vendors_MinRandomSlots;
@@ -215,6 +218,15 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     key: "Randomize night scenario difficulty",
                     defaultValue: true,
                     description: "Expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
+                );
+
+
+            Dreams_RandomizeDreams = config.Bind
+                (
+                    section: "Dreams",
+                    key: "Randomize dreams",
+                    defaultValue: true,
+                    description: "Randomizes the order of dream events"
                 );
 
 
