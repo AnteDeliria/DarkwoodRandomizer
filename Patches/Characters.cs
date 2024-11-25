@@ -32,42 +32,52 @@ namespace DarkwoodRandomizer.Patches
         private static void FixCharacterDeathClip(Character __instance)
         {
             if (AccessTools.Field(typeof(Character), "deathAnim").GetValue(__instance) as string == "Death1")
-                AccessTools.Field(typeof(Character), "deathAnim").SetValue(__instance, null);
+                AccessTools.Field(typeof(Character), "deathAnim").SetValue(__instance, "");
         }
 
 
         private static void AdjustCharacterHealth(Character character, Biome.Type biome)
         {
-            if (!SettingsManager.CharacterScaling_AdjustHealth!.Value)
+            if (!SettingsManager.CharacterAttributes_ScaleHealthByBiome!.Value)
                 return;
 
-            float? mean = biome switch
+            float healthVarianceRange = SettingsManager.CharacterAttributes_HealthVarianceRange!.Value / 100;
+            if (healthVarianceRange < 0)
             {
-                Biome.Type.meadow => SettingsManager.CharacterScaling_MeanHealthDryMeadow!.Value,
-                Biome.Type.forest => SettingsManager.CharacterScaling_MeanHealthSilentForest!.Value,
-                Biome.Type.forest_mutated => SettingsManager.CharacterScaling_MeanHealthOldWoods!.Value,
-                Biome.Type.swamp => SettingsManager.CharacterScaling_MeanHealthSwamp!.Value,
-                _ => null
-            };
-            float? stdev = biome switch
+                DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");
+                healthVarianceRange = 0;
+            }
+
+            character.maxHealth = character.maxHealth * (1 + UnityEngine.Random.Range(-healthVarianceRange, healthVarianceRange));
+            character.health = character.maxHealth;
+
+
+            float scalingThreshold = biome switch
             {
-                Biome.Type.meadow => SettingsManager.CharacterScaling_StdevHealthDryMeadow!.Value,
-                Biome.Type.forest => SettingsManager.CharacterScaling_StdevHealthSilentForest!.Value,
-                Biome.Type.forest_mutated => SettingsManager.CharacterScaling_StdevHealthOldWoods!.Value,
-                Biome.Type.swamp => SettingsManager.CharacterScaling_StdevHealthSwamp!.Value,
-                _ => null
+                Biome.Type.meadow => SettingsManager.CharacterAttributes_HealthScalingThresholdDryMeadow!.Value,
+                Biome.Type.forest => SettingsManager.CharacterAttributes_HealthScalingThresholdSilentForest!.Value,
+                Biome.Type.forest_mutated => SettingsManager.CharacterAttributes_HealthScalingThresholdOldWoods!.Value,
+                Biome.Type.swamp => SettingsManager.CharacterAttributes_HealthScalingThresholdSwamp!.Value,
+                _ => float.MaxValue
             };
-            if (mean == null || stdev == null)
-                return;
+            if (scalingThreshold < 0)
+            {
+                DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthScalingThreshold is negative - defaulting to 0");
+                scalingThreshold = 0;
+            }
 
-            Random rand = new Random();
-            double u1 = 1.0 - rand.NextDouble();
-            double u2 = 1.0 - rand.NextDouble();
-            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
-            double health = (float)mean + (float)stdev * randStdNormal;
+            float scalingRatio = SettingsManager.CharacterAttributes_HealthScalingRatio!.Value;
+            if (scalingRatio <= 0)
+            {
+                DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthScalingRatio is negative or 0 - defaulting to 1");
+                scalingRatio = 1;
+            }
 
-            character.maxHealth = (float)health;
-            character.health = (float)health;
+            if (character.maxHealth > scalingThreshold)
+            {
+                character.maxHealth = character.maxHealth + (character.maxHealth - scalingThreshold) / scalingRatio;
+                character.health = character.maxHealth;
+            }
         }
 
         private static void PreventInfighting(Character character)

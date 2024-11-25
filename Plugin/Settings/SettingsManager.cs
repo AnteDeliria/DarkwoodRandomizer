@@ -26,15 +26,13 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<bool>? Characters_RandomizeNPCs;
         internal static ConfigEntry<bool>? Characters_PreventInfighting;
 
-        internal static ConfigEntry<bool>? CharacterScaling_AdjustHealth;
-        internal static ConfigEntry<float>? CharacterScaling_MeanHealthDryMeadow;
-        internal static ConfigEntry<float>? CharacterScaling_MeanHealthSilentForest;
-        internal static ConfigEntry<float>? CharacterScaling_MeanHealthOldWoods;
-        internal static ConfigEntry<float>? CharacterScaling_MeanHealthSwamp;
-        internal static ConfigEntry<float>? CharacterScaling_StdevHealthDryMeadow;
-        internal static ConfigEntry<float>? CharacterScaling_StdevHealthSilentForest;
-        internal static ConfigEntry<float>? CharacterScaling_StdevHealthOldWoods;
-        internal static ConfigEntry<float>? CharacterScaling_StdevHealthSwamp;
+        internal static ConfigEntry<bool>? CharacterAttributes_ScaleHealthByBiome;
+        internal static ConfigEntry<float>? CharacterAttributes_HealthScalingRatio;
+        internal static ConfigEntry<float>? CharacterAttributes_HealthScalingThresholdDryMeadow;
+        internal static ConfigEntry<float>? CharacterAttributes_HealthScalingThresholdSilentForest;
+        internal static ConfigEntry<float>? CharacterAttributes_HealthScalingThresholdOldWoods;
+        internal static ConfigEntry<float>? CharacterAttributes_HealthScalingThresholdSwamp;
+        internal static ConfigEntry<float>? CharacterAttributes_HealthVarianceRange;
 
 
         internal static ConfigEntry<bool>? Night_RandomizeCharacters;
@@ -153,68 +151,54 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 );
 
 
-            CharacterScaling_AdjustHealth = config.Bind
+            CharacterAttributes_ScaleHealthByBiome = config.Bind
                 (
-                    section: "Character Scaling",
-                    key: "Adjust character health",
+                    section: "Character.Attributes",
+                    key: "Scale character health",
                     defaultValue: true,
-                    description: "Adjusts character health according to specified settings. Health is normally distributed around a biome-specific mean and standard deviation"
+                    description: "Reduces the health of characters which are above a biome-specific threshold, making tough enemies easier to kill in earlier biomes. Character health is calculated as BaseHealth + (BaseHealth - Threshold) / ScalingRatio"
                 );
-            CharacterScaling_MeanHealthDryMeadow = config.Bind
+            CharacterAttributes_HealthScalingRatio = config.Bind
                 (
-                    section: "Character Scaling",
-                    key: "Mean character health - Dry Meadow",
+                    section: "Character.Attributes",
+                    key: "Health scaling ratio",
+                    defaultValue: 2f,
+                    description: "Any health above biome-specific character health thresholds will be scaled down by this value"
+                );
+            CharacterAttributes_HealthScalingThresholdDryMeadow = config.Bind
+                (
+                    section: "Character.Attributes",
+                    key: "Health scaling threshold - Dry Meadow",
                     defaultValue: 20f,
-                    description: "Mean character health for characters in the Dry Meadow biome"
+                    description: "Characters above this threshold in the Dry Meadow biome will have their health scaled down"
                 );
-            CharacterScaling_MeanHealthSilentForest = config.Bind
+            CharacterAttributes_HealthScalingThresholdSilentForest = config.Bind
                 (
-                    section: "Character Scaling",
-                    key: "Mean character health - Silent Forest",
+                    section: "Character.Attributes",
+                    key: "Health scaling threshold - Silent Forest",
                     defaultValue: 60f,
-                    description: "Mean character health for characters in the Silent Forest biome"
+                    description: "Characters above this threshold in the Silent Forest biome will have their health scaled down"
                 );
-            CharacterScaling_MeanHealthOldWoods = config.Bind
+            CharacterAttributes_HealthScalingThresholdOldWoods = config.Bind
                 (
-                    section: "Character Scaling",
-                    key: "Mean character health - Old Woods",
+                    section: "Character.Attributes",
+                    key: "Health scaling threshold - Old Woods",
                     defaultValue: 90f,
-                    description: "Mean character health for characters in the Old Woods biome"
+                    description: "Characters above this threshold in the Old Woods biome will have their health scaled down"
                 );
-            CharacterScaling_MeanHealthSwamp = config.Bind
+            CharacterAttributes_HealthScalingThresholdSwamp = config.Bind
                 (
-                    section: "Character Scaling",
-                    key: "Mean character health - Swamp",
+                    section: "Character.Attributes",
+                    key: "Health scaling threshold - Swamp",
                     defaultValue: 120f,
-                    description: "Mean character health for characters in the Swamp biome"
+                    description: "Characters above this threshold in the Swamp biome will have their health scaled down"
                 );
-            CharacterScaling_StdevHealthDryMeadow = config.Bind
+            CharacterAttributes_HealthVarianceRange = config.Bind
                 (
-                    section: "Character Scaling",
-                    key: "Stdev character health - Dry Meadow",
-                    defaultValue: 5f,
-                    description: "Character health standard deviation for characters in the Dry Meadow biome. 68%/95%/99.7% of health values will lie within 1*Stdev/2*Stdev/3*Stdev of the Mean"
-                );
-            CharacterScaling_StdevHealthSilentForest = config.Bind
-                (
-                    section: "Character Scaling",
-                    key: "Standard deviation of character health - Silent Forest",
-                    defaultValue: 10f,
-                    description: "Character health standard deviation for characters in the Silent Forest biome. 68%/95%/99.7% of health values will lie within 1*Stdev/2*Stdev/3*Stdev of the Mean"
-                );
-            CharacterScaling_StdevHealthOldWoods = config.Bind
-                (
-                    section: "Character Scaling",
-                    key: "Standard deviation of character health - Old Woods",
-                    defaultValue: 15f,
-                    description: "Character health standard deviation for characters in the Old Woods biome. 68%/95%/99.7% of health values will lie within 1*Stdev/2*Stdev/3*Stdev of the Mean"
-                );
-            CharacterScaling_StdevHealthSwamp = config.Bind
-                (
-                    section: "Character Scaling",
-                    key: "Standard deviation of character health - Swamp",
-                    defaultValue: 20f,
-                    description: "Character health standard deviation for characters in the Swamp biome. 68%/95%/99.7% of health values will lie within 1*Stdev/2*Stdev/3*Stdev of the Mean"
+                    section: "Character.Attributes",
+                    key: "Character health variance percentage",
+                    defaultValue: 50f,
+                    description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between [BaseHealth * (1 - HealthVarianceRange/100) and BaseHealth * (1 + HealthVarianceRange/100)]"
                 );
 
 
