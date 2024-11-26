@@ -3,10 +3,8 @@ using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
-using Random = System.Random;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -30,9 +28,6 @@ namespace DarkwoodRandomizer.Patches
 
         internal static void TryAdjustCharacterHealth(Character character, Biome.Type biome)
         {
-            if (!SettingsManager.CharacterAttributes_ScaleHealthByBiome!.Value)
-                return;
-
             float healthVarianceRange = SettingsManager.CharacterAttributes_HealthVarianceRange!.Value / 100;
             if (healthVarianceRange < 0)
             {
@@ -42,34 +37,6 @@ namespace DarkwoodRandomizer.Patches
 
             character.maxHealth = character.maxHealth * (1 + UnityEngine.Random.Range(-healthVarianceRange, healthVarianceRange));
             character.health = character.maxHealth;
-
-
-            float scalingThreshold = biome switch
-            {
-                Biome.Type.meadow => SettingsManager.CharacterAttributes_HealthScalingThresholdDryMeadow!.Value,
-                Biome.Type.forest => SettingsManager.CharacterAttributes_HealthScalingThresholdSilentForest!.Value,
-                Biome.Type.forest_mutated => SettingsManager.CharacterAttributes_HealthScalingThresholdOldWoods!.Value,
-                Biome.Type.swamp => SettingsManager.CharacterAttributes_HealthScalingThresholdSwamp!.Value,
-                _ => float.MaxValue
-            };
-            if (scalingThreshold < 0)
-            {
-                DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthScalingThreshold is negative - defaulting to 0");
-                scalingThreshold = 0;
-            }
-
-            float scalingRatio = SettingsManager.CharacterAttributes_HealthScalingRatio!.Value;
-            if (scalingRatio <= 0)
-            {
-                DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthScalingRatio is negative or 0 - defaulting to 1");
-                scalingRatio = 1;
-            }
-
-            if (character.maxHealth > scalingThreshold)
-            {
-                character.maxHealth = character.maxHealth + (character.maxHealth - scalingThreshold) / scalingRatio;
-                character.health = character.maxHealth;
-            }
         }
 
         internal static void TryPreventInfighting(Character character)
