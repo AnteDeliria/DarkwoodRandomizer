@@ -102,18 +102,16 @@ namespace DarkwoodRandomizer.Patches
                         .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
                         .ToList();
 
-            foreach (Inventory inventory in inventoriesPool.ToArray())
+            foreach (Inventory sourceInventory in inventoriesPool.ToArray())
             {
-                Inventory randomInventory = inventoriesPool.RandomItem();
-                inventoriesPool.Remove(randomInventory);
+                Inventory targetInventory = inventoriesPool.RandomItem();
 
                 // I don't know if setting all of them is necessary
-                inventory.maxColumns = randomInventory.maxColumns;
-                inventory.currentColumn = randomInventory.currentColumn;
-                inventory.currentRow = randomInventory.currentRow;
-                AccessTools.Field(typeof(Inventory), "slotSize").SetValue(inventory, AccessTools.Field(typeof(Inventory), "slotSize").GetValue(randomInventory));
-                inventory.position = randomInventory.position;
-                inventory.slots = randomInventory.slots;
+                (targetInventory.maxColumns, sourceInventory.maxColumns) = (sourceInventory.maxColumns, targetInventory.maxColumns);
+                (targetInventory.currentColumn, sourceInventory.currentColumn) = (sourceInventory.currentColumn, targetInventory.currentColumn);
+                (targetInventory.currentRow, sourceInventory.currentRow) = (sourceInventory.currentRow, targetInventory.currentRow);
+                (targetInventory.position, sourceInventory.position) = (sourceInventory.position, targetInventory.position);
+                (targetInventory.slots, sourceInventory.slots) = (sourceInventory.slots, targetInventory.slots);
             }
         }
 
