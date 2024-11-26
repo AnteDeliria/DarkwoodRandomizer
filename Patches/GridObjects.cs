@@ -12,7 +12,7 @@ namespace DarkwoodRandomizer.Patches
     {
         [HarmonyPatch(typeof(WorldGenerator), "onConnectedRoads")]
         [HarmonyPrefix]
-        internal static void ShuffleGridObjects(WorldGenerator __instance)
+        private static void ShuffleGridObjects(WorldGenerator __instance)
         {
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
@@ -41,14 +41,8 @@ namespace DarkwoodRandomizer.Patches
             foreach (Biome biome in biomesDestination)
                 biome.gObjects.Clear();
 
-            while (gridObjectPool.Count > 0)
-            {
-                GridObject randomGridObject = gridObjectPool.RandomItem();
-                Biome randomBiome = biomesDestination.RandomItem();
-
-                randomBiome.gObjects.Add(randomGridObject);
-                gridObjectPool.Remove(randomGridObject);
-            }
+            foreach (GridObject gridObject in gridObjectPool.ToArray())
+                biomesDestination.RandomItem().gObjects.Add(gridObject);
 
             Plugin.Controller.GridObjectsShuffled = true;
         }
@@ -57,7 +51,7 @@ namespace DarkwoodRandomizer.Patches
 
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         [HarmonyPrefix]
-        internal static void RandomizeGridObjectRotation(GameObject __instance)
+        private static void RandomizeGridObjectRotation(GameObject __instance)
         {
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;

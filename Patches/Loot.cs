@@ -89,6 +89,7 @@ namespace DarkwoodRandomizer.Patches
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
                         .Where(inv => !inv.inSaw && !inv.isWorkbench)
+                        .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")) // These are normally unreachable
                         .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
                         .ToList();
 
@@ -121,9 +122,14 @@ namespace DarkwoodRandomizer.Patches
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
                         .Where(inv => !inv.inSaw && !inv.isWorkbench)
+                        .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")) // These are normally unreachable
                         .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)));
 
-            DarkwoodRandomizerPlugin.Logger.LogInfo($"Item containers pool size: {inventoriesList.Count()}");
+            foreach (Inventory inventory in inventoriesList)
+            {
+                if (inventory.slots.Count == 18 && inventory.slots[0].invItem.type == "barrelExploding")
+                    DarkwoodRandomizerPlugin.Logger.LogInfo($"Name: {inventory.gameObject.name}, Location: {inventory.gameObject.transform.position}");
+            }
 
             Dictionary<Biome.Type, List<Inventory>> inventoriesPool = new()
             {

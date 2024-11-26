@@ -28,7 +28,7 @@ namespace DarkwoodRandomizer.Patches
 
         internal static void TryAdjustCharacterHealth(Character character, Biome.Type biome)
         {
-            float healthVarianceRange = SettingsManager.CharacterAttributes_HealthVarianceRange!.Value / 100;
+            float healthVarianceRange = SettingsManager.CharacterStats_HealthVarianceRange!.Value / 100;
             if (healthVarianceRange < 0)
             {
                 DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");

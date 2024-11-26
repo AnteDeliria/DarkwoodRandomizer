@@ -27,7 +27,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static ConfigEntry<bool>? Characters_PreventInfighting;
 
 
-        internal static ConfigEntry<float>? CharacterAttributes_HealthVarianceRange;
+        internal static ConfigEntry<float>? CharacterStats_HealthVarianceRange;
 
 
         internal static ConfigEntry<bool>? Night_RandomizeCharacters;
@@ -149,9 +149,9 @@ namespace DarkwoodRandomizer.Plugin.Settings
                 );
 
 
-            CharacterAttributes_HealthVarianceRange = config.Bind
+            CharacterStats_HealthVarianceRange = config.Bind
                 (
-                    section: "Character.Attributes",
+                    section: "Character Stats",
                     key: "Character health variance percentage",
                     defaultValue: 50f,
                     description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between BaseHealth ± BaseHealth * HealthVarianceRange/100"
