@@ -18,7 +18,9 @@ namespace DarkwoodRandomizer.Plugin.Settings
         internal static Dictionary<string, string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
         internal static Dictionary<string, string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));
         internal static Dictionary<string, string>? VendorWolfman => GetPoolFromFile(nameof(VendorWolfman));
-        
+        internal static Dictionary<string, string>? VendorTheThree => GetPoolFromFile(nameof(VendorTheThree));
+        internal static Dictionary<string, string>? VendorDoctor => GetPoolFromFile(nameof(VendorDoctor));
+
         internal static Dictionary<string, string>? CharacterLoot => GetPoolFromFile(nameof(CharacterLoot));
 
 

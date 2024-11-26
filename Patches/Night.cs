@@ -46,7 +46,7 @@ namespace DarkwoodRandomizer.Patches
             Characters.TryAdjustCharacterHealth(character, Player.Instance.whereAmI.bigLocation.biomeType);
             // End Injection
 
-            AccessTools.Field(typeof(Character), "character").SetValue(__instance, character);
+            AccessTools.Field(typeof(CharacterSpawner), "character").SetValue(__instance, character);
             if (Player.Instance.whereAmI.bigLocation != null)
                 character.setWaypoints(Player.Instance.whereAmI.bigLocation.waypoints);
             if (attackPlayer)

@@ -170,7 +170,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     section: "Night",
                     key: "Randomize night scenario difficulty",
                     defaultValue: true,
-                    description: "Expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
+                    description: "From night 4 onwards, expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
                 );
 
 

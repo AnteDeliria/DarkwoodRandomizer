@@ -17,6 +17,10 @@ namespace DarkwoodRandomizer.Patches
             if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
                 return;
 
+            // Must drop key
+            if (new string[] { "doctor_confronted", "doctor_confronted2", "doctor_idle", "doctor_trapset" }.Contains(__instance.name.ToLower()))
+                return;
+
             Inventory? inventory = __instance.gameObject.GetComponent<Inventory>();
             if (inventory == null || inventory.invType != Inventory.InvType.deathDrop)
                 return;
@@ -25,11 +29,11 @@ namespace DarkwoodRandomizer.Patches
             if (itemPool == null)
                 return;
 
-            inventory.clearSlots();
-
             InvSlot? firstSlot = inventory.slots.FirstOrDefault();
             if (firstSlot == null)
                 return;
+
+            inventory.clear();
 
             string itemName = itemPool.RandomItem();
 
@@ -48,6 +52,11 @@ namespace DarkwoodRandomizer.Patches
                 durability = 1;
 
             firstSlot.createItem(itemName, amount, durability);
+
+            if (inventory.GetComponent<Selectable>() == null)
+            {
+                inventory.gameObject.AddComponent<Selectable>();
+            }
         }
 
 

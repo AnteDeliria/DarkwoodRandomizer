@@ -148,9 +148,10 @@ namespace DarkwoodRandomizer.Patches
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
 
+
             List<string> locationsToShuffle = new();
 
-            foreach (WorldChunk worldChunk in __instance.worldChunks.Where(x => x.centralChunk))
+            foreach (WorldChunk worldChunk in __instance.worldChunks.Where(x => !x.isBorderChunk))
             {
                 if
                 (
@@ -163,13 +164,16 @@ namespace DarkwoodRandomizer.Patches
                 }
             }
 
+
+            List<WorldChunk> chunkPool = __instance.worldChunks.Where(x => !x.isBorderChunk).ToList();
             while (locationsToShuffle.Count > 0)
             {
                 string randomLocationName = locationsToShuffle.RandomItem();
-                WorldChunk randomWorldChunk = __instance.worldChunks.Where(x => x.centralChunk).RandomItem();
+                WorldChunk randomWorldChunk = chunkPool.RandomItem();
 
                 if (HIDEOUTS.Contains(randomLocationName) || string.IsNullOrEmpty(randomWorldChunk.locationName))
                 {
+                    chunkPool.Remove(randomWorldChunk);
                     locationsToShuffle.Remove(randomLocationName);
                     randomWorldChunk.locationName = randomLocationName;
                 }

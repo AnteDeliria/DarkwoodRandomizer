@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
-    internal static class Traders
+    internal static class Vendors
     {
         private static int MaxNPCSlots = 42;
 
@@ -32,7 +32,8 @@ namespace DarkwoodRandomizer.Patches
                 "piotrek" => ItemPools.VendorPiotrek?.Keys,
                 "wolfman" => ItemPools.VendorWolfman?.Keys,
                 "nightTrader" => ItemPools.VendorNightTrader?.Keys,
-                "theThree" => ItemPools.VendorNightTrader?.Keys,
+                "theThree" => ItemPools.VendorTheThree?.Keys,
+                "doctor_act2" => ItemPools.VendorDoctor?.Keys,
                 _ => null
             };
             if (iremPool == null)
