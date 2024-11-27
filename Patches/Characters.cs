@@ -26,27 +26,33 @@ namespace DarkwoodRandomizer.Patches
         //}
 
 
-        internal static void TryAdjustCharacterHealth(Character character, Biome.Type biome)
+        [HarmonyPatch(typeof(Character), "init")]
+        [HarmonyPostfix]
+        private static void ModifyCharacter(Character __instance)
         {
-            float healthVarianceRange = SettingsManager.CharacterStats_HealthVarianceRange!.Value / 100;
-            if (healthVarianceRange < 0)
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return;
+
+            if (SettingsManager.CharacterStats_HealthVarianceRange!.Value != 0)
             {
-                DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");
-                healthVarianceRange = 0;
+                float healthVarianceRange = SettingsManager.CharacterStats_HealthVarianceRange!.Value / 100;
+                if (healthVarianceRange < 0)
+                {
+                    DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");
+                    healthVarianceRange = 0;
+                }
+
+                __instance.maxHealth = __instance.maxHealth * (1 + UnityEngine.Random.Range(-healthVarianceRange, healthVarianceRange));
+                __instance.health = __instance.maxHealth;
             }
 
-            character.maxHealth = character.maxHealth * (1 + UnityEngine.Random.Range(-healthVarianceRange, healthVarianceRange));
-            character.health = character.maxHealth;
-        }
-
-        internal static void TryPreventInfighting(Character character)
-        {
             if (SettingsManager.Characters_PreventInfighting!.Value)
-                foreach (Character.EnemyType enemyType in character.enemyTypes)
+            {
+                foreach (Character.EnemyType enemyType in __instance.enemyTypes)
                     if (enemyType.faction != Faction.player)
                         enemyType.attacks = false;
+            }
         }
-
 
 
         internal static void TryRandomizeCharacterProperties(Character character)
@@ -111,13 +117,10 @@ namespace DarkwoodRandomizer.Patches
                             Character? component = null;
                             if (characterPool != null)
                                 component = Core.AddPrefab(characterPool.RandomItem(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
-                            
+                            // End injection
+
                             if (component != null)
                             {
-                                TryPreventInfighting(component);
-                                TryAdjustCharacterHealth(component, __instance.biome.type);
-                                // End injection
-
                                 component.noWaypoints = true;
                                 ___freeRoamingChars.Add(component.gameObject);
                                 Core.addToSaveable(component.gameObject, true, true);
@@ -148,29 +151,6 @@ namespace DarkwoodRandomizer.Patches
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
 
-            //if (Settings.Enemies_RandomizeNPCs!.Value)
-            //{
-            //    List<NPC> npcPool = new();
-            //    foreach (Location location in __instance.locations)
-            //        foreach (NPC npc in location.gameObject.GetComponentsInChildren<NPC>())
-            //            npcPool.Add(npc);
-
-            //    DarkwoodRandomizerPlugin.Logger.LogInfo($"NPC pool: {string.Join(", ", npcPool.Select(npc => npc.name))}");
-
-            //    foreach (Location location in __instance.locations)
-            //        foreach (NPC npc in location.gameObject.GetComponentsInChildren<NPC>())
-            //        {
-            //            NPC newNPC = npcPool[UnityEngine.Random.Range(0, npcPool.Count)];
-            //            npcPool.Remove(newNPC);
-
-            //            DarkwoodRandomizerPlugin.Logger.LogInfo($"Old: {npc.name}, New: {newNPC.name}");
-
-            //            npc.name = newNPC.name;
-            //            npc.inventory = newNPC.inventory;
-            //            npc.characterDialogue = newNPC.characterDialogue;
-            //        }
-            //}
-
             Plugin.Controller.RunWhenPredicateMet
             (
                 predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.LocationPositionsRandomized,
@@ -193,21 +173,16 @@ namespace DarkwoodRandomizer.Patches
                                 newCharacter = oldCharacter;
                             else
                             {
-                                GameObject newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                                GameObject? newCharacterObject = Core.AddPrefab(characterPool.RandomItem(), oldCharacter.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
                                 Core.addToSaveable(newCharacterObject, true, true);
                                 UnityEngine.Object.Destroy(oldCharacter.gameObject);
-
-                                newCharacter = newCharacterObject.GetComponent<Character>();
-                            }
-
-                            if (newCharacter != null)
-                            {
-                                TryPreventInfighting(newCharacter);
-                                TryAdjustCharacterHealth(newCharacter, location.biomeType);
+                                newCharacter = newCharacterObject?.GetComponent<Character>();
                             }
 
                             location.charactersList.Remove(oldCharacter);
-                            location.charactersList.Add(newCharacter);
+
+                            if (newCharacter != null)
+                                location.charactersList.Add(newCharacter);
                         }
 
                         foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
@@ -226,20 +201,15 @@ namespace DarkwoodRandomizer.Patches
                             else
                                 newCharacterName = characterPool.RandomItem();
 
-                            GameObject newCharacterObject = Core.AddPrefab(newCharacterName, characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
+                            GameObject? newCharacterObject = Core.AddPrefab(newCharacterName, characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
                             Core.addToSaveable(newCharacterObject, true, true);
                             UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
-
-                            Character? newCharacter = newCharacterObject.GetComponent<Character>();
-
-                            if (newCharacter != null)
-                            {
-                                TryPreventInfighting(newCharacter);
-                                TryAdjustCharacterHealth(newCharacter, location.biomeType);
-                            }
+                            Character? newCharacter = newCharacterObject?.GetComponent<Character>();
 
                             location.spawnPoints.Remove(characterSpawnPoint);
-                            location.charactersList.Add(newCharacter);
+
+                            if (newCharacter != null)
+                                location.charactersList.Add(newCharacter);
                         }
                     }
 

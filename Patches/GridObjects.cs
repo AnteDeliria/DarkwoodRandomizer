@@ -29,7 +29,7 @@ namespace DarkwoodRandomizer.Patches
             else
                 return; // unknown chapter ID
 
-            IEnumerable<Biome> biomesDestination = __instance.bigBiomes.Select(biome => __instance.getBiomePreset(biome.type));
+            List<Biome> biomesDestination = __instance.bigBiomes.Select(biome => __instance.getBiomePreset(biome.type)).ToList();
 
 
             List<GridObject> gridObjectPool = new();
@@ -38,11 +38,13 @@ namespace DarkwoodRandomizer.Patches
                 foreach (GridObject gObject in biome.gObjects)
                     gridObjectPool.Add(gObject);
 
+            gridObjectPool.Shuffle();
+
             foreach (Biome biome in biomesDestination)
                 biome.gObjects.Clear();
 
-            foreach (GridObject gridObject in gridObjectPool.ToArray())
-                biomesDestination.RandomItem().gObjects.Add(gridObject);
+            for (int i = 0; i < gridObjectPool.Count; i++)
+                biomesDestination[i % biomesDestination.Count()].gObjects.Add(gridObjectPool[i]);
 
             Plugin.Controller.GridObjectsShuffled = true;
         }

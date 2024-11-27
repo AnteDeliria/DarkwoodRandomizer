@@ -41,9 +41,6 @@ namespace DarkwoodRandomizer.Patches
 
             string randomCharacter = characterPool.RandomItem();
             Character? character = Core.AddPrefab(randomCharacter, vector, Quaternion.Euler(90f, 0f, 0f), gameObject, false).GetComponent<Character>();
-
-            Characters.TryPreventInfighting(character);
-            Characters.TryAdjustCharacterHealth(character, Player.Instance.whereAmI.bigLocation.biomeType);
             // End Injection
 
             AccessTools.Field(typeof(CharacterSpawner), "character").SetValue(__instance, character);
