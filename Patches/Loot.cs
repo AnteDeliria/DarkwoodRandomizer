@@ -11,7 +11,7 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Loot
     {
-        [HarmonyPatch(typeof(Character), "die")]
+        [HarmonyPatch(typeof(Character), "die2")]
         [HarmonyPrefix]
         private static void RandomizeCharacterLoot(Character __instance)
         {
@@ -56,12 +56,7 @@ namespace DarkwoodRandomizer.Patches
 
             firstSlot.createItem(itemName, amount, durability);
 
-            if (inventory.GetComponent<Selectable>() == null)
-            {
-                Selectable selectable = __instance.gameObject.AddComponent<Selectable>();
-                selectable.enabled = true;
-            }
-
+            __instance.notSelectableWhenDead = false;
             AccessTools.Method(typeof(Character), "setDeathCollider").Invoke(__instance, null);
         }
 
