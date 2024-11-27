@@ -58,7 +58,8 @@ namespace DarkwoodRandomizer.Patches
 
             if (inventory.GetComponent<Selectable>() == null)
             {
-                inventory.gameObject.AddComponent<Selectable>();
+                Selectable selectable = inventory.gameObject.AddComponent<Selectable>();
+                selectable.enabled = true;
             }
         }
 

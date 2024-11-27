@@ -3,7 +3,6 @@ banshee	1
 bansheebaby	1
 brat_babykury	1
 bride	1
-centipede	1
 chicken	1
 chomperblack	1
 chomperbride	1
@@ -17,8 +16,6 @@ humanspider	1
 humanspiderminion	1
 kamikaze	1
 dodger	1
-doppelganger	1
-tank	1
 pig	1
 rabbit	1
 redneck	1
@@ -26,7 +23,6 @@ redneck02	1
 redneck03	1
 spider02	1
 spider03_day	1
-swamper1	1
 villager	1
 villager1_burning	1
 villager3_plank	1

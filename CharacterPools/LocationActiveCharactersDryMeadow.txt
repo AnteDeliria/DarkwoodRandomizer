@@ -4,8 +4,6 @@ brat_babykury	1
 bride	1
 chicken	1
 chomperhalf	1
-chomperred	1
-chomperred_small	1
 deer	1
 dog	1
 dogmutated	1
