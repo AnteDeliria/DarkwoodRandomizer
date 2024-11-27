@@ -24,8 +24,8 @@ namespace DarkwoodRandomizer.Patches
             if (new string[] { "doctor_confronted", "doctor_confronted2", "doctor_idle", "doctor_trapset" }.Contains(__instance.name.ToLower()))
                 return;
 
-            Inventory? inventory = __instance.gameObject.GetComponent<Inventory>();
-            if (inventory == null || inventory.invType != Inventory.InvType.deathDrop)
+            Inventory? inventory = __instance.GetComponent<Inventory>();
+            if (inventory == null || inventory?.invType != Inventory.InvType.deathDrop)
                 return;
 
             IEnumerable<string>? itemPool = ItemPools.CharacterLoot?.Keys;
@@ -56,11 +56,7 @@ namespace DarkwoodRandomizer.Patches
 
             firstSlot.createItem(itemName, amount, durability);
 
-            if (inventory.GetComponent<Selectable>() == null)
-            {
-                Selectable selectable = inventory.gameObject.AddComponent<Selectable>();
-                selectable.enabled = true;
-            }
+            AccessTools.Method(typeof(Character), "setDeathCollider").Invoke(inventory.GetComponent<Character>(), null);
         }
 
 
