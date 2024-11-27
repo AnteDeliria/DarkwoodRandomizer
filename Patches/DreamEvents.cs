@@ -20,7 +20,10 @@ namespace DarkwoodRandomizer.Patches
             if (DreamPools.PROLOGUE_DREAMS.Contains(presetName) || DreamPools.EPILOGUE_DREAMS.Contains(presetName) || DreamPools.STORY_DREAMS.Contains(presetName))
                 return true;
 
-            IEnumerable<string> dreamPool = DreamPools.LEVEL_UP_DREAMS.Concat(DreamPools.UNUSED_DREAMS);
+            List<string> dreamPool = DreamPools.LEVEL_UP_DREAMS.Concat(DreamPools.UNUSED_DREAMS).ToList();
+            if (!Core.currentProfile.backerOnlyContent)
+                dreamPool.Remove("dream_acid");
+
             DreamPreset dreamPreset = __instance.presetList.Where(x => dreamPool.Contains(x.name)).RandomItem();
             __instance.presetList.Remove(dreamPreset);
             __result = dreamPreset;
