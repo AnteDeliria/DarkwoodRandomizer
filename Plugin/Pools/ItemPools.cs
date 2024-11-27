@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace DarkwoodRandomizer.Plugin.Settings
+namespace DarkwoodRandomizer.Plugin.Pools
 {
     internal static class ItemPools
     {

@@ -1,4 +1,5 @@
 ﻿using DarkwoodRandomizer.Plugin;
+using DarkwoodRandomizer.Plugin.Pools;
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System.Collections.Generic;

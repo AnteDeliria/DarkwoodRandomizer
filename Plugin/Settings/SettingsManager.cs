@@ -179,7 +179,7 @@ namespace DarkwoodRandomizer.Plugin.Settings
                     section: "Dreams",
                     key: "Randomize dreams",
                     defaultValue: true,
-                    description: "Randomizes the order of dream events"
+                    description: "Randomizes the first dream sequence, and in addition adds a new dream sequence (cut content) to the vanilla random dream pool"
                 );
 
 

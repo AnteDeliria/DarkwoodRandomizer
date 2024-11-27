@@ -1,4 +1,5 @@
 ﻿using DarkwoodRandomizer.Plugin;
+using DarkwoodRandomizer.Plugin.Pools;
 using DarkwoodRandomizer.Plugin.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace DarkwoodRandomizer.Patches
         private static void RandomizeCharacterLoot(Character __instance)
         {
             if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
+                return;
+            if (Singleton<Dreams>.Instance.dreaming)
                 return;
 
             // Must drop key
