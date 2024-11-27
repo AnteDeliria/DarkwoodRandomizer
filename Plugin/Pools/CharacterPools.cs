@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace DarkwoodRandomizer.Plugin.Pools
 {
@@ -52,12 +53,22 @@ namespace DarkwoodRandomizer.Plugin.Pools
                 if (PoolNames.Contains(tokens[0]))
                 {
                     if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
+                    {
                         for (int i = 0; i < timesToAdd; i++)
-                            foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)typeof(ItemPools).GetField(tokens[0]).GetValue(null))
-                                items.Add(item.Key, item.Value);
+                        {
+                            Dictionary<string, string>? pool = typeof(CharacterPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
+                            if (pool != null)
+                                foreach (KeyValuePair<string, string> item in pool)
+                                    items.Add(item.Key, item.Value);
+                        }
+                    }
                     else
-                        foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)typeof(ItemPools).GetField(tokens[0]).GetValue(null))
-                            items.Add(item.Key, item.Value);
+                    {
+                        Dictionary<string, string>? pool = typeof(CharacterPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
+                        if (pool != null)
+                            foreach (KeyValuePair<string, string> item in pool)
+                                items.Add(item.Key, item.Value);
+                    }
                 }
                 else if (ALL_CHARACTERS.ContainsKey(tokens[0]))
                 {
@@ -69,7 +80,11 @@ namespace DarkwoodRandomizer.Plugin.Pools
                 }
             }
             reader.Close();
-            return items;
+
+            if (items.Count == 0)
+                return null;
+            else
+                return items;
         }
 
         internal static IEnumerable<string>? GetLocationActivePoolForBiome(Biome.Type biome)

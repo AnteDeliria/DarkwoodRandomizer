@@ -56,7 +56,13 @@ namespace DarkwoodRandomizer.Patches
 
             firstSlot.createItem(itemName, amount, durability);
 
-            AccessTools.Method(typeof(Character), "setDeathCollider").Invoke(inventory.GetComponent<Character>(), null);
+            if (inventory.GetComponent<Selectable>() == null)
+            {
+                Selectable selectable = __instance.gameObject.AddComponent<Selectable>();
+                selectable.enabled = true;
+            }
+
+            AccessTools.Method(typeof(Character), "setDeathCollider").Invoke(__instance, null);
         }
 
 
