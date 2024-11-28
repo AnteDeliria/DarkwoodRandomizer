@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
 
-namespace DarkwoodRandomizer.Plugin.Settings
+namespace DarkwoodRandomizer.Settings
 {
     internal static class SettingsManager
     {

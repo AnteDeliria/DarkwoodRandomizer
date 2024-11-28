@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using DarkwoodRandomizer.Plugin;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace DarkwoodRandomizer.Plugin.Pools
+namespace DarkwoodRandomizer.Pools
 {
     internal static class ItemPools
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DarkwoodRandomizer.Plugin.Pools
+namespace DarkwoodRandomizer.Pools
 {
     internal static class LocationPools
     {

@@ -1,5 +1,5 @@
 ﻿using DarkwoodRandomizer.Plugin;
-using DarkwoodRandomizer.Plugin.Settings;
+using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,13 +38,13 @@ namespace DarkwoodRandomizer.Patches
                 foreach (GridObject gObject in biome.gObjects)
                     gridObjectPool.Add(gObject);
 
-            gridObjectPool.Shuffle();
-
             foreach (Biome biome in biomesDestination)
                 biome.gObjects.Clear();
 
-            for (int i = 0; i < gridObjectPool.Count; i++)
-                biomesDestination[i % biomesDestination.Count()].gObjects.Add(gridObjectPool[i]);
+            foreach (GridObject gObject in gridObjectPool)
+            {
+                biomesDestination.RandomItem().gObjects.Add(gObject);
+            }
 
             Plugin.Controller.GridObjectsShuffled = true;
         }

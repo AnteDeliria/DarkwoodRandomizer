@@ -1,4 +1,4 @@
-﻿namespace DarkwoodRandomizer.Plugin.Settings
+﻿namespace DarkwoodRandomizer.Settings
 {
     internal enum GameState
     {

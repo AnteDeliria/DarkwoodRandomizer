@@ -1,6 +1,6 @@
 ﻿using DarkwoodRandomizer.Plugin;
-using DarkwoodRandomizer.Plugin.Pools;
-using DarkwoodRandomizer.Plugin.Settings;
+using DarkwoodRandomizer.Pools;
+using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
 
@@ -18,22 +18,20 @@ namespace DarkwoodRandomizer.Patches
         {
             if (___inventory == null || __instance.gameObject?.GetComponent<NPC>() == null)
                 return true;
-
-            string npcName = __instance.gameObject.GetComponent<NPC>().name;
-
-            if (npcName == "piotrek" || npcName == "wolfman")
-                if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
-                    return true;
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+                return true;
             if (!SettingsManager.Vendors_RandomizeVendorInventory!.Value)
                 return true;
 
+            string npcName = __instance.gameObject.GetComponent<NPC>().name.ToLower();
 
             IEnumerable<string>? iremPool = npcName switch
             {
                 "piotrek" => ItemPools.VendorPiotrek?.Keys,
                 "wolfman" => ItemPools.VendorWolfman?.Keys,
-                "nightTrader" => ItemPools.VendorNightTrader?.Keys,
-                "theThree" => ItemPools.VendorTheThree?.Keys,
+                "wolfman_att" => ItemPools.VendorWolfman?.Keys,
+                "nighttrader" => ItemPools.VendorNightTrader?.Keys,
+                "thethree" => ItemPools.VendorTheThree?.Keys,
                 "doctor_act2" => ItemPools.VendorDoctor?.Keys,
                 _ => null
             };
@@ -50,12 +48,12 @@ namespace DarkwoodRandomizer.Patches
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
                     assignedSlots += 2;
                 }
-                else if (npcName == "wolfman")
+                else if (npcName == "wolfman" || npcName == "wolfman_att")
                 {
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
                     assignedSlots += 1;
                 }
-                else if (npcName == "nightTrader" || npcName == "theThree")
+                else if (npcName == "nighttrader" || npcName == "thethree")
                 {
                     ___inventory.addItem(new InvItemClass("gasoline", UnityEngine.Random.Range(0.7f, 1f), 1), true);
                     ___inventory.addItem(new InvItemClass("wood", 1, UnityEngine.Random.Range(1, 11)), true);

@@ -2,8 +2,8 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using System.Reflection;
-using DarkwoodRandomizer.Plugin.Settings;
 using System.IO;
+using DarkwoodRandomizer.Settings;
 
 namespace DarkwoodRandomizer.Plugin;
 

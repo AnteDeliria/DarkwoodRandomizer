@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DarkwoodRandomizer.Plugin.Pools
+namespace DarkwoodRandomizer.Pools
 {
     internal static class DreamPools
     {

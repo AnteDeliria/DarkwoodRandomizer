@@ -1,6 +1,6 @@
 ﻿using DarkwoodRandomizer.Plugin;
-using DarkwoodRandomizer.Plugin.Pools;
-using DarkwoodRandomizer.Plugin.Settings;
+using DarkwoodRandomizer.Pools;
+using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,7 +41,10 @@ namespace DarkwoodRandomizer.Patches
                 return true;
 
             string randomCharacter = characterPool.RandomItem();
-            Character? character = Core.AddPrefab(randomCharacter, vector, Quaternion.Euler(90f, 0f, 0f), gameObject, false).GetComponent<Character>();
+            Character? character = Core.AddPrefab(randomCharacter, vector, Quaternion.Euler(90f, 0f, 0f), gameObject, false)?.GetComponent<Character>();
+
+            if (character == null)
+                return true;
             // End Injection
 
             AccessTools.Field(typeof(CharacterSpawner), "character").SetValue(__instance, character);

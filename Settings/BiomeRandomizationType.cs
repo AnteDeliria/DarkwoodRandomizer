@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DarkwoodRandomizer.Plugin.Settings
+namespace DarkwoodRandomizer.Settings
 {
     internal enum BiomeRandomizationType
     {

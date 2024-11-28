@@ -1,6 +1,6 @@
 ﻿using DarkwoodRandomizer.Plugin;
-using DarkwoodRandomizer.Plugin.Pools;
-using DarkwoodRandomizer.Plugin.Settings;
+using DarkwoodRandomizer.Pools;
+using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Loot
     {
-        [HarmonyPatch(typeof(Character), "die2")]
+        [HarmonyPatch(typeof(Character), "die")]
         [HarmonyPrefix]
         private static void RandomizeCharacterLoot(Character __instance)
         {
@@ -94,11 +94,12 @@ namespace DarkwoodRandomizer.Patches
                         .Concat(Singleton<OutsideLocations>.Instance.gameObject
                             .GetComponentsInChildren<Inventory>(includeInactive: true))
                         .Where(inv => inv.invType == Inventory.InvType.itemInv)
+                        .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
+                        .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
                         .Where(inv => inv.gameObject.GetComponent<Trigger>() == null)
                         .Where(inv => inv.gameObject.GetComponent<Padlock>() == null)
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
-                        .Where(inv => !inv.inSaw && !inv.isWorkbench)
                         .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")) // These are normally unreachable
                         .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
                         .ToList();
@@ -124,11 +125,12 @@ namespace DarkwoodRandomizer.Patches
                         .Concat(Singleton<OutsideLocations>.Instance.gameObject
                             .GetComponentsInChildren<Inventory>(includeInactive: true))
                         .Where(inv => inv.invType == Inventory.InvType.itemInv)
+                        .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
+                        .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
                         .Where(inv => inv.gameObject.GetComponent<Trigger>() == null)
                         .Where(inv => inv.gameObject.GetComponent<Padlock>() == null)
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
                         .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
-                        .Where(inv => !inv.inSaw && !inv.isWorkbench)
                         .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")) // These are normally unreachable
                         .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)));
 

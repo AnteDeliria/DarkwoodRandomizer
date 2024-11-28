@@ -1,6 +1,6 @@
 ﻿using DarkwoodRandomizer.Plugin;
-using DarkwoodRandomizer.Plugin.Pools;
-using DarkwoodRandomizer.Plugin.Settings;
+using DarkwoodRandomizer.Pools;
+using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
