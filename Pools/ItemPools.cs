@@ -802,10 +802,8 @@ namespace DarkwoodRandomizer.Pools
             ["blanket_sister"] = "InventoryItems/misc/blanket_sister",
             ["bone"] = "InventoryItems/misc/bone",
             ["bucket"] = "InventoryItems/misc/bucket",
-            ["cable"] = "InventoryItems/misc/cable",
             ["cassette"] = "InventoryItems/misc/cassette",
             ["cassette_dream_tut"] = "InventoryItems/misc/cassette_dream_tut",
-            ["chain_well"] = "InventoryItems/misc/chain_well",
             ["chemical_bottle_01"] = "InventoryItems/misc/chemical_bottle_01",
             ["chicken_head"] = "InventoryItems/misc/chicken_head",
             ["cross_01"] = "InventoryItems/misc/cross_01",
@@ -882,6 +880,8 @@ namespace DarkwoodRandomizer.Pools
 
         internal static readonly Dictionary<string, string> QUEST_ITEMS = new()
         {
+            ["cable"] = "InventoryItems/misc/cable",
+            ["chain_well"] = "InventoryItems/misc/chain_well",
             ["hat_brother"] = "InventoryItems/questItems/hat_brother",
             ["note_musicianCard1"] = "InventoryItems/questItems/note_musicianCard1",
             ["oxygenTank_empty"] = "InventoryItems/questItems/oxygenTank_empty",

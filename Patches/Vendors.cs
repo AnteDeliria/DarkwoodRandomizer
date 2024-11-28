@@ -12,16 +12,14 @@ namespace DarkwoodRandomizer.Patches
         private static int MaxNPCSlots = 42;
 
 
-        [HarmonyPatch(typeof(InventoryRandom), "randomize")]
-        [HarmonyPrefix]
-        private static bool RandomizeTraderInventory(InventoryRandom __instance, Inventory? ___inventory)
+        [HarmonyPatch(typeof(InventoryRandom), "spawnItems")]
+        [HarmonyPostfix]
+        private static void RandomizeTraderInventory(InventoryRandom __instance, Inventory? ___inventory)
         {
             if (___inventory == null || __instance.gameObject?.GetComponent<NPC>() == null)
-                return true;
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
-                return true;
+                return;
             if (!SettingsManager.Vendors_RandomizeVendorInventory!.Value)
-                return true;
+                return;
 
             string npcName = __instance.gameObject.GetComponent<NPC>().name.ToLower();
 
@@ -36,8 +34,9 @@ namespace DarkwoodRandomizer.Patches
                 _ => null
             };
             if (iremPool == null)
-                return true;
+                return;
 
+            ___inventory.clear();
             int assignedSlots = 0;
 
             if (SettingsManager.Vendors_EnsureStaples!.Value)
@@ -45,13 +44,15 @@ namespace DarkwoodRandomizer.Patches
                 if (npcName == "piotrek")
                 {
                     ___inventory.addItem(new InvItemClass("cable", 1f, 1), true);
+                    ___inventory.addItem(new InvItemClass("chain_well", 1f, 1), true);
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
-                    assignedSlots += 2;
+                    assignedSlots += 3;
                 }
                 else if (npcName == "wolfman" || npcName == "wolfman_att")
                 {
+                    ___inventory.addItem(new InvItemClass("chain_well", 1f, 1), true);
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
-                    assignedSlots += 1;
+                    assignedSlots += 2;
                 }
                 else if (npcName == "nighttrader" || npcName == "thethree")
                 {
@@ -95,7 +96,7 @@ namespace DarkwoodRandomizer.Patches
                 assignedSlots++;
             }
 
-            return false;
+            return;
         }
     }
 }

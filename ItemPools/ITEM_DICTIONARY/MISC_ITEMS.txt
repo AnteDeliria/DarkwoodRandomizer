@@ -3,10 +3,8 @@ bark_01
 blanket_sister
 bone
 bucket
-cable
 cassette
 cassette_dream_tut
-chain_well
 chemical_bottle_01
 chicken_head
 cross_01

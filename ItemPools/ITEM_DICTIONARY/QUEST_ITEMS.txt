@@ -1,3 +1,5 @@
+cable
+chain_well
 hat_brother
 note_musicianCard1
 oxygenTank_empty

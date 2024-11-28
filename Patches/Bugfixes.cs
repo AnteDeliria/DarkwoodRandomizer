@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Settings;
+using HarmonyLib;
 using Pathfinding;
+using System.Linq;
 using UnityEngine;
 
 namespace DarkwoodRandomizer.Patches
@@ -7,6 +9,22 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Bugfixes
     {
+        // Unlocks Piotrek's door - needed because dog gets randomized away
+        [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
+        [HarmonyPostfix]
+        private static void OpenPiotrekDoor(WorldGenerator __instance, GameObject ___WorldChunksGO)
+        {
+            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1))
+                return;
+
+            ___WorldChunksGO.GetComponentsInChildren<Locked>(includeInactive: true)
+                ?.FirstOrDefault(
+                    locked => locked.GetComponentInParent<Location>(includeInactive: true)?.name == "sub_cottage_junk_01_done" &&
+                        locked.GetComponent<EventTriggers>()?.remoteTriggers?.Count == 1)
+                ?.unlock();
+        }
+
+
         // Prevents error message spam (needed because this errors every time it is called on a reloaded save)
         [HarmonyPatch(typeof(AstarPath), "GetNodesAround")]
         [HarmonyPrefix]

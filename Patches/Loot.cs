@@ -20,7 +20,6 @@ namespace DarkwoodRandomizer.Patches
             if (Singleton<Dreams>.Instance.dreaming)
                 return;
 
-            // Must drop key
             if (new string[] { "doctor_confronted", "doctor_confronted2", "doctor_idle", "doctor_trapset" }.Contains(__instance.name.ToLower()))
                 return;
 
@@ -55,9 +54,7 @@ namespace DarkwoodRandomizer.Patches
                 durability = 1;
 
             firstSlot.createItem(itemName, amount, durability);
-
             __instance.notSelectableWhenDead = false;
-            AccessTools.Method(typeof(Character), "setDeathCollider").Invoke(__instance, null);
         }
 
 
