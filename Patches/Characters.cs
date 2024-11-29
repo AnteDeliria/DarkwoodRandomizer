@@ -159,7 +159,7 @@ namespace DarkwoodRandomizer.Patches
                 {
                     foreach (Location location in Singleton<WorldGenerator>.Instance.locations.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values))
                     {
-                        foreach (Character oldCharacter in location.charactersList.ToArray())
+                        foreach (Character oldCharacter in location.GetComponentsInChildren<Character>(includeInactive: true))
                         {
                             IEnumerable<string>? characterPool = null;
 
@@ -180,13 +180,15 @@ namespace DarkwoodRandomizer.Patches
                                 newCharacter = newCharacterObject?.GetComponent<Character>();
                             }
 
-                            location.charactersList.Remove(oldCharacter);
-
-                            if (newCharacter != null)
-                                location.charactersList.Add(newCharacter);
+                            if (location.charactersList.Contains(oldCharacter))
+                            {
+                                location.charactersList.Remove(oldCharacter);
+                                if (newCharacter != null)
+                                    location.charactersList.Add(newCharacter);
+                            }
                         }
 
-                        foreach (CharacterSpawnPoint characterSpawnPoint in location.spawnPoints.ToArray())
+                        foreach (CharacterSpawnPoint characterSpawnPoint in location.GetComponentsInChildren<CharacterSpawnPoint>(includeInactive: true))
                         {
                             IEnumerable<string>? characterPool = null;
 
@@ -207,10 +209,12 @@ namespace DarkwoodRandomizer.Patches
                             UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
                             Character? newCharacter = newCharacterObject?.GetComponent<Character>();
 
-                            location.spawnPoints.Remove(characterSpawnPoint);
-
-                            if (newCharacter != null)
-                                location.charactersList.Add(newCharacter);
+                            if (location.spawnPoints.Contains(characterSpawnPoint))
+                            {
+                                location.spawnPoints.Remove(characterSpawnPoint);
+                                if (newCharacter != null)
+                                    location.charactersList.Add(newCharacter);
+                            }
                         }
                     }
 

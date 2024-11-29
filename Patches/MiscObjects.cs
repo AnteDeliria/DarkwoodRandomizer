@@ -25,7 +25,7 @@ namespace DarkwoodRandomizer.Patches
             if (worldGenerator.chapterID == 1)
                 biomesSource = worldGenerator.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated }.Contains(x.type));
             else if (worldGenerator.chapterID == 2)
-                biomesSource = worldGenerator.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated, Biome.Type.swamp }.Contains(x.type));
+                biomesSource = worldGenerator.biomePresets.Where(x => x.type == Biome.Type.swamp);
             else
                 return; // unknown chapter ID
 

@@ -242,7 +242,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Loot",
                     key: "Shuffle item containers - include key and quest items",
                     defaultValue: false,
-                    description: "Whether to add item containers containing KEY and QUEST items to the shuffle pool"
+                    description: "Whether to add item containers containing ket and quest items to the shuffle pool"
                 );
             Loot_ShuffleItemContainersIncludeOutsideLocations = config.Bind
                 (

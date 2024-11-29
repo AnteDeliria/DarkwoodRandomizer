@@ -86,11 +86,10 @@ namespace DarkwoodRandomizer.Patches
         private static IEnumerable<Inventory> GetItemContainers()
         {
             GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
-            IEnumerable<Inventory> containers;
+            IEnumerable<Inventory> containers = worldChunksGO.GetComponentsInChildren<Inventory>(includeInactive: true);
 
-            containers = worldChunksGO.GetComponentsInChildren<Inventory>(includeInactive: true);
             if (SettingsManager.Loot_ShuffleItemContainersIncludeOutsideLocations!.Value)
-                containers = containers.Concat(Singleton<OutsideLocations>.Instance.gameObject.GetComponentsInChildren<Inventory>(includeInactive: true));
+                containers = containers.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values.SelectMany(loc => loc.GetComponentsInChildren<Inventory>(includeInactive: true)));
             if (!SettingsManager.Loot_ShuffleItemContainersIncludeEmptyContainers!.Value)
                 containers = containers.Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot.invItem?.type)));
             if (!SettingsManager.Loot_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
@@ -133,12 +132,6 @@ namespace DarkwoodRandomizer.Patches
             GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
 
             IEnumerable<Inventory> inventoriesList = GetItemContainers();
-
-            foreach (Inventory inventory in inventoriesList)
-            {
-                if (inventory.slots.Count == 18 && inventory.slots[0].invItem.type == "barrelExploding")
-                    DarkwoodRandomizerPlugin.Logger.LogInfo($"Name: {inventory.gameObject.name}, Location: {inventory.gameObject.transform.position}");
-            }
 
             Dictionary<Biome.Type, List<Inventory>> inventoriesPool = new()
             {

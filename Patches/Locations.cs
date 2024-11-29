@@ -119,7 +119,7 @@ namespace DarkwoodRandomizer.Patches
             }
 
 
-            List<WorldChunk> chunkPool = __instance.worldChunks.Where(x => !x.isBorderChunk).ToList();
+            List<WorldChunk> chunkPool = __instance.worldChunks.Where(x => !x.isBorderChunk && x.biome.type != Biome.Type.empty).ToList();
             while (locationsToShuffle.Count > 0)
             {
                 string randomLocationName = locationsToShuffle.RandomItem();

@@ -1,5 +1,4 @@
-﻿using DarkwoodRandomizer.Patches;
-using DarkwoodRandomizer.Settings;
+﻿using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -29,8 +28,6 @@ namespace DarkwoodRandomizer.Plugin
         [HarmonyPrefix]
         private static void ResetState(WorldGenerator __instance)
         {
-            //__instance.chapterID = 2;
-
             OutsideLocationsLoaded = false;
             LocationCharactersRandomized = false;
             FreeRoamingCharactersRandomized = false;

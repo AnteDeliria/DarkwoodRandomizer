@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using DarkwoodRandomizer.Settings;
+using HarmonyLib;
 
 namespace DarkwoodRandomizer.Patches
 {

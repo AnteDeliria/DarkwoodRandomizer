@@ -30,7 +30,6 @@ namespace DarkwoodRandomizer.Patches
                 "wolfman_att" => ItemPools.VendorWolfman?.Keys,
                 "nighttrader" => ItemPools.VendorNightTrader?.Keys,
                 "thethree" => ItemPools.VendorTheThree?.Keys,
-                "doctor_act2" => ItemPools.VendorDoctor?.Keys,
                 _ => null
             };
             if (iremPool == null)
