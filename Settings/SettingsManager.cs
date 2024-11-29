@@ -45,6 +45,9 @@ namespace DarkwoodRandomizer.Settings
 
         internal static ConfigEntry<bool>? Loot_ShuffleItemContainers;
         internal static ConfigEntry<BiomeRandomizationType>? Loot_ShuffleItemContainersType;
+        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersIncludeOutsideLocations;
+        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersIncludeEmptyContainers;
+        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersIncludeKeyAndQuestItems;
         internal static ConfigEntry<bool>? Loot_RandomizeCharacterDrops;
 
 
@@ -227,6 +230,28 @@ namespace DarkwoodRandomizer.Settings
                     defaultValue: BiomeRandomizationType.WithinBiome,
                     description: "Global - shuffle item containers globally\nWithin Biome - shuffle item containers within each biome"
                 );
+            Loot_ShuffleItemContainersIncludeEmptyContainers = config.Bind
+                (
+                    section: "Loot",
+                    key: "Shuffle item containers - include empty containers",
+                    defaultValue: false,
+                    description: "Whether to add empty item containers to the shuffle pool"
+                );
+            Loot_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
+                (
+                    section: "Loot",
+                    key: "Shuffle item containers - include key and quest items",
+                    defaultValue: false,
+                    description: "Whether to add item containers containing KEY and QUEST items to the shuffle pool"
+                );
+            Loot_ShuffleItemContainersIncludeOutsideLocations = config.Bind
+                (
+                    section: "Loot",
+                    key: "Shuffle item containers - include outside locations",
+                    defaultValue: true,
+                    description: "Whether to add item containers from outside locations to the shuffle pool"
+                );
+
             Loot_RandomizeCharacterDrops = config.Bind
                 (
                     section: "Loot",

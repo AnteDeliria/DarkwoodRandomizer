@@ -82,24 +82,39 @@ namespace DarkwoodRandomizer.Patches
             );
         }
 
+
+        private static IEnumerable<Inventory> GetItemContainers()
+        {
+            GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
+            IEnumerable<Inventory> containers;
+
+            containers = worldChunksGO.GetComponentsInChildren<Inventory>(includeInactive: true);
+            if (SettingsManager.Loot_ShuffleItemContainersIncludeOutsideLocations!.Value)
+                containers = containers.Concat(Singleton<OutsideLocations>.Instance.gameObject.GetComponentsInChildren<Inventory>(includeInactive: true));
+            if (!SettingsManager.Loot_ShuffleItemContainersIncludeEmptyContainers!.Value)
+                containers = containers.Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot.invItem?.type)));
+            if (!SettingsManager.Loot_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
+                containers = containers.Where(inv => !inv.slots.Any(slot => ItemPools.KEY_ITEMS.Keys.Concat(ItemPools.QUEST_ITEMS.Keys).Contains(slot.invItem?.type)));
+
+            containers = containers
+                .Where(inv => inv.invType == Inventory.InvType.itemInv)
+                .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
+                .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
+                .Where(inv => inv.gameObject.GetComponent<Trigger>() == null)
+                .Where(inv => inv.gameObject.GetComponent<Padlock>() == null)
+                .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
+                .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
+                .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")); // These are normally unreachable
+
+            return containers;
+        }
+
+
         private static void RandomizeItemContainersGlobally()
         {
             GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
 
-            List<Inventory> inventoriesPool = worldChunksGO
-                        .GetComponentsInChildren<Inventory>(includeInactive: true)
-                        .Concat(Singleton<OutsideLocations>.Instance.gameObject
-                            .GetComponentsInChildren<Inventory>(includeInactive: true))
-                        .Where(inv => inv.invType == Inventory.InvType.itemInv)
-                        .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Trigger>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Padlock>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
-                        .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
-                        .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")) // These are normally unreachable
-                        .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)))
-                        .ToList();
+            IEnumerable<Inventory> inventoriesPool = GetItemContainers();
 
             foreach (Inventory sourceInventory in inventoriesPool.ToArray())
             {
@@ -117,19 +132,7 @@ namespace DarkwoodRandomizer.Patches
         {
             GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
 
-            IEnumerable<Inventory> inventoriesList = worldChunksGO
-                        .GetComponentsInChildren<Inventory>(includeInactive: true)
-                        .Concat(Singleton<OutsideLocations>.Instance.gameObject
-                            .GetComponentsInChildren<Inventory>(includeInactive: true))
-                        .Where(inv => inv.invType == Inventory.InvType.itemInv)
-                        .Where(inv => inv.gameObject.GetComponent<Workbench>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Saw>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Trigger>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Padlock>() == null)
-                        .Where(inv => inv.gameObject.GetComponent<Item>()?.switchable == false)
-                        .Where(inv => inv.gameObject.GetComponent<Item>()?.isDroppedItem == false)
-                        .Where(inv => !(inv.gameObject.name == "LootContainer_MetalCrate_big_2A")) // These are normally unreachable
-                        .Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot?.invItem?.type)));
+            IEnumerable<Inventory> inventoriesList = GetItemContainers();
 
             foreach (Inventory inventory in inventoriesList)
             {
