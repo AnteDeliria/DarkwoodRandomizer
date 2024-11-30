@@ -9,6 +9,23 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Bugfixes
     {
+        // Fixes certain characters not having pathfinding AI in water by moving them out of water
+        [HarmonyPatch(typeof(Character), "Update")]
+        [HarmonyPrefix]
+        private static void FixWaterPathfinding(Character __instance)
+        {
+            if (!__instance.inWater)
+                return;
+
+            AIPath? aIPath = __instance.GetComponent<AIPath>();
+            if (aIPath == null)
+                return;
+
+            if (AccessTools.Field(typeof(AIPath), "path").GetValue(aIPath) == null && __instance.animator?.Library?.GetClipByName("Walk_Water") == null)
+                __instance.transform.position = Core.getWalkablePointAround(__instance.transform.position, 500f);
+        }
+
+
         // Unlocks Piotrek's door - needed because dog gets randomized away
         [HarmonyPatch(typeof(WorldGenerator), "activatePlayer")]
         [HarmonyPostfix]
