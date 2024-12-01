@@ -103,17 +103,19 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
 
-            List<string> locationsToShuffle = new();
+            Dictionary<string, Biome.Type?> locationsToShuffle = new();
 
             foreach (WorldChunk worldChunk in __instance.worldChunks.Where(x => !x.isBorderChunk))
             {
-                if
-                (
-                    (SettingsManager.Locations_RandomizeLocationPosition!.Value && LocationPools.NON_BORDER_LOCATIONS.Contains(worldChunk.locationName)) ||
-                    (SettingsManager.Locations_RandomizeHideoutPosition!.Value && LocationPools.HIDEOUTS.Contains(worldChunk.locationName))
-                )
+                if (SettingsManager.Locations_RandomizeLocationPosition!.Value && LocationPools.NON_BORDER_LOCATIONS.Contains(worldChunk.locationName))
                 {
-                    locationsToShuffle.Add(worldChunk.locationName);
+                    locationsToShuffle.Add(worldChunk.locationName, null); // Shuffle to any biome
+                    worldChunk.locationName = "";
+                }
+                
+                if (SettingsManager.Locations_RandomizeHideoutPosition!.Value && LocationPools.HIDEOUTS.Contains(worldChunk.locationName))
+                {
+                    locationsToShuffle.Add(worldChunk.locationName, worldChunk.biome.type); // Shuffle to same biome
                     worldChunk.locationName = "";
                 }
             }
@@ -122,20 +124,13 @@ namespace DarkwoodRandomizer.Patches
             List<WorldChunk> chunkPool = __instance.worldChunks.Where(x => !x.isBorderChunk && x.biome.type != Biome.Type.empty).ToList();
             while (locationsToShuffle.Count > 0)
             {
-                string randomLocationName = locationsToShuffle.RandomItem();
-                WorldChunk randomWorldChunk;
+                KeyValuePair<string, Biome.Type?> locationToShuffle = locationsToShuffle.RandomItem();
+                string randomLocationName = locationToShuffle.Key;
+                Biome.Type? randomLocationBiome = locationToShuffle.Value;
 
-                if (LocationPools.HIDEOUTS.Contains(randomLocationName)) // Shuffle hideouts within their biome
-                {
-                    randomWorldChunk = randomLocationName switch
-                    {
-                        "med_cottage_tree_01" => chunkPool.Where(x => x.biome.type == Biome.Type.meadow).RandomItem(),
-                        "big_farm_02" => chunkPool.Where(x => x.biome.type == Biome.Type.forest).RandomItem(),
-                        "big_farm_03" => chunkPool.Where(x => x.biome.type == Biome.Type.forest_mutated).RandomItem(),
-                        "med_hideout_04" or "med_hideout_05" => chunkPool.Where(x => x.biome.type == Biome.Type.swamp).RandomItem(),
-                        _ => chunkPool.RandomItem(),
-                    };
-                }
+                WorldChunk randomWorldChunk;
+                if (randomLocationBiome != null)
+                    randomWorldChunk = chunkPool.Where(x => x.biome.type == randomLocationBiome).RandomItem();
                 else
                     randomWorldChunk = chunkPool.RandomItem();
 
@@ -143,8 +138,9 @@ namespace DarkwoodRandomizer.Patches
                 {
                     chunkPool.Remove(randomWorldChunk);
                     locationsToShuffle.Remove(randomLocationName);
+
                     if (!string.IsNullOrEmpty(randomWorldChunk.locationName))
-                        locationsToShuffle.Add(randomWorldChunk.locationName);
+                        locationsToShuffle.Add(randomWorldChunk.locationName, randomWorldChunk.biome.type);
 
                     randomWorldChunk.locationName = randomLocationName;
                 }
