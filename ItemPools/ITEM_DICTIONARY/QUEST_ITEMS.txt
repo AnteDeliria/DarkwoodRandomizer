@@ -1,5 +1,6 @@
 cable
 chain_well
+compressor_parts_01
 hat_brother
 note_musicianCard1
 oxygenTank_empty

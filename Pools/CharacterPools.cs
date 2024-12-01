@@ -15,36 +15,36 @@ namespace DarkwoodRandomizer.Pools
                 nameof(NPC_CHARACTERS_CH1), nameof(NPC_CHARACTERS_CH2), nameof(NPC_CHARACTERS_EPILOGUE)];
 
 
-        internal static Dictionary<string, string>? LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
-        internal static Dictionary<string, string>? LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));
-        internal static Dictionary<string, string>? LocationActiveCharactersOldWoods => GetPoolFromFile(nameof(LocationActiveCharactersOldWoods));
-        internal static Dictionary<string, string>? LocationActiveCharactersSwamp => GetPoolFromFile(nameof(LocationActiveCharactersSwamp));
+        internal static List<string>? LocationActiveCharactersDryMeadow => GetPoolFromFile(nameof(LocationActiveCharactersDryMeadow));
+        internal static List<string>? LocationActiveCharactersSilentForest => GetPoolFromFile(nameof(LocationActiveCharactersSilentForest));
+        internal static List<string>? LocationActiveCharactersOldWoods => GetPoolFromFile(nameof(LocationActiveCharactersOldWoods));
+        internal static List<string>? LocationActiveCharactersSwamp => GetPoolFromFile(nameof(LocationActiveCharactersSwamp));
 
-        internal static Dictionary<string, string>? LocationStaticCharactersDryMeadow => GetPoolFromFile(nameof(LocationStaticCharactersDryMeadow));
-        internal static Dictionary<string, string>? LocationStaticCharactersSilentForest => GetPoolFromFile(nameof(LocationStaticCharactersSilentForest));
-        internal static Dictionary<string, string>? LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
-        internal static Dictionary<string, string>? LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
+        internal static List<string>? LocationStaticCharactersDryMeadow => GetPoolFromFile(nameof(LocationStaticCharactersDryMeadow));
+        internal static List<string>? LocationStaticCharactersSilentForest => GetPoolFromFile(nameof(LocationStaticCharactersSilentForest));
+        internal static List<string>? LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
+        internal static List<string>? LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
 
-        internal static Dictionary<string, string>? GlobalCharactersDryMeadow => GetPoolFromFile(nameof(GlobalCharactersDryMeadow));
-        internal static Dictionary<string, string>? GlobalCharactersSilentForest => GetPoolFromFile(nameof(GlobalCharactersSilentForest));
-        internal static Dictionary<string, string>? GlobalCharactersOldWoods => GetPoolFromFile(nameof(GlobalCharactersOldWoods));
-        internal static Dictionary<string, string>? GlobalCharactersSwamp => GetPoolFromFile(nameof(GlobalCharactersSwamp));
+        internal static List<string>? GlobalCharactersDryMeadow => GetPoolFromFile(nameof(GlobalCharactersDryMeadow));
+        internal static List<string>? GlobalCharactersSilentForest => GetPoolFromFile(nameof(GlobalCharactersSilentForest));
+        internal static List<string>? GlobalCharactersOldWoods => GetPoolFromFile(nameof(GlobalCharactersOldWoods));
+        internal static List<string>? GlobalCharactersSwamp => GetPoolFromFile(nameof(GlobalCharactersSwamp));
 
-        internal static Dictionary<string, string>? NightCharactersDryMeadow => GetPoolFromFile(nameof(NightCharactersDryMeadow));
-        internal static Dictionary<string, string>? NightCharactersSilentForest => GetPoolFromFile(nameof(NightCharactersSilentForest));
-        internal static Dictionary<string, string>? NightCharactersOldWoods => GetPoolFromFile(nameof(NightCharactersOldWoods));
-        internal static Dictionary<string, string>? NightCharactersSwamp => GetPoolFromFile(nameof(NightCharactersSwamp));
+        internal static List<string>? NightCharactersDryMeadow => GetPoolFromFile(nameof(NightCharactersDryMeadow));
+        internal static List<string>? NightCharactersSilentForest => GetPoolFromFile(nameof(NightCharactersSilentForest));
+        internal static List<string>? NightCharactersOldWoods => GetPoolFromFile(nameof(NightCharactersOldWoods));
+        internal static List<string>? NightCharactersSwamp => GetPoolFromFile(nameof(NightCharactersSwamp));
 
 
 
-        private static Dictionary<string, string>? GetPoolFromFile(string poolName)
+        private static List<string>? GetPoolFromFile(string poolName)
         {
             string path = Path.Combine(CharacterPoolsDirectory, $"{poolName}.txt");
             if (!File.Exists(path))
                 return null;
 
             StreamReader reader = new StreamReader(path);
-            Dictionary<string, string> items = new();
+            List<string> items = new();
             while (!reader.EndOfStream)
             {
                 string[] tokens = reader.ReadLine().Trim().Split();
@@ -59,25 +59,25 @@ namespace DarkwoodRandomizer.Pools
                         {
                             Dictionary<string, string>? pool = typeof(CharacterPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
                             if (pool != null)
-                                foreach (KeyValuePair<string, string> item in pool)
-                                    items.Add(item.Key, item.Value);
+                                foreach (string item in pool.Keys)
+                                    items.Add(item);
                         }
                     }
                     else
                     {
                         Dictionary<string, string>? pool = typeof(CharacterPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
                         if (pool != null)
-                            foreach (KeyValuePair<string, string> item in pool)
-                                items.Add(item.Key, item.Value);
+                            foreach (string item in pool.Keys)
+                                items.Add(item);
                     }
                 }
                 else if (ALL_CHARACTERS.ContainsKey(tokens[0]))
                 {
                     if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
                         for (int i = 0; i < timesToAdd; i++)
-                            items.Add(tokens[0], ALL_CHARACTERS[tokens[0]]);
+                            items.Add(tokens[0]);
                     else
-                        items.Add(tokens[0], ALL_CHARACTERS[tokens[0]]);
+                        items.Add(tokens[0]);
                 }
             }
             reader.Close();
@@ -88,52 +88,60 @@ namespace DarkwoodRandomizer.Pools
                 return items;
         }
 
-        internal static IEnumerable<string>? GetLocationActivePoolForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetLocationActivePathsForBiome(Biome.Type biome)
         {
-            return biome switch
+            List<string>? pool = biome switch
             {
-                Biome.Type.meadow => LocationActiveCharactersDryMeadow?.Values,
-                Biome.Type.forest => LocationActiveCharactersSilentForest?.Values,
-                Biome.Type.forest_mutated => LocationActiveCharactersOldWoods?.Values,
-                Biome.Type.swamp => LocationActiveCharactersSwamp?.Values,
+                Biome.Type.meadow => LocationActiveCharactersDryMeadow,
+                Biome.Type.forest => LocationActiveCharactersSilentForest,
+                Biome.Type.forest_mutated => LocationActiveCharactersOldWoods,
+                Biome.Type.swamp => LocationActiveCharactersSwamp,
                 _ => null,
             };
+
+            return pool?.Select(x => ALL_CHARACTERS[x]);
         }
 
-        internal static IEnumerable<string>? GetLocationStaticPoolForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetLocationStaticPathsForBiome(Biome.Type biome)
         {
-            return biome switch
+            List<string>? pool = biome switch
             {
-                Biome.Type.meadow => LocationStaticCharactersDryMeadow?.Values,
-                Biome.Type.forest => LocationStaticCharactersSilentForest?.Values,
-                Biome.Type.forest_mutated => LocationStaticCharactersOldWoods?.Values,
-                Biome.Type.swamp => LocationStaticCharactersSwamp?.Values,
+                Biome.Type.meadow => LocationStaticCharactersDryMeadow,
+                Biome.Type.forest => LocationStaticCharactersSilentForest,
+                Biome.Type.forest_mutated => LocationStaticCharactersOldWoods,
+                Biome.Type.swamp => LocationStaticCharactersSwamp,
                 _ => null,
             };
+
+            return pool?.Select(x => ALL_CHARACTERS[x]);
         }
 
-        internal static IEnumerable<string>? GetGlobalCharacterPoolForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetGlobalCharacterPathsForBiome(Biome.Type biome)
         {
-            return biome switch
+            List<string>? pool = biome switch
             {
-                Biome.Type.meadow => GlobalCharactersDryMeadow?.Values,
-                Biome.Type.forest => GlobalCharactersSilentForest?.Values,
-                Biome.Type.forest_mutated => GlobalCharactersOldWoods?.Values,
-                Biome.Type.swamp => GlobalCharactersSwamp?.Values,
+                Biome.Type.meadow => GlobalCharactersDryMeadow,
+                Biome.Type.forest => GlobalCharactersSilentForest,
+                Biome.Type.forest_mutated => GlobalCharactersOldWoods,
+                Biome.Type.swamp => GlobalCharactersSwamp,
                 _ => null,
             };
+
+            return pool?.Select(x => ALL_CHARACTERS[x]);
         }
 
-        internal static IEnumerable<string>? GetNightPoolForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetNightPathsForBiome(Biome.Type biome)
         {
-            return biome switch
+            List<string>? pool = biome switch
             {
-                Biome.Type.meadow => NightCharactersDryMeadow?.Values,
-                Biome.Type.forest => NightCharactersSilentForest?.Values,
-                Biome.Type.forest_mutated => NightCharactersOldWoods?.Values,
-                Biome.Type.swamp => NightCharactersSwamp?.Values,
+                Biome.Type.meadow => NightCharactersDryMeadow,
+                Biome.Type.forest => NightCharactersSilentForest,
+                Biome.Type.forest_mutated => NightCharactersOldWoods,
+                Biome.Type.swamp => NightCharactersSwamp,
                 _ => null,
             };
+
+            return pool?.Select(x => ALL_CHARACTERS[x]);
         }
 
         internal static readonly Dictionary<string, string> ALL_CHARACTERS = new()

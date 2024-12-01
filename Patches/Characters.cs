@@ -99,14 +99,14 @@ namespace DarkwoodRandomizer.Patches
             IEnumerable<string>? characterPool;
 
             if (__instance.location != null && SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value)
-                characterPool = CharacterPools.GetGlobalCharacterPoolForBiome(__instance.location.biomeType);
+                characterPool = CharacterPools.GetGlobalCharacterPathsForBiome(__instance.location.biomeType);
             else if (__instance.location == null && SettingsManager.Characters_RandomizeGlobalCharacters!.Value)
             {
                 Biome.Type? biome = Singleton<WorldGenerator>.Instance.bigBiomes.Where(biome => biome.globalCharacterSpawnPoints.Contains(__instance)).FirstOrDefault()?.type;
                 if (biome == null)
                     return true;
 
-                characterPool = CharacterPools.GetGlobalCharacterPoolForBiome((Biome.Type)biome);
+                characterPool = CharacterPools.GetGlobalCharacterPathsForBiome((Biome.Type)biome);
             }
             else
                 return true;
@@ -173,7 +173,7 @@ namespace DarkwoodRandomizer.Patches
                         if (pointWithinBounds != Vector3.zero)
                         {
                             // Injection
-                            IEnumerable<string>? characterPool = CharacterPools.GetGlobalCharacterPoolForBiome(__instance.biome.type);
+                            IEnumerable<string>? characterPool = CharacterPools.GetGlobalCharacterPathsForBiome(__instance.biome.type);
                             Character? component = null;
                             if (characterPool != null)
                                 component = Core.AddPrefab(characterPool.RandomItem(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
@@ -222,9 +222,9 @@ namespace DarkwoodRandomizer.Patches
                             IEnumerable<string>? characterPool = null;
 
                             if (SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                                characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
+                                characterPool = CharacterPools.GetLocationActivePathsForBiome(location.biomeType);
                             else if (SettingsManager.Characters_RandomizeLocationStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                                characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
+                                characterPool = CharacterPools.GetLocationStaticPathsForBiome(location.biomeType);
 
                             Character? newCharacter;
 

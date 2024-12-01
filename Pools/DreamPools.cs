@@ -23,10 +23,7 @@ namespace DarkwoodRandomizer.Pools
             "epilog_part1c_room_dream_returnFromCrater", "epilog_part2_crater", "outside_roadToHome_01"];
 
         internal static readonly List<string> STORY_DREAMS =
-            ["dream_doctor_01", "dream_doctor_02", "dream_village_cellar"];
-
-        internal static readonly List<string> UNUSED_DREAMS =
-            ["dream_oneChance_01_2"];
+            ["dream_doctor_01", "dream_doctor_02", "dream_village_cellar", "dream_oneChance_01_2"];
 
         internal static readonly List<string> NON_BROKEN_DREAMS =
             ["dream_acid", "dream_bunker_underground_01", "dream_church_ruins_01", "dream_doctor_01",
