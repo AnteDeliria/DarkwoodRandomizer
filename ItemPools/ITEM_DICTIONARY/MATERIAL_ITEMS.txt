@@ -1,6 +1,5 @@
 axe_edge
 chitin
-compressor_parts_01
 electronics
 fabric
 junk

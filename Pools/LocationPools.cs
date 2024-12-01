@@ -47,6 +47,6 @@ namespace DarkwoodRandomizer.Pools
         internal static readonly List<string> OUTSIDE_LOCATIONS_CH2 =
             ["outside_cottage_snail_01", "outside_oneChance_01", "outside_roadToHome_01", "outside_village_ch2_cellar_01"];
 
-        internal static readonly string OUTSIDE_LOCATION_TRANSITION = "outside_bunker_underground_part2_01";
+        internal static readonly string CHAPTER_TRANSITION = "outside_bunker_underground_part2_01";
     }
 }

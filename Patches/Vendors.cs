@@ -25,11 +25,11 @@ namespace DarkwoodRandomizer.Patches
 
             IEnumerable<string>? iremPool = npcName switch
             {
-                "piotrek" => ItemPools.VendorPiotrek?.Keys,
-                "wolfman" => ItemPools.VendorWolfman?.Keys,
-                "wolfman_att" => ItemPools.VendorWolfman?.Keys,
-                "nighttrader" => ItemPools.VendorNightTrader?.Keys,
-                "thethree" => ItemPools.VendorTheThree?.Keys,
+                "piotrek" => ItemPools.VendorPiotrek,
+                "wolfman" => ItemPools.VendorWolfman,
+                "wolfman_att" => ItemPools.VendorWolfman,
+                "nighttrader" => ItemPools.VendorNightTrader,
+                "thethree" => ItemPools.VendorTheThree,
                 _ => null
             };
             if (iremPool == null)

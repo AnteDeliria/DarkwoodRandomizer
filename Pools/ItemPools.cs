@@ -17,23 +17,23 @@ namespace DarkwoodRandomizer.Pools
                 nameof(TRAP_ITEMS), nameof(UTILITY_ITEMS), nameof(WEAPON_ITEMS), nameof(XP_ITEMS)];
 
 
-        internal static Dictionary<string, string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
-        internal static Dictionary<string, string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));
-        internal static Dictionary<string, string>? VendorWolfman => GetPoolFromFile(nameof(VendorWolfman));
-        internal static Dictionary<string, string>? VendorTheThree => GetPoolFromFile(nameof(VendorTheThree));
+        internal static List<string>? VendorNightTrader => GetPoolFromFile(nameof(VendorNightTrader));
+        internal static List<string>? VendorPiotrek => GetPoolFromFile(nameof(VendorPiotrek));
+        internal static List<string>? VendorWolfman => GetPoolFromFile(nameof(VendorWolfman));
+        internal static List<string>? VendorTheThree => GetPoolFromFile(nameof(VendorTheThree));
 
-        internal static Dictionary<string, string>? CharacterLoot => GetPoolFromFile(nameof(CharacterLoot));
+        internal static List<string>? CharacterLoot => GetPoolFromFile(nameof(CharacterLoot));
 
 
 
-        private static Dictionary<string, string>? GetPoolFromFile(string poolName)
+        private static List<string>? GetPoolFromFile(string poolName)
         {
             string path = Path.Combine(ItemPoolsDirectory, $"{poolName}.txt");
             if (!File.Exists(path))
                 return null;
 
             StreamReader reader = new StreamReader(path);
-            Dictionary<string, string> items = new();
+            List<string> items = new();
             while (!reader.EndOfStream)
             {
                 string[] tokens = reader.ReadLine().Trim().Split();
@@ -48,25 +48,25 @@ namespace DarkwoodRandomizer.Pools
                         {
                             Dictionary<string, string>? pool = typeof(ItemPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
                             if (pool != null)
-                                foreach (KeyValuePair<string, string> item in pool)
-                                    items.Add(item.Key, item.Value);
+                                foreach (string item in pool.Keys)
+                                    items.Add(item);
                         }
                     }
                     else
                     {
                         Dictionary<string, string>? pool = typeof(ItemPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
                         if (pool != null)
-                            foreach (KeyValuePair<string, string> item in pool)
-                                items.Add(item.Key, item.Value);
+                            foreach (string item in pool.Keys)
+                                items.Add(item);
                     }
                 }
                 else if (ALL_ITEMS.ContainsKey(tokens[0]))
                 {
                     if (tokens.Length > 1 && int.TryParse(tokens[1], out int timesToAdd))
                         for (int i = 0; i < timesToAdd; i++)
-                            items.Add(tokens[0], ALL_ITEMS[tokens[0]]);
+                            items.Add(tokens[0]);
                     else
-                        items.Add(tokens[0], ALL_ITEMS[tokens[0]]);
+                        items.Add(tokens[0]);
                 }
             }
             reader.Close();
@@ -775,7 +775,6 @@ namespace DarkwoodRandomizer.Pools
         {
             ["axe_edge"] = "InventoryItems/materials/axe_edge",
             ["chitin"] = "InventoryItems/materials/chitin",
-            ["compressor_parts_01"] = "InventoryItems/materials/compressor_parts_01",
             ["electronics"] = "InventoryItems/materials/electronics",
             ["fabric"] = "InventoryItems/materials/fabric",
             ["junk"] = "InventoryItems/materials/junk",
@@ -881,6 +880,7 @@ namespace DarkwoodRandomizer.Pools
         {
             ["cable"] = "InventoryItems/misc/cable",
             ["chain_well"] = "InventoryItems/misc/chain_well",
+            ["compressor_parts_01"] = "InventoryItems/materials/compressor_parts_01",
             ["hat_brother"] = "InventoryItems/questItems/hat_brother",
             ["note_musicianCard1"] = "InventoryItems/questItems/note_musicianCard1",
             ["oxygenTank_empty"] = "InventoryItems/questItems/oxygenTank_empty",

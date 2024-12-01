@@ -33,9 +33,6 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<bool>? Night_RandomizeScenarioDifficulty;
 
 
-        internal static ConfigEntry<bool>? Dreams_RandomizeDreams;
-
-
         internal static ConfigEntry<bool>? Vendors_RandomizeVendorInventory;
         internal static ConfigEntry<bool>? Vendors_EnsureStaples;
         internal static ConfigEntry<int>? Vendors_MinRandomSlots;
@@ -126,7 +123,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Characters",
                     key: "Randomize global characters",
                     defaultValue: true,
-                    description: "Randomizes spawns for global characters - characters that are not tied to any location or grid object. Character pools are defined within DarkwoodRandomizer/CharacterPools/[LocationGlobalCharactersDryMeadow.txt, LocationGlobalCharactersSilentForest.txt, LocationGlobalCharactersOldWoods.txt, LocationGlobalCharactersSwamp.txt]"
+                    description: "Randomizes spawns for global characters - characters that are not tied to any location or grid object. Character pools are defined within DarkwoodRandomizer/CharacterPools/[GlobalCharactersDryMeadow.txt, GlobalCharactersSilentForest.txt, GlobalCharactersOldWoods.txt, GlobalCharactersSwamp.txt]"
                 );
             Characters_RandomizeLocationActiveCharacters = config.Bind
                 (
@@ -173,15 +170,6 @@ namespace DarkwoodRandomizer.Settings
                     key: "Randomize night scenario difficulty",
                     defaultValue: true,
                     description: "From night 4 onwards, expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
-                );
-
-
-            Dreams_RandomizeDreams = config.Bind
-                (
-                    section: "Dreams",
-                    key: "Randomize dreams",
-                    defaultValue: true,
-                    description: "Randomizes the first dream sequence, and in addition adds a new dream sequence (cut content) to the dream pool"
                 );
 
 
@@ -241,7 +229,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Loot",
                     key: "Shuffle item containers - include key and quest items",
                     defaultValue: false,
-                    description: "Whether to include item containers containing key and quest items in the shuffle pool"
+                    description: "Whether to include item containers containing key and quest items in the shuffle pool. WARNING: This may result in key/quest items ending up in inaccessible locations"
                 );
             Loot_ShuffleItemContainersIncludeOutsideLocations = config.Bind
                 (
