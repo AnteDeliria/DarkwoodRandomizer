@@ -9,25 +9,25 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class MiscObjects
     {
-        [HarmonyPatch(typeof(WorldChunk), "distributeObjects")]
+        [HarmonyPatch(typeof(WorldGenerator), "spawnMiscObjects")]
         [HarmonyPrefix]
-        internal static void RandomizeMiscObjects(ref List<UnityEngine.Object> objectsToDistribute, ref float height, ref int density, ref int gridSize)
+        internal static void RandomizeMiscObjects(WorldGenerator __instance)
         {
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.MiscObjects_RandomizeMiscObjects!.Value)
                 return;
 
-            WorldGenerator worldGenerator = Singleton<WorldGenerator>.Instance;
-
             IEnumerable<Biome> biomesSource;
 
-            if (worldGenerator.chapterID == 1)
-                biomesSource = worldGenerator.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated }.Contains(x.type));
-            else if (worldGenerator.chapterID == 2)
-                biomesSource = worldGenerator.biomePresets.Where(x => x.type == Biome.Type.swamp);
+            if (__instance.chapterID == 1)
+                biomesSource = __instance.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated }.Contains(x.type));
             else
-                return; // unknown chapter ID
+                return;
+
+            List<Biome> biomesDestination = __instance.bigBiomes
+                .Where(biome => biome.type != Biome.Type.empty)
+                .Select(biome => __instance.getBiomePreset(biome.type)).ToList();
 
 
             List<BiomePrefabsPreset> miscPrefabPool = new();
@@ -37,12 +37,13 @@ namespace DarkwoodRandomizer.Patches
                     miscPrefabPool.Add(prefab);
 
 
-            BiomePrefabsPreset randomMiscPrefab = miscPrefabPool.RandomItem();
-            objectsToDistribute = randomMiscPrefab.prefabs;
-            height = randomMiscPrefab.height;
-            density = randomMiscPrefab.density;
-            gridSize = randomMiscPrefab.gridDensity;
-            // Unlike grid objects, misc objects are not removed from the pool once spawned as different chunks can normally spawn repeats of the same object
+            foreach (Biome biome in biomesDestination)
+                biome.miscPrefabs.Clear();
+
+            foreach (BiomePrefabsPreset prefab in miscPrefabPool)
+                biomesDestination.RandomItem().miscPrefabs.Add(prefab);
+
+            Plugin.Controller.MiscObjectsShuffled = true;
         }
     }
 }

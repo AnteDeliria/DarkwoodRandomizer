@@ -72,14 +72,14 @@ namespace DarkwoodRandomizer.Settings
                     section: "Locations",
                     key: "Randomize location position",
                     defaultValue: true,
-                    description: "Randomizes the position of non-border locations (excluding hideouts) by allowing them to be placed anywhere on the map"
+                    description: "Shuffles the position of non-border locations (excluding hideouts) by allowing them to be placed anywhere on the map"
                 );
             Locations_RandomizeHideoutPosition = config.Bind
                 (
                     section: "Locations",
                     key: "Randomize hideout position",
                     defaultValue: false,
-                    description: "Randomizes the position of hideout locations by allowing them to be placed anywhere on the map"
+                    description: "Shuffles the position of hideout locations by allowing them to be placed anywhere within their respective biome"
                 );
             Locations_RandomizeLocationRotation = config.Bind
                 (
@@ -102,7 +102,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Grid Objects",
                     key: "Shuffle grid objects",
                     defaultValue: true,
-                    description: "Shuffles the position of grid objects, allowing them to spawn outside their target biome"
+                    description: "Shuffles the position of grid objects, allowing them to spawn outside their target biome. Does not affect chapter 2"
                 );
             GridObjects_RandomizeGridObjectRotation = config.Bind
                 (
@@ -118,7 +118,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Misc Objects",
                     key: "Shuffle misc objects",
                     defaultValue: false,
-                    description: "Shuffles the position of misc objects, allowing them to spawn outside their target biome"
+                    description: "Shuffles the position of misc objects, allowing them to spawn outside their target biome. Does not affect chapter 2"
                 );
 
 
@@ -166,7 +166,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Night",
                     key: "Randomize night characters",
                     defaultValue: true,
-                    description: "Randomizes spawns for night characters - characters that spawn during night scenarios. Character pools are defined within DarkwoodRandomizer/CharacterPools/NightCharacters.txt"
+                    description: "Randomizes spawns for night characters - characters that spawn during night scenarios. Character pools are defined within DarkwoodRandomizer/CharacterPools/[NightCharactersDryMeadow.txt, NightCharactersSilentForest.txt, NightCharactersOldWoods.txt, NightCharactersSwamp.txt]"
                 );
             Night_RandomizeScenarioDifficulty = config.Bind
                 (
@@ -182,7 +182,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Dreams",
                     key: "Randomize dreams",
                     defaultValue: true,
-                    description: "Randomizes the first dream sequence, and in addition adds a new dream sequence (cut content) to the vanilla random dream pool"
+                    description: "Randomizes the first dream sequence, and in addition adds a new dream sequence (cut content) to the dream pool"
                 );
 
 
@@ -205,14 +205,14 @@ namespace DarkwoodRandomizer.Settings
                     section: "Vendors",
                     key: "Vendor inventory min random slots",
                     defaultValue: 6,
-                    description: "Minimum number of randomized inventory slots that will be present in trader inventories"
+                    description: "Minimum number of randomized inventory slots that will be added to trader inventories"
                 );
             Vendors_MaxRandomSlots = config.Bind
                 (
                     section: "Vendors",
                     key: "Trader inventory max random slots",
                     defaultValue: 18,
-                    description: "Maximum number of randomized inventory slots that will be present in trader inventories"
+                    description: "Maximum number of randomized inventory slots that will added to trader inventories"
                 );
 
 
@@ -221,7 +221,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Loot",
                     key: "Shuffle item containers",
                     defaultValue: true,
-                    description: "Shuffles the contents of item containers found within locations and grid objects"
+                    description: "Shuffles item containers"
                 );
             Loot_ShuffleItemContainersType = config.Bind
                 (
@@ -235,21 +235,21 @@ namespace DarkwoodRandomizer.Settings
                     section: "Loot",
                     key: "Shuffle item containers - include empty containers",
                     defaultValue: false,
-                    description: "Whether to add empty item containers to the shuffle pool"
+                    description: "Whether to include empty item containers in the shuffle pool"
                 );
             Loot_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
                 (
                     section: "Loot",
                     key: "Shuffle item containers - include key and quest items",
                     defaultValue: false,
-                    description: "Whether to add item containers containing ket and quest items to the shuffle pool"
+                    description: "Whether to include item containers containing key and quest items in the shuffle pool"
                 );
             Loot_ShuffleItemContainersIncludeOutsideLocations = config.Bind
                 (
                     section: "Loot",
                     key: "Shuffle item containers - include outside locations",
                     defaultValue: true,
-                    description: "Whether to add item containers from outside locations to the shuffle pool"
+                    description: "Whether to include item containers from outside locations in the shuffle pool"
                 );
 
             Loot_RandomizeCharacterDrops = config.Bind

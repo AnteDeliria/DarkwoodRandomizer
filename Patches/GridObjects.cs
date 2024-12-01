@@ -24,10 +24,8 @@ namespace DarkwoodRandomizer.Patches
 
             if (__instance.chapterID == 1)
                 biomesSource = __instance.biomePresets.Where(x => new Biome.Type[] { Biome.Type.meadow, Biome.Type.forest, Biome.Type.forest_mutated }.Contains(x.type));
-            else if (__instance.chapterID == 2)
-                biomesSource = __instance.biomePresets.Where(x => x.type == Biome.Type.swamp);
             else
-                return; // unknown chapter ID
+                return;
 
             List<Biome> biomesDestination = __instance.bigBiomes
                 .Where(biome => biome.type != Biome.Type.empty)

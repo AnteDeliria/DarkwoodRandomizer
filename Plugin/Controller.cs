@@ -18,6 +18,8 @@ namespace DarkwoodRandomizer.Plugin
 
         internal static bool GridObjectsShuffled { get; set; }
 
+        internal static bool MiscObjectsShuffled { get; set; }
+
         internal static bool LocationPositionsRandomized { get; set; }
 
         internal static bool ItemContainersRandomized { get; set; }
