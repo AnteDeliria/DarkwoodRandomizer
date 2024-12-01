@@ -9,6 +9,34 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Bugfixes
     {
+        //[HarmonyPatch(typeof(Controller), "generateChapter")]
+        //[HarmonyPrefix]
+        //private static void RegisterBiomePresets1(int _chapterId)
+        //{
+        //    if (_chapterId == 2)
+        //    {
+        //        BiomePresetsCh1 = Singleton<WorldGenerator>.Instance.biomePresets.Where(biome => biome.type != Biome.Type.empty).ToList().Copy();
+        //        //Object.DontDestroyOnLoad(Singleton<WorldGenerator>.Instance.gameObject);
+        //    }
+        //}
+
+        //private static WorldGenerator? WorldGenerator { get; set; }
+        //internal static List<Biome>? BiomePresetsCh1 { get; set; }
+
+        //[HarmonyPatch(typeof(WorldGenerator), MethodType.Constructor)]
+        //[HarmonyPostfix]
+        //private static void RegisterBiomePresets2(WorldGenerator __instance)
+        //{
+        //    DarkwoodRandomizerPlugin.Logger.LogInfo($"BiomePresets: {(BiomePresetsCh1 == null ? "null" : "not null")}");
+        //    foreach (Biome biome in BiomePresetsCh1 ?? Enumerable.Empty<Biome>())
+        //        DarkwoodRandomizerPlugin.Logger.LogInfo($"Biome: {biome.type}");
+
+        //    if (__instance.chapterID == 2 && WorldGenerator != null)
+        //        __instance.biomePresets.AddRange(BiomePresetsCh1);
+        //}
+
+
+
         // Fixes certain characters not having pathfinding AI in water by moving them out of water
         [HarmonyPatch(typeof(Character), "Update")]
         [HarmonyPrefix]

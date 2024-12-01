@@ -1,7 +1,6 @@
 ﻿using DarkwoodRandomizer.Plugin;
 using DarkwoodRandomizer.Settings;
 using HarmonyLib;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DarkwoodRandomizer.Patches
@@ -21,8 +20,7 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
             __state = __instance.biome;
-            List<Biome> biomes = (List<Biome>)AccessTools.Field(typeof(WorldGenerator), "biomePresets").GetValue(Singleton<WorldGenerator>.Instance);
-            __instance.biome = biomes.Where(biome => biome.type != Biome.Type.empty).RandomItem();
+            __instance.biome = Singleton<WorldGenerator>.Instance.biomePresets.Where(biome => biome.type != Biome.Type.empty).RandomItem();
         }
 
         [HarmonyPatch(typeof(WorldChunk), "createGroundSprites")]
