@@ -25,10 +25,10 @@ namespace DarkwoodRandomizer.Pools
         internal static Dictionary<string, string>? LocationStaticCharactersOldWoods => GetPoolFromFile(nameof(LocationStaticCharactersOldWoods));
         internal static Dictionary<string, string>? LocationStaticCharactersSwamp => GetPoolFromFile(nameof(LocationStaticCharactersSwamp));
 
-        internal static Dictionary<string, string>? FreeRoamingCharactersDryMeadow => GetPoolFromFile(nameof(FreeRoamingCharactersDryMeadow));
-        internal static Dictionary<string, string>? FreeRoamingCharactersSilentForest => GetPoolFromFile(nameof(FreeRoamingCharactersSilentForest));
-        internal static Dictionary<string, string>? FreeRoamingCharactersOldWoods => GetPoolFromFile(nameof(FreeRoamingCharactersOldWoods));
-        internal static Dictionary<string, string>? FreeRoamingCharactersSwamp => GetPoolFromFile(nameof(FreeRoamingCharactersSwamp));
+        internal static Dictionary<string, string>? GlobalCharactersDryMeadow => GetPoolFromFile(nameof(GlobalCharactersDryMeadow));
+        internal static Dictionary<string, string>? GlobalCharactersSilentForest => GetPoolFromFile(nameof(GlobalCharactersSilentForest));
+        internal static Dictionary<string, string>? GlobalCharactersOldWoods => GetPoolFromFile(nameof(GlobalCharactersOldWoods));
+        internal static Dictionary<string, string>? GlobalCharactersSwamp => GetPoolFromFile(nameof(GlobalCharactersSwamp));
 
         internal static Dictionary<string, string>? NightCharactersDryMeadow => GetPoolFromFile(nameof(NightCharactersDryMeadow));
         internal static Dictionary<string, string>? NightCharactersSilentForest => GetPoolFromFile(nameof(NightCharactersSilentForest));
@@ -112,14 +112,14 @@ namespace DarkwoodRandomizer.Pools
             };
         }
 
-        internal static IEnumerable<string>? GetFreeRoamingPoolForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetGlobalCharacterPoolForBiome(Biome.Type biome)
         {
             return biome switch
             {
-                Biome.Type.meadow => FreeRoamingCharactersDryMeadow?.Values,
-                Biome.Type.forest => FreeRoamingCharactersSilentForest?.Values,
-                Biome.Type.forest_mutated => FreeRoamingCharactersOldWoods?.Values,
-                Biome.Type.swamp => FreeRoamingCharactersSwamp?.Values,
+                Biome.Type.meadow => GlobalCharactersDryMeadow?.Values,
+                Biome.Type.forest => GlobalCharactersSilentForest?.Values,
+                Biome.Type.forest_mutated => GlobalCharactersOldWoods?.Values,
+                Biome.Type.swamp => GlobalCharactersSwamp?.Values,
                 _ => null,
             };
         }

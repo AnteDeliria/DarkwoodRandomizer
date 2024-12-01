@@ -92,14 +92,73 @@ namespace DarkwoodRandomizer.Patches
         }
 
 
+        [HarmonyPatch(typeof(CharacterSpawnPoint), "actuallySpawn")]
+        [HarmonyPrefix]
+        private static bool RandomizeCharacterSpawners(CharacterSpawnPoint __instance)
+        {
+            IEnumerable<string>? characterPool;
+
+            if (__instance.location != null && SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value)
+                characterPool = CharacterPools.GetGlobalCharacterPoolForBiome(__instance.location.biomeType);
+            else if (__instance.location == null && SettingsManager.Characters_RandomizeGlobalCharacters!.Value)
+            {
+                Biome.Type? biome = Singleton<WorldGenerator>.Instance.bigBiomes.Where(biome => biome.globalCharacterSpawnPoints.Contains(__instance)).FirstOrDefault()?.type;
+                if (biome == null)
+                    return true;
+
+                characterPool = CharacterPools.GetGlobalCharacterPoolForBiome((Biome.Type)biome);
+            }
+            else
+                return true;
+
+            if (characterPool == null)
+                return true;
+
+
+            float num = UnityEngine.Random.Range(0f, 1f);
+            if (__instance.spawnChance >= num)
+            {
+                Character component = Core.AddPrefab(characterPool.RandomItem(), __instance.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), __instance.transform.parent.gameObject, false).GetComponent<Character>();
+                if (component != null)
+                {
+                    __instance.spawnedCharacter = component;
+                    if (__instance.useInsideWaypoints)
+                    {
+                        component.usesInsideWaypoints = true;
+                    }
+                    if (__instance.waypoints.Count > 0)
+                    {
+                        component.setWaypoints(__instance.waypoints);
+                        component.usesCustomWaypoints = true;
+                    }
+                    component.spawnPoint = __instance.transform.position;
+                    Core.addToSaveable(component.gameObject, true, true);
+                    if (__instance.location != null)
+                    {
+                        if (!__instance.location.charactersList.Contains(component))
+                        {
+                            __instance.location.charactersList.Add(component);
+                        }
+                        component.isActive = true;
+                        if (Core.randomGeneration && !__instance.location.entered)
+                        {
+                            component.gameObject.SetActive(false);
+                            component.enableComponents(false);
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
 
         [HarmonyPatch(typeof(WorldChunk), "spawnFreeRoamingCharacters")]
         [HarmonyPrefix]
         private static bool RandomizeFreeRoamingCharacters(WorldChunk __instance, GameObject ___CharactersFreeRoaming, List<GameObject> ___freeRoamingChars)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
-                return true;
-            if (!SettingsManager.Characters_RandomizeFreeRoamingCharacters!.Value)
+            if (!SettingsManager.Characters_RandomizeGlobalCharacters!.Value)
                 return true;
 
             int num = 0;
@@ -114,7 +173,7 @@ namespace DarkwoodRandomizer.Patches
                         if (pointWithinBounds != Vector3.zero)
                         {
                             // Injection
-                            IEnumerable<string>? characterPool = CharacterPools.GetFreeRoamingPoolForBiome(__instance.biome.type);
+                            IEnumerable<string>? characterPool = CharacterPools.GetGlobalCharacterPoolForBiome(__instance.biome.type);
                             Character? component = null;
                             if (characterPool != null)
                                 component = Core.AddPrefab(characterPool.RandomItem(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
@@ -139,7 +198,6 @@ namespace DarkwoodRandomizer.Patches
                 num = i;
             }
 
-            Plugin.Controller.FreeRoamingCharactersRandomized = true;
             return false;
         }
 
@@ -187,38 +245,7 @@ namespace DarkwoodRandomizer.Patches
                                     location.charactersList.Add(newCharacter);
                             }
                         }
-
-                        foreach (CharacterSpawnPoint characterSpawnPoint in location.GetComponentsInChildren<CharacterSpawnPoint>(includeInactive: true))
-                        {
-                            IEnumerable<string>? characterPool = null;
-
-                            if (SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
-                                characterPool = CharacterPools.GetLocationActivePoolForBiome(location.biomeType);
-                            if (SettingsManager.Characters_RandomizeLocationStaticCharacters!.Value && CharacterPools.STATIC_CHARACTERS.Keys.Contains(characterSpawnPoint.type.ToString().ToLower()))
-                                characterPool = CharacterPools.GetLocationStaticPoolForBiome(location.biomeType);
-
-                            string newCharacterName;
-
-                            if (characterPool == null)
-                                newCharacterName = CharacterPools.ALL_CHARACTERS[characterSpawnPoint.type.ToString().ToLower()];
-                            else
-                                newCharacterName = characterPool.RandomItem();
-
-                            GameObject? newCharacterObject = Core.AddPrefab(newCharacterName, characterSpawnPoint.transform.localPosition, Quaternion.Euler(90f, 0f, 0f), location.characters.gameObject, false);
-                            Core.addToSaveable(newCharacterObject, true, true);
-                            UnityEngine.Object.Destroy(characterSpawnPoint.gameObject);
-                            Character? newCharacter = newCharacterObject?.GetComponent<Character>();
-
-                            if (location.spawnPoints.Contains(characterSpawnPoint))
-                            {
-                                location.spawnPoints.Remove(characterSpawnPoint);
-                                if (newCharacter != null)
-                                    location.charactersList.Add(newCharacter);
-                            }
-                        }
                     }
-
-                    Plugin.Controller.LocationCharactersRandomized = true;
                 }
             );
         }

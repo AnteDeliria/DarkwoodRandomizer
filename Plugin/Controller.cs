@@ -12,10 +12,6 @@ namespace DarkwoodRandomizer.Plugin
 
         internal static bool OutsideLocationsLoaded { get; set; }
 
-        internal static bool LocationCharactersRandomized { get; set; }
-
-        internal static bool FreeRoamingCharactersRandomized { get; set; }
-
         internal static bool GridObjectsShuffled { get; set; }
 
         internal static bool MiscObjectsShuffled { get; set; }
@@ -31,8 +27,6 @@ namespace DarkwoodRandomizer.Plugin
         private static void ResetState(WorldGenerator __instance)
         {
             OutsideLocationsLoaded = false;
-            LocationCharactersRandomized = false;
-            FreeRoamingCharactersRandomized = false;
             GridObjectsShuffled = false;
             LocationPositionsRandomized = false;
             ItemContainersRandomized = false;

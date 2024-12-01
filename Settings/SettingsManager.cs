@@ -20,10 +20,9 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<bool>? MiscObjects_RandomizeMiscObjects;
 
 
-        internal static ConfigEntry<bool>? Characters_RandomizeFreeRoamingCharacters;
+        internal static ConfigEntry<bool>? Characters_RandomizeGlobalCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeLocationActiveCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeLocationStaticCharacters;
-        internal static ConfigEntry<bool>? Characters_RandomizeNPCs;
         internal static ConfigEntry<bool>? Characters_PreventInfighting;
 
 
@@ -122,12 +121,12 @@ namespace DarkwoodRandomizer.Settings
                 );
 
 
-            Characters_RandomizeFreeRoamingCharacters = config.Bind
+            Characters_RandomizeGlobalCharacters = config.Bind
                 (
                     section: "Characters",
-                    key: "Randomize free roaming characters",
+                    key: "Randomize global characters",
                     defaultValue: true,
-                    description: "Randomizes spawns for free roaming characters - characters that are not tied to any location or grid object. Character pools are defined within DarkwoodRandomizer/CharacterPools/[LocationFreeRoamingCharactersDryMeadow.txt, LocationFreeRoamingCharactersSilentForest.txt, LocationFreeRoamingCharactersOldWoods.txt, LocationFreeRoamingCharactersSwamp.txt]"
+                    description: "Randomizes spawns for global characters - characters that are not tied to any location or grid object. Character pools are defined within DarkwoodRandomizer/CharacterPools/[LocationGlobalCharactersDryMeadow.txt, LocationGlobalCharactersSilentForest.txt, LocationGlobalCharactersOldWoods.txt, LocationGlobalCharactersSwamp.txt]"
                 );
             Characters_RandomizeLocationActiveCharacters = config.Bind
                 (
