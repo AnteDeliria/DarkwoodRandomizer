@@ -74,7 +74,7 @@ namespace DarkwoodRandomizer.Settings
                 (
                     section: "Locations",
                     key: "Randomize hideout position",
-                    defaultValue: false,
+                    defaultValue: true,
                     description: "Shuffles the position of hideout locations by allowing them to be placed anywhere within their respective biome"
                 );
             Locations_RandomizeLocationRotation = config.Bind
