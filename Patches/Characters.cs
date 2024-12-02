@@ -31,9 +31,6 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         private static void ModifyCharacter(Character __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
-                return;
-
             if (SettingsManager.CharacterStats_HealthVarianceRange!.Value != 0)
             {
                 float healthVarianceRange = SettingsManager.CharacterStats_HealthVarianceRange!.Value / 100;
@@ -96,6 +93,9 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static bool RandomizeCharacterSpawners(CharacterSpawnPoint __instance)
         {
+            if (Singleton<Dreams>.Instance.dreaming)
+                return true;
+
             IEnumerable<string>? characterPool;
 
             if (__instance.location != null && SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value)
