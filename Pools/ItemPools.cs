@@ -48,16 +48,14 @@ namespace DarkwoodRandomizer.Pools
                         {
                             Dictionary<string, string>? pool = typeof(ItemPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
                             if (pool != null)
-                                foreach (string item in pool.Keys)
-                                    items.Add(item);
+                                items.AddRange(pool.Keys);
                         }
                     }
                     else
                     {
                         Dictionary<string, string>? pool = typeof(ItemPools).GetField(tokens[0], BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) as Dictionary<string, string>;
                         if (pool != null)
-                            foreach (string item in pool.Keys)
-                                items.Add(item);
+                            items.AddRange(pool.Keys);
                     }
                 }
                 else if (ALL_ITEMS.ContainsKey(tokens[0]))
