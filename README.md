@@ -1,1 +1,1 @@
-﻿if BepInEx fails to initialize open doorstop_config.ini in a text editor and set ignoreDisableSwitch=true, then restart the game
+﻿
