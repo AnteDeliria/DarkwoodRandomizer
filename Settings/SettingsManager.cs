@@ -39,12 +39,12 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<int>? Vendors_MaxRandomSlots;
 
 
-        internal static ConfigEntry<bool>? Loot_ShuffleItemContainers;
-        internal static ConfigEntry<BiomeRandomizationType>? Loot_ShuffleItemContainersType;
-        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersIncludeOutsideLocations;
-        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersIncludeEmptyContainers;
-        internal static ConfigEntry<bool>? Loot_ShuffleItemContainersIncludeKeyAndQuestItems;
-        internal static ConfigEntry<bool>? Loot_RandomizeCharacterDrops;
+        internal static ConfigEntry<bool>? Items_ShuffleItemContainers;
+        internal static ConfigEntry<BiomeRandomizationType>? Items_ShuffleItemContainersType;
+        internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeOutsideLocations;
+        internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeEmptyContainers;
+        internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeKeyAndQuestItems;
+        internal static ConfigEntry<bool>? Items_RandomizeCharacterDrops;
 
 
         //internal static ConfigEntry<bool>? Map_RandomizeBorders;
@@ -178,14 +178,14 @@ namespace DarkwoodRandomizer.Settings
                     section: "Vendors",
                     key: "Randomize vendor inventory",
                     defaultValue: true,
-                    description: "Randomizes the items sold by vendors. Item pools are defined within DarkwoodRandomizer/ItemPools/[VendorWolfman.txt, VendorPiotrek.txt, VendorNightTrader.txt]"
+                    description: "Randomizes the items sold by vendors. Item pools are defined within DarkwoodRandomizer/ItemPools/[VendorWolfman.txt, VendorPiotrek.txt, VendorNightTrader.txt, VendorTheThree.txt]"
                 );
             Vendors_EnsureStaples = config.Bind
                 (
                     section: "Vendors",
                     key: "Guarantee vendor staples",
                     defaultValue: true,
-                    description: "Guarantee key items in trader inventories. Wolfman - chain, old woods map; Piotrek - chain, cable, old woods map; Night Trader - gasoline, planks, nails, scrap, wires, rags, matchsticks"
+                    description: "Guarantee key items in trader inventories. Wolfman - chain, old woods map; Piotrek - chain, cable, old woods map; NightTrader/TheThree - gasoline, planks, nails, scrap, wires, rags, matchsticks"
                 );
             Vendors_MinRandomSlots = config.Bind
                 (
@@ -203,45 +203,45 @@ namespace DarkwoodRandomizer.Settings
                 );
 
 
-            Loot_ShuffleItemContainers = config.Bind
+            Items_ShuffleItemContainers = config.Bind
                 (
-                    section: "Loot",
+                    section: "Items",
                     key: "Shuffle item containers",
                     defaultValue: true,
                     description: "Shuffles item containers"
                 );
-            Loot_ShuffleItemContainersType = config.Bind
+            Items_ShuffleItemContainersType = config.Bind
                 (
-                    section: "Loot",
+                    section: "Items",
                     key: "Item container shuffle type",
                     defaultValue: BiomeRandomizationType.WithinBiome,
                     description: "Global - shuffle item containers globally\nWithin Biome - shuffle item containers within each biome"
                 );
-            Loot_ShuffleItemContainersIncludeEmptyContainers = config.Bind
+            Items_ShuffleItemContainersIncludeEmptyContainers = config.Bind
                 (
-                    section: "Loot",
+                    section: "Items",
                     key: "Shuffle item containers - include empty containers",
                     defaultValue: false,
                     description: "Whether to include empty item containers in the shuffle pool"
                 );
-            Loot_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
+            Items_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
                 (
-                    section: "Loot",
+                    section: "Items",
                     key: "Shuffle item containers - include key and quest items",
                     defaultValue: false,
                     description: "Whether to include item containers containing key and quest items in the shuffle pool. WARNING: This may result in key/quest items ending up in inaccessible locations"
                 );
-            Loot_ShuffleItemContainersIncludeOutsideLocations = config.Bind
+            Items_ShuffleItemContainersIncludeOutsideLocations = config.Bind
                 (
-                    section: "Loot",
+                    section: "Items",
                     key: "Shuffle item containers - include outside locations",
                     defaultValue: true,
                     description: "Whether to include item containers from outside locations in the shuffle pool"
                 );
 
-            Loot_RandomizeCharacterDrops = config.Bind
+            Items_RandomizeCharacterDrops = config.Bind
                 (
-                    section: "Loot",
+                    section: "Items",
                     key: "Randomize character drops",
                     defaultValue: true,
                     description: "Randomizes the items dropped by killed characters. Item pools are defined within DarkwoodRandomizer/ItemPools/CharacterLoot.txt"

@@ -15,7 +15,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void RandomizeCharacterLoot(Character __instance)
         {
-            if (!SettingsManager.Loot_RandomizeCharacterDrops!.Value)
+            if (!SettingsManager.Items_RandomizeCharacterDrops!.Value)
                 return;
             if (Singleton<Dreams>.Instance.dreaming)
                 return;
@@ -64,7 +64,7 @@ namespace DarkwoodRandomizer.Patches
         {
             if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
                 return;
-            if (!SettingsManager.Loot_ShuffleItemContainers!.Value)
+            if (!SettingsManager.Items_ShuffleItemContainers!.Value)
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
@@ -72,9 +72,9 @@ namespace DarkwoodRandomizer.Patches
                 predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.LocationPositionsRandomized,
                 action: () =>
                 {
-                    if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
+                    if (SettingsManager.Items_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
                         RandomizeItemContainersWithinBiomes();
-                    else if (SettingsManager.Loot_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
+                    else if (SettingsManager.Items_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
                         RandomizeItemContainersGlobally();
 
                     Plugin.Controller.ItemContainersRandomized = true;
@@ -88,11 +88,11 @@ namespace DarkwoodRandomizer.Patches
             GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
             IEnumerable<Inventory> containers = worldChunksGO.GetComponentsInChildren<Inventory>(includeInactive: true);
 
-            if (SettingsManager.Loot_ShuffleItemContainersIncludeOutsideLocations!.Value)
+            if (SettingsManager.Items_ShuffleItemContainersIncludeOutsideLocations!.Value)
                 containers = containers.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values.SelectMany(loc => loc.GetComponentsInChildren<Inventory>(includeInactive: true)));
-            if (!SettingsManager.Loot_ShuffleItemContainersIncludeEmptyContainers!.Value)
+            if (!SettingsManager.Items_ShuffleItemContainersIncludeEmptyContainers!.Value)
                 containers = containers.Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot.invItem?.type)));
-            if (!SettingsManager.Loot_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
+            if (!SettingsManager.Items_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
                 containers = containers.Where(inv => !inv.slots.Any(slot => ItemPools.KEY_ITEMS.Keys.Concat(ItemPools.QUEST_ITEMS.Keys).Contains(slot.invItem?.type)));
 
             containers = containers
