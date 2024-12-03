@@ -11,6 +11,7 @@ chomperred_small	1
 deer	1
 dog	1
 dogmutated	1
+dog_cottagetrailer	1
 kamikaze	1
 dodger	1
 pig	1
