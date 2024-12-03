@@ -47,8 +47,7 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<bool>? Items_RandomizeCharacterDrops;
 
 
-        //internal static ConfigEntry<bool>? Map_RandomizeBorders;
-        //internal static ConfigEntry<bool>? Map_RevealAllMapElements;
+        internal static ConfigEntry<bool>? Map_RevealAllMapElements;
 
 
 
@@ -249,22 +248,13 @@ namespace DarkwoodRandomizer.Settings
 
 
 
-            //Map_RevealAllMapElements = config.Bind
-            //    (
-            //        section: "Map",
-            //        key: "Reveal all map elements",
-            //        defaultValue: false,
-            //        description: "Whether to show all locations on the map. Use this for testing out the mod"
-            //    );
-
-
-            //Map_RandomizeBorders = config.Bind
-            //    (
-            //        section: "Map",
-            //        key: "Randomize map borders",
-            //        defaultValue: false,
-            //        description: "COSMETIC: Whether to randomize map borders. Makes the map screen more confusing"
-            //    );
+            Map_RevealAllMapElements = config.Bind
+                (
+                    section: "Map",
+                    key: "Reveal all map elements",
+                    defaultValue: false,
+                    description: "Whether to show all locations on the map. Use this for testing out the mod"
+                );
         }
     }
 }
