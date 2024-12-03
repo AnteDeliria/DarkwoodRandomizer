@@ -12,21 +12,6 @@ namespace DarkwoodRandomizer.Patches
     [HarmonyPatch]
     internal static class Characters
     {
-        // Test spawn characters
-        //private static int Index = 0;
-        //[HarmonyPatch(typeof(Player), "onInstantClick")]
-        //[HarmonyPostfix]
-        //internal static void SpawnCharacterTest(Player __instance)
-        //{
-        //    if (!(bool)AccessTools.Field(typeof(Player), "rmbDown").GetValue(__instance))
-        //        return;
-
-        //    GameObject obj = Core.AddPrefab(allCharacters.Values.ToArray()[Index], __instance.transform.position + new Vector3(100, 0, 0), Quaternion.Euler(90f, 0f, 0f), Singleton<WorldGenerator>.Instance.gameObject, true);
-        //    Index++;
-        //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
-        //}
-
-
         [HarmonyPatch(typeof(Character), "init")]
         [HarmonyPostfix]
         private static void ModifyCharacter(Character __instance)
