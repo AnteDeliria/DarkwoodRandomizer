@@ -13,18 +13,17 @@ namespace DarkwoodRandomizer.Patches
     internal static class Characters
     {
         // Test spawn characters
-        //private static int Index = 0;
-        //[HarmonyPatch(typeof(Player), "onInstantClick")]
-        //[HarmonyPostfix]
-        //internal static void SpawnCharacterTest(Player __instance)
-        //{
-        //    if (!(bool)AccessTools.Field(typeof(Player), "rmbDown").GetValue(__instance))
-        //        return;
+        public static void SpawnCharacter(string name)
+        {
+            Core.AddPrefab(CharacterPools.ALL_CHARACTERS[name], Player.Instance.transform.position + new Vector3(100, 0, 0), Quaternion.Euler(90f, 0f, 0f), Singleton<WorldGenerator>.Instance.gameObject, true);
+            DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning {name}");
+        }
 
-        //    GameObject obj = Core.AddPrefab(allCharacters.Values.ToArray()[Index], __instance.transform.position + new Vector3(100, 0, 0), Quaternion.Euler(90f, 0f, 0f), Singleton<WorldGenerator>.Instance.gameObject, true);
-        //    Index++;
-        //    DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning Index {Index}: {allCharacters.Values.ToArray()[Index]}, Immobile: {obj.GetComponent<Character>().immobile}");
-        //}
+        public static void SpawnCharacter(int index)
+        {
+            Core.AddPrefab(CharacterPools.ALL_CHARACTERS.Values.ElementAt(index), Player.Instance.transform.position + new Vector3(100, 0, 0), Quaternion.Euler(90f, 0f, 0f), Singleton<WorldGenerator>.Instance.gameObject, true);
+            DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawning {CharacterPools.ALL_CHARACTERS.Keys.ElementAt(index)}");
+        }
 
 
         [HarmonyPatch(typeof(Character), "init")]
