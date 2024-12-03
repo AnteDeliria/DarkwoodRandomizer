@@ -26,6 +26,7 @@ namespace DarkwoodRandomizer.Patches
         }
 
 
+
         [HarmonyPatch(typeof(Character), "init")]
         [HarmonyPostfix]
         private static void ModifyCharacter(Character __instance)

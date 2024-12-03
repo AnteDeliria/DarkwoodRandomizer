@@ -49,8 +49,6 @@ namespace DarkwoodRandomizer.Settings
 
         internal static ConfigEntry<bool>? Map_RevealAllMapElements;
 
-
-
         internal static void InitializeConfigs(ConfigFile config)
         {
             Decals_RandomizeChunkGroundSprites = config.Bind

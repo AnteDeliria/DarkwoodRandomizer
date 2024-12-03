@@ -136,12 +136,10 @@ namespace DarkwoodRandomizer.Patches
 
                 if (LocationPools.HIDEOUTS.Contains(randomLocationName) || string.IsNullOrEmpty(randomWorldChunk.locationName)) // Hideouts can replace any location
                 {
-                    chunkPool.Remove(randomWorldChunk);
-                    locationsToShuffle.Remove(randomLocationName);
-
                     if (!string.IsNullOrEmpty(randomWorldChunk.locationName))
                         locationsToShuffle.Add(randomWorldChunk.locationName, randomWorldChunk.biome.type);
 
+                    locationsToShuffle.Remove(randomLocationName);
                     randomWorldChunk.locationName = randomLocationName;
                 }
             }
