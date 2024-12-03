@@ -346,6 +346,7 @@ namespace DarkwoodRandomizer.Pools
             ["character_dummy_02"] = "characters/_test/character_dummy_02",
             ["forestspirit_onechance_02"] = "characters/_test/forestspirit_onechance_02",
             ["villager3_plank_burning"] = "characters/_test/villager3_plank_burning",
+            ["antagonistact2lv4"] = "characters/antagonistact2lv4",
             ["banshee"] = "characters/banshee",
             ["bansheebaby"] = "characters/bansheebaby",
             ["brat_babykury"] = "characters/brat_babykury",
@@ -522,6 +523,7 @@ namespace DarkwoodRandomizer.Pools
         {
             ["forestspirit_onechance_02"] = "characters/_test/forestspirit_onechance_02",
             ["villager3_plank_burning"] = "characters/_test/villager3_plank_burning",
+            ["antagonistact2lv4"] = "characters/antagonistact2lv4",
             ["banshee"] = "characters/banshee",
             ["bansheebaby"] = "characters/bansheebaby",
             ["brat_babykury"] = "characters/brat_babykury",
