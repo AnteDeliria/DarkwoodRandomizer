@@ -1,6 +1,7 @@
 character_dummy_02
 forestspirit_onechance_02
 villager3_plank_burning
+antagonistact2lv4
 banshee
 bansheebaby
 brat_babykury
@@ -61,10 +62,12 @@ crazy_villager_mininpc_01_radiotower
 crazy_villager_mininpc_02
 crazy_villager_mininpc_gridobj_rednecks_2_01
 crazy_villager_mininpc_onechance
+dog_cottagetrailer
 larva_big_01
 nightworms_01
 nightworms_02
 pig_big_mutant
+priest_mininpc_01
 raven_dummy_01
 worms_enemy_01
 zombie_female_bathing
@@ -78,6 +81,7 @@ dog_01_wolfmanhideout_01
 dog_02_wolfmanhideout_01
 dog_03_wolfmanhideout_01
 dog_doctor
+redneckbury
 dodger
 doppelganger
 robber
@@ -169,5 +173,6 @@ villager_normal4
 villager_normal5
 villager_normal6
 villager_normal7
+villager_normal8
 villager_normal9
 villagertorch

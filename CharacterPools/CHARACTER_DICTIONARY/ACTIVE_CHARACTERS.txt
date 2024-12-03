@@ -15,6 +15,8 @@ chomperred_small
 deer  
 dog  
 dogmutated  
+dog_cottagetrailer
+nightworms_01	
 nightworms_02  
 worms_enemy_01  
 forestspirit_bunkerdream  
