@@ -1,4 +1,5 @@
 villager3_plank_burning	1
+antagonistact2lv4	1
 bansheebaby	1
 brat_babykury	1
 bride	1
@@ -7,6 +8,7 @@ chomperhalf	1
 deer	1
 dog	1
 dogmutated	1
+dog_cottagetrailer	1
 pig	1
 rabbit	1
 redneck	1

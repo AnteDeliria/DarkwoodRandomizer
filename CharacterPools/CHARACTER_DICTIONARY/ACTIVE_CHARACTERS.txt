@@ -1,5 +1,6 @@
 forestspirit_onechance_02  
 villager3_plank_burning  
+antagonistact2lv4  
 banshee  
 bansheebaby  
 brat_babykury  
@@ -14,6 +15,8 @@ chomperred_small
 deer  
 dog  
 dogmutated  
+dog_cottagetrailer
+nightworms_01	
 nightworms_02  
 worms_enemy_01  
 forestspirit_bunkerdream  

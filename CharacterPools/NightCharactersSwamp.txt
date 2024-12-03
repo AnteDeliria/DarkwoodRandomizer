@@ -1,4 +1,5 @@
 villager3_plank_burning	1
+antagonistact2lv4	1
 banshee	1
 bansheebaby	1
 brat_babykury	1
@@ -13,6 +14,7 @@ chomperred_small	1
 deer	1
 dog	1
 dogmutated	1
+dog_cottagetrailer	1
 humanspider	1
 humanspiderminion	1
 kamikaze	1

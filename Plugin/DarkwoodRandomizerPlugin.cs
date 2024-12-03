@@ -1,9 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using HarmonyLib;
-using System.Reflection;
-using System.IO;
 using DarkwoodRandomizer.Settings;
+using HarmonyLib;
+using System.IO;
+using System.Reflection;
 
 namespace DarkwoodRandomizer.Plugin;
 

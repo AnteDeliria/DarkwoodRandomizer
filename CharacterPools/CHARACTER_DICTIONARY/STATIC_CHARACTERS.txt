@@ -41,6 +41,7 @@ crazy_villager_mininpc_01_radiotower
 crazy_villager_mininpc_02  
 crazy_villager_mininpc_gridobj_rednecks_2_01  
 crazy_villager_mininpc_onechance  
+priest_mininpc_01	
 raven_dummy_01  
 zombie_female_bathing  
 zombie_male_sitting  
@@ -49,6 +50,7 @@ dog_01_wolfmanhideout_01
 dog_02_wolfmanhideout_01  
 dog_03_wolfmanhideout_01  
 dog_doctor  
+redneckbury
 istota_lv1  
 kapelusznik_dummy  
 kapelusznik_dummy_01  
@@ -79,4 +81,5 @@ villager_normal4
 villager_normal5  
 villager_normal6  
 villager_normal7  
+villager_normal8	
 villager_normal9
