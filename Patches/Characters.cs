@@ -15,9 +15,9 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void ModifyCharacter(Character __instance)
         {
-            if (SettingsManager.CharacterStats_HealthVarianceRange!.Value != 0)
+            if (SettingsManager.Characters_HealthVarianceRange!.Value != 0)
             {
-                float healthVarianceRange = SettingsManager.CharacterStats_HealthVarianceRange!.Value / 100;
+                float healthVarianceRange = SettingsManager.Characters_HealthVarianceRange!.Value / 100;
                 if (healthVarianceRange < 0)
                 {
                     DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");

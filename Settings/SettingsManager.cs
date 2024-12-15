@@ -177,7 +177,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Vendors",
                     key: "Guarantee vendor staples",
                     defaultValue: true,
-                    description: "Guarantee key items in trader inventories. Wolfman - chain, old woods map; Piotrek - chain, cable, old woods map; NightTrader/TheThree - gasoline, planks, nails, scrap, wires, rags, matchsticks"
+                    description: "Guarantee certain items in trader inventories. Wolfman - chain, old woods map; Piotrek - chain, cable, old woods map; NightTrader/TheThree - gasoline, planks, nails, scrap, wires, rags, matchsticks, pellet ammo, shotgun shell, medium caliber bullet, small caliber magazine"
                 );
             Vendors_MinRandomSlots = config.Bind
                 (
