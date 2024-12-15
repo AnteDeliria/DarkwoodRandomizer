@@ -23,10 +23,8 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<bool>? Characters_RandomizeGlobalCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeLocationActiveCharacters;
         internal static ConfigEntry<bool>? Characters_RandomizeLocationStaticCharacters;
+        internal static ConfigEntry<float>? Characters_HealthVarianceRange;
         internal static ConfigEntry<bool>? Characters_PreventInfighting;
-
-
-        internal static ConfigEntry<float>? CharacterStats_HealthVarianceRange;
 
 
         internal static ConfigEntry<bool>? Night_RandomizeCharacters;
@@ -135,21 +133,19 @@ namespace DarkwoodRandomizer.Settings
                     defaultValue: true,
                     description: "Randomizes spawns for location static characters - characters that are tied to a location and do not exhibit any movement. Character pools are defined within DarkwoodRandomizer/CharacterPools/[LocationStaticCharactersDryMeadow.txt, LocationStaticCharactersSilentForest.txt, LocationStaticCharactersOldWoods.txt, LocationStaticCharactersSwamp.txt]"
                 );
+            Characters_HealthVarianceRange = config.Bind
+                (
+                    section: "Characters",
+                    key: "Character health variance percentage",
+                    defaultValue: 50f,
+                    description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between BaseHealth ± BaseHealth * HealthVarianceRange/100"
+                );
             Characters_PreventInfighting = config.Bind
                 (
                     section: "Characters",
                     key: "Prevent character infighting",
-                    defaultValue: false,
+                    defaultValue: true,
                     description: "Prevents characters from different factions from attacking and killing each other"
-                );
-
-
-            CharacterStats_HealthVarianceRange = config.Bind
-                (
-                    section: "Character Stats",
-                    key: "Character health variance percentage",
-                    defaultValue: 50f,
-                    description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between BaseHealth ± BaseHealth * HealthVarianceRange/100"
                 );
 
 

@@ -2,7 +2,6 @@
 using DarkwoodRandomizer.Pools;
 using DarkwoodRandomizer.Settings;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace DarkwoodRandomizer.Patches
     internal static class Characters
     {
         [HarmonyPatch(typeof(Character), "init")]
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         private static void ModifyCharacter(Character __instance)
         {
             if (SettingsManager.CharacterStats_HealthVarianceRange!.Value != 0)
@@ -35,42 +34,6 @@ namespace DarkwoodRandomizer.Patches
                     if (enemyType.faction != Faction.player)
                         enemyType.attacks = false;
             }
-        }
-
-
-        internal static void TryRandomizeCharacterProperties(Character character)
-        {
-            foreach (Character.EnemyType enemyType in character.enemyTypes)
-            {
-                bool randomBool = UnityEngine.Random.Range(0f, 1f) > 0.5f;
-                enemyType.attacks = randomBool;
-                enemyType.runsAwayFrom = !randomBool;
-            }
-            character.seekerType = Enum.GetValues(typeof(Character.SeekerType)).Cast<Character.SeekerType>().RandomItem();
-            //character.blind
-            //character.deaf
-            //character.ethereal
-            //character.fieldOfViewRange
-            //character.wantToAttackDistance
-            //character.wantToRangedAttackDistance
-            //character.accuracy
-            //character.enemyInSightCounterTarget
-            //character.enemyInSightCounterFade
-            //character.hearingQuality
-
-            //foreach (FieldInfo field in typeof(Character).GetFields())
-            //{
-            //    if (field.FieldType == typeof(bool))
-            //        field.SetValue(character, UnityEngine.Random.Range(0f, 1f) > 0.5f);
-            //    else if (field.FieldType == typeof(float))
-            //        field.SetValue(character, (float)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f));
-            //    else if (field.FieldType == typeof(double))
-            //        field.SetValue(character, (double)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f));
-            //    else if (field.FieldType == typeof(int))
-            //        field.SetValue(character, (int)((int)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f)));
-            //    else if (field.FieldType == typeof(Enum))
-            //        field.SetValue(character, Enum.GetValues(field.FieldType).Cast<Enum>().RandomItem());
-            //}
         }
 
 
