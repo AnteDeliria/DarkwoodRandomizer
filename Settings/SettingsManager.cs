@@ -43,6 +43,8 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeEmptyContainers;
         internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeKeyAndQuestItems;
         internal static ConfigEntry<bool>? Items_RandomizeCharacterDrops;
+        internal static ConfigEntry<float>? Items_RandomUpgradeChance;
+        internal static ConfigEntry<int>? Items_MaxRandomUpgades;
 
 
 
@@ -237,6 +239,21 @@ namespace DarkwoodRandomizer.Settings
                     key: "Randomize character drops",
                     defaultValue: true,
                     description: "Randomizes the items dropped by killed characters. Item pools are defined within DarkwoodRandomizer/ItemPools/CharacterLoot.txt"
+                );
+
+            Items_RandomUpgradeChance = config.Bind
+                (
+                    section: "Items",
+                    key: "Random upgrade chance",
+                    defaultValue: 0.3f,
+                    description: "The chance (0-1) of adding a random upgrade to items sold by vendors or dropped by characters"
+                );
+            Items_MaxRandomUpgades = config.Bind
+                (
+                    section: "Items",
+                    key: "Max random upgrades",
+                    defaultValue: 3,
+                    description: "The maximum number of random upgrades that can be randomly added to items sold by vendors or dropped by characters"
                 );
         }
     }

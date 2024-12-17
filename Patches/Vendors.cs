@@ -69,7 +69,7 @@ namespace DarkwoodRandomizer.Patches
                 }
             }
 
-            int assignedSlots = ___inventory.slots.Where(s => !string.IsNullOrEmpty(s.invItem.type)).Count();
+            int assignedSlots = ___inventory.slots.Where(s => !InvItemClass.isNull(s.invItem)).Count();
             int slotsToAssign = UnityEngine.Random.Range(SettingsManager.Vendors_MinRandomSlots!.Value + assignedSlots, SettingsManager.Vendors_MaxRandomSlots!.Value + assignedSlots + 1);
             while (assignedSlots < slotsToAssign && assignedSlots < MaxNPCSlots)
             {
@@ -94,7 +94,26 @@ namespace DarkwoodRandomizer.Patches
                 else
                     durability = 1;
 
-                nextFreeSlot.createItem(itemName, amount, durability, InvItem.ModifierQuality.none, false);
+                InvItemClass createdItem = nextFreeSlot.createItem(itemName, amount, durability, InvItem.ModifierQuality.none, false);
+
+
+                while (createdItem.upgrades.Count < SettingsManager.Items_MaxRandomUpgades!.Value)
+                {
+                    IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
+
+                    float randomUpgradeChance = SettingsManager.Items_RandomUpgradeChance!.Value;
+                    if (randomUpgradeChance < 0 || randomUpgradeChance > 1)
+                    {
+                        DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
+                        randomUpgradeChance = 0;
+                    }
+
+                    if (upgradePool.Count() == 0 || UnityEngine.Random.Range(0f, 1f) >= randomUpgradeChance)
+                        break;
+
+                    createdItem.addUpgrade(upgradePool.RandomItem());
+                }
+
                 assignedSlots++;
             }
 

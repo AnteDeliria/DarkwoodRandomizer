@@ -35,7 +35,9 @@ namespace DarkwoodRandomizer.Patches
             if (firstSlot == null)
                 return;
 
+            __instance.notSelectableWhenDead = false;
             inventory.clear();
+
 
             string itemName = itemPool.RandomItem();
 
@@ -53,8 +55,25 @@ namespace DarkwoodRandomizer.Patches
             else
                 durability = 1;
 
-            firstSlot.createItem(itemName, amount, durability);
-            __instance.notSelectableWhenDead = false;
+            InvItemClass createdItem = firstSlot.createItem(itemName, amount, durability);
+
+
+            while (createdItem.upgrades.Count < SettingsManager.Items_MaxRandomUpgades!.Value)
+            {
+                IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
+
+                float randomUpgradeChance = SettingsManager.Items_RandomUpgradeChance!.Value;
+                if (randomUpgradeChance < 0 || randomUpgradeChance > 1)
+                {
+                    DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
+                    randomUpgradeChance = 0;
+                }
+
+                if (upgradePool.Count() == 0 || UnityEngine.Random.Range(0f, 1f) >= randomUpgradeChance)
+                    break;
+
+                createdItem.addUpgrade(upgradePool.RandomItem());
+            }
         }
 
 
@@ -91,7 +110,7 @@ namespace DarkwoodRandomizer.Patches
             if (SettingsManager.Items_ShuffleItemContainersIncludeOutsideLocations!.Value)
                 containers = containers.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values.SelectMany(loc => loc.GetComponentsInChildren<Inventory>(includeInactive: true)));
             if (!SettingsManager.Items_ShuffleItemContainersIncludeEmptyContainers!.Value)
-                containers = containers.Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot.invItem?.type)));
+                containers = containers.Where(inv => inv.slots.Any(slot => !InvItemClass.isNull(slot.invItem)));
             if (!SettingsManager.Items_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
                 containers = containers.Where(inv => !inv.slots.Any(slot => ItemPools.KEY_ITEMS.Keys.Concat(ItemPools.QUEST_ITEMS.Keys).Contains(slot.invItem?.type)));
 

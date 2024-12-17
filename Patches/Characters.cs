@@ -15,12 +15,15 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void ModifyCharacter(Character __instance)
         {
+            if (Core.loadingGame)
+                return;
+
             if (SettingsManager.Characters_HealthVarianceRange!.Value != 0)
             {
                 float healthVarianceRange = SettingsManager.Characters_HealthVarianceRange!.Value / 100;
                 if (healthVarianceRange < 0)
                 {
-                    DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");
+                    DarkwoodRandomizerPlugin.Logger.LogError("Characters_HealthVarianceRange is negative - defaulting to 0");
                     healthVarianceRange = 0;
                 }
 
@@ -31,6 +34,27 @@ namespace DarkwoodRandomizer.Patches
             if (SettingsManager.Characters_PreventInfighting!.Value)
             {
                 foreach (Character.EnemyType enemyType in __instance.enemyTypes)
+                    if (enemyType.faction != Faction.player)
+                        enemyType.attacks = false;
+            }
+        }
+
+        [HarmonyPatch(typeof(Character.SaveState), MethodType.Constructor, typeof(Character))]
+        [HarmonyPostfix]
+        private static void SaveCharacterProperties(Character.SaveState __instance, Character character)
+        {
+            __instance.health = character.maxHealth; // Inactive characters save with health 0 and die otherwise
+        }
+
+        [HarmonyPatch(typeof(Character.SaveState), "loadValues")]
+        [HarmonyPrefix]
+        private static void LoadCharacterProperties(Character.SaveState __instance, Character character)
+        {
+            character.maxHealth = __instance.health;
+
+            if (SettingsManager.Characters_PreventInfighting!.Value)
+            {
+                foreach (Character.EnemyType enemyType in character.enemyTypes)
                     if (enemyType.faction != Faction.player)
                         enemyType.attacks = false;
             }
