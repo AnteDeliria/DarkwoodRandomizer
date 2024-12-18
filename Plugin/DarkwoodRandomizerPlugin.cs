@@ -20,6 +20,7 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
     {
         Logger = base.Logger;
         SettingsManager.InitializeConfigs(Config);
+        SettingsManager.ValidateSettings();
 
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
     }

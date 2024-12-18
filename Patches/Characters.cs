@@ -18,18 +18,10 @@ namespace DarkwoodRandomizer.Patches
             if (Core.loadingGame)
                 return;
 
-            if (SettingsManager.Characters_HealthVarianceRange!.Value != 0)
-            {
-                float healthVarianceRange = SettingsManager.Characters_HealthVarianceRange!.Value / 100;
-                if (healthVarianceRange < 0)
-                {
-                    DarkwoodRandomizerPlugin.Logger.LogError("Characters_HealthVarianceRange is negative - defaulting to 0");
-                    healthVarianceRange = 0;
-                }
+            SettingsManager.ValidateSettings();
 
-                __instance.maxHealth = __instance.maxHealth * (1 + UnityEngine.Random.Range(-healthVarianceRange, healthVarianceRange));
-                __instance.health = __instance.maxHealth;
-            }
+            __instance.maxHealth = __instance.maxHealth * (1 + UnityEngine.Random.Range(-SettingsManager.Characters_HealthVarianceRange!.Value, SettingsManager.Characters_HealthVarianceRange!.Value) / 100f);
+            __instance.health = __instance.maxHealth;
 
             if (SettingsManager.Characters_PreventInfighting!.Value)
             {

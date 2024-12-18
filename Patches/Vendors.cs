@@ -21,6 +21,8 @@ namespace DarkwoodRandomizer.Patches
                 return;
             if (!SettingsManager.Vendors_RandomizeVendorInventory!.Value)
                 return;
+            SettingsManager.ValidateSettings();
+
 
             string npcName = __instance.gameObject.GetComponent<NPC>().name.ToLower();
 
@@ -97,18 +99,20 @@ namespace DarkwoodRandomizer.Patches
                 InvItemClass createdItem = nextFreeSlot.createItem(itemName, amount, durability, InvItem.ModifierQuality.none, false);
 
 
-                while (createdItem.upgrades.Count < SettingsManager.Items_MaxRandomUpgades!.Value)
+                while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MaxRandomUpgades!.Value &&
+                    UnityEngine.Random.Range(0f, 1f) < SettingsManager.ItemUpgrades_RandomUpgradeChance!.Value)
                 {
                     IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
+                    if (upgradePool.Count() == 0)
+                        break;
 
-                    float randomUpgradeChance = SettingsManager.Items_RandomUpgradeChance!.Value;
-                    if (randomUpgradeChance < 0 || randomUpgradeChance > 1)
-                    {
-                        DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
-                        randomUpgradeChance = 0;
-                    }
+                    createdItem.addUpgrade(upgradePool.RandomItem());
+                }
 
-                    if (upgradePool.Count() == 0 || UnityEngine.Random.Range(0f, 1f) >= randomUpgradeChance)
+                while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MinRandomUpgades!.Value)
+                {
+                    IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
+                    if (upgradePool.Count() == 0)
                         break;
 
                     createdItem.addUpgrade(upgradePool.RandomItem());

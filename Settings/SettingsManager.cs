@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using DarkwoodRandomizer.Plugin;
 
 namespace DarkwoodRandomizer.Settings
 {
@@ -37,14 +38,21 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<int>? Vendors_MaxRandomSlots;
 
 
-        internal static ConfigEntry<bool>? Items_ShuffleItemContainers;
-        internal static ConfigEntry<BiomeRandomizationType>? Items_ShuffleItemContainersType;
-        internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeOutsideLocations;
-        internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeEmptyContainers;
-        internal static ConfigEntry<bool>? Items_ShuffleItemContainersIncludeKeyAndQuestItems;
-        internal static ConfigEntry<bool>? Items_RandomizeCharacterDrops;
-        internal static ConfigEntry<float>? Items_RandomUpgradeChance;
-        internal static ConfigEntry<int>? Items_MaxRandomUpgades;
+        internal static ConfigEntry<bool>? ItemShuffle_ShuffleItemContainers;
+        internal static ConfigEntry<BiomeRandomizationType>? ItemShuffle_ShuffleItemContainersType;
+        internal static ConfigEntry<bool>? ItemShuffle_ShuffleItemContainersIncludeOutsideLocations;
+        internal static ConfigEntry<bool>? ItemShuffle_ShuffleItemContainersIncludeEmptyContainers;
+        internal static ConfigEntry<bool>? ItemShuffle_ShuffleItemContainersIncludeKeyAndQuestItems;
+
+
+        internal static ConfigEntry<float>? ItemDrops_RandomDropChance;
+        internal static ConfigEntry<int>? ItemDrops_MinRandomDrops;
+        internal static ConfigEntry<int>? ItemDrops_MaxRandomDrops;
+
+
+        internal static ConfigEntry<float>? ItemUpgrades_RandomUpgradeChance;
+        internal static ConfigEntry<int>? ItemUpgrades_MinRandomUpgades;
+        internal static ConfigEntry<int>? ItemUpgrades_MaxRandomUpgades;
 
 
 
@@ -138,7 +146,7 @@ namespace DarkwoodRandomizer.Settings
             Characters_HealthVarianceRange = config.Bind
                 (
                     section: "Characters",
-                    key: "Character health variance percentage",
+                    key: "Character health variance range",
                     defaultValue: 50f,
                     description: "The percentage of character health that is allowed to vary. Character health is uniformly distributed between BaseHealth ± BaseHealth * HealthVarianceRange/100"
                 );
@@ -197,64 +205,115 @@ namespace DarkwoodRandomizer.Settings
                 );
 
 
-            Items_ShuffleItemContainers = config.Bind
+            ItemShuffle_ShuffleItemContainers = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Shuffle",
                     key: "Shuffle item containers",
                     defaultValue: true,
                     description: "Shuffles item containers"
                 );
-            Items_ShuffleItemContainersType = config.Bind
+            ItemShuffle_ShuffleItemContainersType = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Shuffle",
                     key: "Item container shuffle type",
                     defaultValue: BiomeRandomizationType.WithinBiome,
                     description: "Global - shuffle item containers globally\nWithin Biome - shuffle item containers within each biome"
                 );
-            Items_ShuffleItemContainersIncludeEmptyContainers = config.Bind
+            ItemShuffle_ShuffleItemContainersIncludeEmptyContainers = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Shuffle",
                     key: "Shuffle item containers - include empty containers",
                     defaultValue: false,
                     description: "Whether to include empty item containers in the shuffle pool"
                 );
-            Items_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
+            ItemShuffle_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Shuffle",
                     key: "Shuffle item containers - include key and quest items",
                     defaultValue: false,
                     description: "Whether to include item containers containing key and quest items in the shuffle pool. WARNING: This may result in key/quest items ending up in inaccessible locations"
                 );
-            Items_ShuffleItemContainersIncludeOutsideLocations = config.Bind
+            ItemShuffle_ShuffleItemContainersIncludeOutsideLocations = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Shuffle",
                     key: "Shuffle item containers - include outside locations",
                     defaultValue: true,
                     description: "Whether to include item containers from outside locations in the shuffle pool"
                 );
 
-            Items_RandomizeCharacterDrops = config.Bind
+
+            ItemDrops_RandomDropChance = config.Bind
                 (
-                    section: "Items",
-                    key: "Randomize character drops",
-                    defaultValue: true,
-                    description: "Randomizes the items dropped by killed characters. Item pools are defined within DarkwoodRandomizer/ItemPools/CharacterLoot.txt"
+                    section: "Item Drops",
+                    key: "Random drop chance",
+                    defaultValue: 0.5f,
+                    description: "The chance (0-1) of adding a random drop to killed characters. This is rolled multiple times per character until a single failed roll occurs, or the maximum number of random items is reached"
+                );
+            ItemDrops_MinRandomDrops = config.Bind
+                (
+                    section: "Item Drops",
+                    key: "Min random drops",
+                    defaultValue: 1,
+                    description: "The minimum number of random drops that can be dropped by killed characters. If the number of items resulting from the drop chance roll is less than this, the number of items will be set to this minimum"
+                );
+            ItemDrops_MaxRandomDrops = config.Bind
+                (
+                    section: "Item Drops",
+                    key: "Max random drops",
+                    defaultValue: 3,
+                    description: "The maximum number of random drops that can be dropped by killed characters"
                 );
 
-            Items_RandomUpgradeChance = config.Bind
+
+            ItemUpgrades_RandomUpgradeChance = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Upgrades",
                     key: "Random upgrade chance",
                     defaultValue: 0.3f,
-                    description: "The chance (0-1) of adding a random upgrade to items sold by vendors or dropped by characters"
+                    description: "The chance (0-1) of adding a random upgrade to items sold by vendors or dropped by characters. This is rolled multiple times per item until a single failed roll occurs, or the maximum number of random upgrades is reached"
                 );
-            Items_MaxRandomUpgades = config.Bind
+            ItemUpgrades_MinRandomUpgades = config.Bind
                 (
-                    section: "Items",
+                    section: "Item Upgrades",
+                    key: "Min random upgrades",
+                    defaultValue: 0,
+                    description: "The minimum number of random upgrades that can be added to items sold by vendors or dropped by characters. If the number of upgrades resulting from the upgrade chance roll is less than this, the number of upgrades will be set to this minimum"
+                );
+            ItemUpgrades_MaxRandomUpgades = config.Bind
+                (
+                    section: "Item Upgrades",
                     key: "Max random upgrades",
                     defaultValue: 3,
-                    description: "The maximum number of random upgrades that can be randomly added to items sold by vendors or dropped by characters"
+                    description: "The maximum number of random upgrades that can be added to items sold by vendors or dropped by characters"
                 );
+        }
+
+
+        internal static void ValidateSettings()
+        {
+            if (ItemUpgrades_RandomUpgradeChance!.Value < 0 || ItemUpgrades_RandomUpgradeChance!.Value > 1)
+            {
+                DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
+                ItemUpgrades_RandomUpgradeChance!.Value = 0;
+            }
+
+            if (ItemDrops_RandomDropChance!.Value < 0 || ItemDrops_RandomDropChance!.Value > 1)
+            {
+                DarkwoodRandomizerPlugin.Logger.LogError("ItemDrops_RandomDropChance is not between 0 and 1 - defaulting to 0");
+                ItemDrops_RandomDropChance!.Value = 0;
+            }
+
+            if (ItemUpgrades_RandomUpgradeChance!.Value < 0 || ItemUpgrades_RandomUpgradeChance!.Value > 1)
+            {
+                DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
+                ItemUpgrades_RandomUpgradeChance!.Value = 0;
+            }
+
+            if (Characters_HealthVarianceRange!.Value < 0)
+            {
+                DarkwoodRandomizerPlugin.Logger.LogError("Characters_HealthVarianceRange is negative - defaulting to 0");
+                Characters_HealthVarianceRange!.Value = 0;
+            }
         }
     }
 }
