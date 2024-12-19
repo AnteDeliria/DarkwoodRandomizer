@@ -171,7 +171,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         private static void RandomizeLocationCharacters(WorldGenerator __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
@@ -186,9 +186,9 @@ namespace DarkwoodRandomizer.Patches
                             IEnumerable<string>? characterPool = null;
 
                             if (SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                                characterPool = CharacterPools.GetLocationActivePathsForBiome(location.biomeType);
+                                characterPool = CharacterPools.GetLocationActiveCharacterPathsForBiome(location.biomeType);
                             else if (SettingsManager.Characters_RandomizeLocationStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                                characterPool = CharacterPools.GetLocationStaticPathsForBiome(location.biomeType);
+                                characterPool = CharacterPools.GetLocationStaticCharacterPathsForBiome(location.biomeType);
 
                             Character? newCharacter;
 

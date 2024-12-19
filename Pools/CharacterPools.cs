@@ -86,7 +86,7 @@ namespace DarkwoodRandomizer.Pools
                 return items;
         }
 
-        internal static IEnumerable<string>? GetLocationActivePathsForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetLocationActiveCharacterPathsForBiome(Biome.Type biome)
         {
             List<string>? pool = biome switch
             {
@@ -100,7 +100,7 @@ namespace DarkwoodRandomizer.Pools
             return pool?.Select(x => ALL_CHARACTERS[x]);
         }
 
-        internal static IEnumerable<string>? GetLocationStaticPathsForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetLocationStaticCharacterPathsForBiome(Biome.Type biome)
         {
             List<string>? pool = biome switch
             {
@@ -128,7 +128,7 @@ namespace DarkwoodRandomizer.Pools
             return pool?.Select(x => ALL_CHARACTERS[x]);
         }
 
-        internal static IEnumerable<string>? GetNightPathsForBiome(Biome.Type biome)
+        internal static IEnumerable<string>? GetNightCharacterPathsForBiome(Biome.Type biome)
         {
             List<string>? pool = biome switch
             {

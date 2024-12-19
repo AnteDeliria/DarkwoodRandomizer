@@ -117,8 +117,8 @@ namespace DarkwoodRandomizer.Settings
                 (
                     section: "Misc Objects",
                     key: "Shuffle misc objects",
-                    defaultValue: true,
-                    description: "Shuffles the position of misc objects, allowing them to spawn outside their target biome. Does not affect chapter 2"
+                    defaultValue: false,
+                    description: "Shuffles biome specific misc objects, allowing them to spawn outside their target biome. Does not affect chapter 2"
                 );
 
 

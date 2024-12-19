@@ -3,7 +3,7 @@
 namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
-    internal static class Items
+    internal static class ItemMods
     {
         // No way to serialize these so they are lost on save/load
 

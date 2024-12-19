@@ -9,6 +9,7 @@ namespace DarkwoodRandomizer.Plugin;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Darkwood.exe")]
+[HarmonyPatch]
 public class DarkwoodRandomizerPlugin : BaseUnityPlugin
 {
     internal static string PluginPath => Path.Combine(Paths.PluginPath, "DarkwoodRandomizer");
@@ -28,5 +29,13 @@ public class DarkwoodRandomizerPlugin : BaseUnityPlugin
     private void Update()
     {
         Controller.Update();
+    }
+
+
+    [HarmonyPatch(typeof(MainMenu), "Start")]
+    [HarmonyPostfix]
+    private static void AddModName(MainMenu __instance)
+    {
+        __instance.CurrentVersion.text += $"\nDarkwood Randomizer {MyPluginInfo.PLUGIN_VERSION}";
     }
 }

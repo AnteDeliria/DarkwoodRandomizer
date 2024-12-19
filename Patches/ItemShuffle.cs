@@ -9,92 +9,13 @@ using UnityEngine;
 namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
-    internal static class Loot
+    internal static class ItemShuffle
     {
-        [HarmonyPatch(typeof(Character), "die")]
-        [HarmonyPrefix]
-        private static void RandomizeCharacterLoot(Character __instance)
-        {
-            if (Singleton<Dreams>.Instance.dreaming)
-                return;
-
-            if (new string[] { "doctor_confronted", "doctor_confronted2", "doctor_idle", "doctor_trapset" }.Contains(__instance.name.ToLower()))
-                return; // Do not randomize Big Metal Key
-
-            Inventory? inventory = __instance.GetComponent<Inventory>();
-            if (inventory == null || inventory?.invType != Inventory.InvType.deathDrop)
-                return;
-
-            IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
-            if (itemPool == null)
-                return;
-
-            SettingsManager.ValidateSettings();
-            
-
-
-            __instance.notSelectableWhenDead = false;
-            inventory.clear();
-
-            while (inventory.slots.Where(slot => !InvItemClass.isNull(slot.invItem)).Count() < SettingsManager.ItemDrops_MaxRandomDrops!.Value &&
-                UnityEngine.Random.Range(0f, 1f) < SettingsManager.ItemDrops_RandomDropChance!.Value)
-            {
-                AddRandomItemToInventory(inventory, itemPool);
-            }
-
-            while (inventory.slots.Where(slot => !InvItemClass.isNull(slot.invItem)).Count() < SettingsManager.ItemDrops_MinRandomDrops!.Value)
-            {
-                AddRandomItemToInventory(inventory, itemPool);
-            }
-        }
-
-        private static void AddRandomItemToInventory(Inventory inventory, IEnumerable<string> itemPool)
-        {
-            string itemName = itemPool.RandomItem();
-
-            InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
-
-            int amount;
-            if (item.hasAmmo)
-                amount = UnityEngine.Random.Range(0, item.clipSize + 1);
-            else
-                amount = 1;
-
-            float durability;
-            if (item.hasDurability)
-                durability = UnityEngine.Random.Range(0.1f, 0.4f);
-            else
-                durability = 1;
-
-            InvItemClass createdItem = inventory.addItem(new InvItemClass(itemName, durability, amount), true);
-
-
-            while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MaxRandomUpgades!.Value &&
-                UnityEngine.Random.Range(0f, 1f) < SettingsManager.ItemUpgrades_RandomUpgradeChance!.Value)
-            {
-                IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
-                if (upgradePool.Count() == 0)
-                    break;
-
-                createdItem.addUpgrade(upgradePool.RandomItem());
-            }
-
-            while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MinRandomUpgades!.Value)
-            {
-                IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
-                if (upgradePool.Count() == 0)
-                    break;
-
-                createdItem.addUpgrade(upgradePool.RandomItem());
-            }
-        }
-
-
         [HarmonyPatch(typeof(WorldGenerator), "distributeMustSpawnItems")]
         [HarmonyPrefix]
         private static void RandomizeItemContainers(WorldGenerator __instance, GameObject ___WorldChunksGO)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.ItemShuffle_ShuffleItemContainers!.Value)
                 return;

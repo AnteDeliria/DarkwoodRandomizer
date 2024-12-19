@@ -59,7 +59,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         private static void OpenPiotrekDoor(WorldGenerator __instance, GameObject ___WorldChunksGO)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1))
                 return;
 
             ___WorldChunksGO.GetComponentsInChildren<Locked>(includeInactive: true)

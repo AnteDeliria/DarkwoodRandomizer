@@ -14,7 +14,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeGroundSpritesPrefix(WorldChunk __instance, ref Biome __state)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.Decals_RandomizeChunkGroundSprites!.Value)
                 return;
@@ -27,7 +27,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         internal static void RandomizeGroundSpritesPostfix(WorldChunk __instance, ref Biome __state)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.Decals_RandomizeChunkGroundSprites!.Value)
                 return;
