@@ -13,7 +13,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         internal static void RandomizeMiscObjects(WorldGenerator __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.MiscObjects_RandomizeMiscObjects!.Value)
                 return;

@@ -1,14 +1,12 @@
-fists	1
-hammer	1
-healthUpgrade	1
-playerUpgradeIngredient	1
-recipe	1
-staminaUpgrade	1
-workbenchUpgrade_01	1
-workbenchUpgrade_02	1
-workbenchUpgrade_03	1
-workbenchUpgrade_04	1
-workbenchUpgrade_05	1
-workbenchUpgrade_06	1
-workbenchUpgrade_07	1
-workbenchUpgrade_08	1
+fists
+healthUpgrade
+playerUpgradeIngredient
+staminaUpgrade
+workbenchUpgrade_01
+workbenchUpgrade_02
+workbenchUpgrade_03
+workbenchUpgrade_04
+workbenchUpgrade_05
+workbenchUpgrade_06
+workbenchUpgrade_07
+workbenchUpgrade_08

@@ -711,10 +711,8 @@ namespace DarkwoodRandomizer.Pools
         internal static readonly Dictionary<string, string> DEBUG_ITEMS = new()
         {
             ["fists"] = "InventoryItems/_other/fists",
-            ["hammer"] = "InventoryItems/_other/hammer",
             ["healthUpgrade"] = "InventoryItems/_other/healthUpgrade",
             ["playerUpgradeIngredient"] = "InventoryItems/_other/playerUpgradeIngredient",
-            ["recipe"] = "InventoryItems/_other/recipe",
             ["staminaUpgrade"] = "InventoryItems/_other/staminaUpgrade",
             ["workbenchUpgrade_01"] = "InventoryItems/_other/workbenchUpgrade_01",
             ["workbenchUpgrade_02"] = "InventoryItems/_other/workbenchUpgrade_02",
@@ -807,6 +805,7 @@ namespace DarkwoodRandomizer.Pools
             ["gps_ear"] = "InventoryItems/misc/gps_ear",
             ["gps_finger"] = "InventoryItems/misc/gps_finger",
             ["gps_nose"] = "InventoryItems/misc/gps_nose",
+            ["hammer"] = "InventoryItems/_other/hammer",
             ["humanArm_01"] = "InventoryItems/misc/humanArm_01",
             ["humanEar_01"] = "InventoryItems/misc/humanEar_01",
             ["humanFinger_01"] = "InventoryItems/misc/humanFinger_01",
@@ -820,6 +819,7 @@ namespace DarkwoodRandomizer.Pools
             ["old_medical_bag"] = "InventoryItems/misc/old_medical_bag",
             ["pigHead"] = "InventoryItems/misc/pigHead",
             ["porterWhistle"] = "InventoryItems/misc/porterWhistle",
+            ["recipe"] = "InventoryItems/_other/recipe",
             ["ring2"] = "InventoryItems/misc/ring2",
             ["ring_wedding"] = "InventoryItems/misc/ring_wedding",
             ["ring_wedding_babahunter"] = "InventoryItems/misc/ring_wedding_babahunter",

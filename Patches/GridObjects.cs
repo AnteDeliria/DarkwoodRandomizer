@@ -14,7 +14,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void ShuffleGridObjects(WorldGenerator __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (!SettingsManager.GridObjects_ShuffleGridObjects!.Value)
                 return;
@@ -53,7 +53,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void RandomizeGridObjectRotation(GameObject __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (SettingsManager.GridObjects_RandomizeGridObjectRotation!.Value)
                 return;

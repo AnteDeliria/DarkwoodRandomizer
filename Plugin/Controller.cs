@@ -8,7 +8,7 @@ namespace DarkwoodRandomizer.Plugin
     [HarmonyPatch]
     internal static class Controller
     {
-        internal static GameState GameState { get; private set; } = GameState.Unknown;
+        internal static GameState WorldGeneratorState { get; private set; } = GameState.Unknown;
 
         internal static bool OutsideLocationsLoaded { get; set; }
 
@@ -31,24 +31,24 @@ namespace DarkwoodRandomizer.Plugin
             LocationPositionsRandomized = false;
             ItemContainersRandomized = false;
 
-            GameState = GameState.Unknown;
+            WorldGeneratorState = GameState.Unknown;
 
             if (Core.loadingGame)
             {
                 if (__instance.chapterID == 1)
-                    GameState = GameState.LoadingCh1;
+                    WorldGeneratorState = GameState.LoadingCh1;
                 else if (__instance.chapterID == 2)
-                    GameState = GameState.LoadingCh2;
+                    WorldGeneratorState = GameState.LoadingCh2;
             }
             else
             {
                 if (__instance.chapterID == 1)
-                    GameState = GameState.GeneratingCh1;
+                    WorldGeneratorState = GameState.GeneratingCh1;
                 else if (__instance.chapterID == 2)
-                    GameState = GameState.GeneratingCh2;
+                    WorldGeneratorState = GameState.GeneratingCh2;
             }
 
-            DarkwoodRandomizerPlugin.Logger.LogInfo($"GameState: {GameState}");
+            DarkwoodRandomizerPlugin.Logger.LogInfo($"WorldGeneratorState: {WorldGeneratorState}");
         }
 
 

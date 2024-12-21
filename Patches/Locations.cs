@@ -16,7 +16,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         private static void PreloadOutsideLocations(WorldGenerator __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (Plugin.Controller.OutsideLocationsLoaded)
                 return;
@@ -26,7 +26,7 @@ namespace DarkwoodRandomizer.Patches
                 predicate: () => !Singleton<OutsideLocations>.Instance.playerInOutsideLocation,
                 action: () =>
                 {
-                    IEnumerable<string> locationsToGenerate;
+                    List<string> locationsToGenerate;
                     string LastLocation;
 
                     switch (__instance.chapterID)
@@ -54,14 +54,14 @@ namespace DarkwoodRandomizer.Patches
 
                     Plugin.Controller.RunWhenPredicateMet
                     (
-                        predicate: () => locationsToGenerate.Count() - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                        predicate: () => locationsToGenerate.Count - 1 == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
                         action: () => Singleton<OutsideLocations>.Instance.prepareLocation(LastLocation),
                         exclusive: true
                     );
 
                     Plugin.Controller.RunWhenPredicateMet
                     (
-                        predicate: () => locationsToGenerate.Count() == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
+                        predicate: () => locationsToGenerate.Count == Singleton<OutsideLocations>.Instance.spawnedLocations.Count && !Singleton<OutsideLocations>.Instance.loading,
                         action: () =>
                         {
                             GameEvents? component =
@@ -99,7 +99,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void RandomizeLocationPosition(WorldGenerator __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
 
 
@@ -150,13 +150,12 @@ namespace DarkwoodRandomizer.Patches
 
 
         // Randomizes location rotation
-        // Also makes vaulting a little scuffed
         // Does not affect border locations
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         [HarmonyPrefix]
         private static void RandomizeLocationRotation(GameObject __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
             if (__instance.GetComponentInParent<WorldChunk>()?.isBorderChunk == true)
                 return;

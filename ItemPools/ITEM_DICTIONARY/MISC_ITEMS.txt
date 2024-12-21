@@ -12,6 +12,7 @@ gasmask
 gps_ear
 gps_finger
 gps_nose
+hammer
 humanArm_01
 humanEar_01
 humanFinger_01
@@ -25,6 +26,7 @@ mushroom_rotten
 old_medical_bag
 pigHead
 porterWhistle
+recipe
 ring2
 ring_wedding
 ring_wedding_babahunter

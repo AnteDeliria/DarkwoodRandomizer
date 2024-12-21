@@ -35,7 +35,7 @@ namespace DarkwoodRandomizer.Patches
                 vector = offset * distance;
 
             // Injection
-            IEnumerable<string>? characterPool = CharacterPools.GetNightPathsForBiome(Player.Instance.whereAmI.bigLocation.biomeType);
+            IEnumerable<string>? characterPool = CharacterPools.GetNightCharacterPathsForBiome(Player.Instance.whereAmI.bigLocation.biomeType);
 
             if (characterPool == null)
                 return true;

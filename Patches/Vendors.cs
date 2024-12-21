@@ -3,6 +3,7 @@ using DarkwoodRandomizer.Pools;
 using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DarkwoodRandomizer.Patches
 {
@@ -20,6 +21,8 @@ namespace DarkwoodRandomizer.Patches
                 return;
             if (!SettingsManager.Vendors_RandomizeVendorInventory!.Value)
                 return;
+            SettingsManager.ValidateSettings();
+
 
             string npcName = __instance.gameObject.GetComponent<NPC>().name.ToLower();
 
@@ -36,7 +39,6 @@ namespace DarkwoodRandomizer.Patches
                 return;
 
             ___inventory.clear();
-            int assignedSlots = 0;
 
             if (SettingsManager.Vendors_EnsureStaples!.Value)
             {
@@ -45,28 +47,31 @@ namespace DarkwoodRandomizer.Patches
                     ___inventory.addItem(new InvItemClass("cable", 1f, 1), true);
                     ___inventory.addItem(new InvItemClass("chain_well", 1f, 1), true);
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
-                    assignedSlots += 3;
                 }
                 else if (npcName == "wolfman" || npcName == "wolfman_att")
                 {
                     ___inventory.addItem(new InvItemClass("chain_well", 1f, 1), true);
                     ___inventory.addItem(new InvItemClass("map_bio3", 1f, 1), true);
-                    assignedSlots += 2;
                 }
                 else if (npcName == "nighttrader" || npcName == "thethree")
                 {
                     ___inventory.addItem(new InvItemClass("gasoline", UnityEngine.Random.Range(0.7f, 1f), 1), true);
-                    ___inventory.addItem(new InvItemClass("wood", 1, UnityEngine.Random.Range(1, 11)), true);
-                    ___inventory.addItem(new InvItemClass("wood", 1, UnityEngine.Random.Range(1, 11)), true);
-                    ___inventory.addItem(new InvItemClass("nail", 1, UnityEngine.Random.Range(1, 51)), true);
-                    ___inventory.addItem(new InvItemClass("junk", 1, UnityEngine.Random.Range(1, 11)), true);
-                    ___inventory.addItem(new InvItemClass("wire", 1, UnityEngine.Random.Range(1, 3)), true);
-                    ___inventory.addItem(new InvItemClass("rag", 1, UnityEngine.Random.Range(1, 6)), true);
-                    ___inventory.addItem(new InvItemClass("matchstick", 1, UnityEngine.Random.Range(1, 21)), true);
-                    assignedSlots += 8;
+                    ___inventory.addItem(new InvItemClass("gasoline", UnityEngine.Random.Range(0.7f, 1f), 1), true);
+                    ___inventory.addItem(new InvItemClass("wood", 1, 10), true);
+                    ___inventory.addItem(new InvItemClass("wood", 1, 5), true);
+                    ___inventory.addItem(new InvItemClass("nail", 1, 20), true);
+                    ___inventory.addItem(new InvItemClass("junk", 1, 3), true);
+                    ___inventory.addItem(new InvItemClass("wire", 1, 2), true);
+                    ___inventory.addItem(new InvItemClass("rag", 1, 3), true);
+                    ___inventory.addItem(new InvItemClass("matchstick", 1, UnityEngine.Random.Range(10, 16)), true);
+                    ___inventory.addItem(new InvItemClass("ammo_single_pellet", 1, 1), true);
+                    ___inventory.addItem(new InvItemClass("ammo_single_shotgun", 1, 1), true);
+                    ___inventory.addItem(new InvItemClass("ammo_single_mediumCal", 1, 1), true);
+                    ___inventory.addItem(new InvItemClass("ammo_clip_smallCal", 1, 1), true);
                 }
             }
 
+            int assignedSlots = ___inventory.slots.Where(s => !InvItemClass.isNull(s.invItem)).Count();
             int slotsToAssign = UnityEngine.Random.Range(SettingsManager.Vendors_MinRandomSlots!.Value + assignedSlots, SettingsManager.Vendors_MaxRandomSlots!.Value + assignedSlots + 1);
             while (assignedSlots < slotsToAssign && assignedSlots < MaxNPCSlots)
             {
@@ -91,7 +96,28 @@ namespace DarkwoodRandomizer.Patches
                 else
                     durability = 1;
 
-                nextFreeSlot.createItem(itemName, amount, durability, InvItem.ModifierQuality.none, false);
+                InvItemClass createdItem = nextFreeSlot.createItem(itemName, amount, durability, InvItem.ModifierQuality.none, false);
+
+
+                while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MaxRandomUpgades!.Value &&
+                    UnityEngine.Random.Range(0f, 1f) < SettingsManager.ItemUpgrades_RandomUpgradeChance!.Value)
+                {
+                    IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
+                    if (upgradePool.Count() == 0)
+                        break;
+
+                    createdItem.addUpgrade(upgradePool.RandomItem());
+                }
+
+                while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MinRandomUpgades!.Value)
+                {
+                    IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
+                    if (upgradePool.Count() == 0)
+                        break;
+
+                    createdItem.addUpgrade(upgradePool.RandomItem());
+                }
+
                 assignedSlots++;
             }
 

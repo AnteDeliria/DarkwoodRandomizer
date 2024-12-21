@@ -9,62 +9,15 @@ using UnityEngine;
 namespace DarkwoodRandomizer.Patches
 {
     [HarmonyPatch]
-    internal static class Loot
+    internal static class ItemShuffle
     {
-        [HarmonyPatch(typeof(Character), "die")]
-        [HarmonyPrefix]
-        private static void RandomizeCharacterLoot(Character __instance)
-        {
-            if (!SettingsManager.Items_RandomizeCharacterDrops!.Value)
-                return;
-            if (Singleton<Dreams>.Instance.dreaming)
-                return;
-
-            if (new string[] { "doctor_confronted", "doctor_confronted2", "doctor_idle", "doctor_trapset" }.Contains(__instance.name.ToLower()))
-                return;
-
-            Inventory? inventory = __instance.GetComponent<Inventory>();
-            if (inventory == null || inventory?.invType != Inventory.InvType.deathDrop)
-                return;
-
-            IEnumerable<string>? itemPool = ItemPools.CharacterLoot;
-            if (itemPool == null)
-                return;
-
-            InvSlot? firstSlot = inventory.slots.FirstOrDefault();
-            if (firstSlot == null)
-                return;
-
-            inventory.clear();
-
-            string itemName = itemPool.RandomItem();
-
-            InvItem item = Singleton<ItemsDatabase>.Instance.getItem(itemName, false);
-
-            int amount;
-            if (item.hasAmmo)
-                amount = UnityEngine.Random.Range(0, item.clipSize + 1);
-            else
-                amount = 1;
-
-            float durability;
-            if (item.hasDurability)
-                durability = UnityEngine.Random.Range(0.1f, 0.4f);
-            else
-                durability = 1;
-
-            firstSlot.createItem(itemName, amount, durability);
-            __instance.notSelectableWhenDead = false;
-        }
-
-
         [HarmonyPatch(typeof(WorldGenerator), "distributeMustSpawnItems")]
         [HarmonyPrefix]
         private static void RandomizeItemContainers(WorldGenerator __instance, GameObject ___WorldChunksGO)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
-            if (!SettingsManager.Items_ShuffleItemContainers!.Value)
+            if (!SettingsManager.ItemShuffle_ShuffleItemContainers!.Value)
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
@@ -72,9 +25,9 @@ namespace DarkwoodRandomizer.Patches
                 predicate: () => Plugin.Controller.OutsideLocationsLoaded && Plugin.Controller.LocationPositionsRandomized,
                 action: () =>
                 {
-                    if (SettingsManager.Items_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
+                    if (SettingsManager.ItemShuffle_ShuffleItemContainersType!.Value == BiomeRandomizationType.WithinBiome)
                         RandomizeItemContainersWithinBiomes();
-                    else if (SettingsManager.Items_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
+                    else if (SettingsManager.ItemShuffle_ShuffleItemContainersType!.Value == BiomeRandomizationType.Global)
                         RandomizeItemContainersGlobally();
 
                     Plugin.Controller.ItemContainersRandomized = true;
@@ -88,11 +41,11 @@ namespace DarkwoodRandomizer.Patches
             GameObject worldChunksGO = (GameObject)AccessTools.Field(typeof(WorldGenerator), "WorldChunksGO").GetValue(Singleton<WorldGenerator>.Instance);
             IEnumerable<Inventory> containers = worldChunksGO.GetComponentsInChildren<Inventory>(includeInactive: true);
 
-            if (SettingsManager.Items_ShuffleItemContainersIncludeOutsideLocations!.Value)
+            if (SettingsManager.ItemShuffle_ShuffleItemContainersIncludeOutsideLocations!.Value)
                 containers = containers.Concat(Singleton<OutsideLocations>.Instance.spawnedLocations.Values.SelectMany(loc => loc.GetComponentsInChildren<Inventory>(includeInactive: true)));
-            if (!SettingsManager.Items_ShuffleItemContainersIncludeEmptyContainers!.Value)
-                containers = containers.Where(inv => inv.slots.Any(slot => !string.IsNullOrEmpty(slot.invItem?.type)));
-            if (!SettingsManager.Items_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
+            if (!SettingsManager.ItemShuffle_ShuffleItemContainersIncludeEmptyContainers!.Value)
+                containers = containers.Where(inv => inv.slots.Any(slot => !InvItemClass.isNull(slot.invItem)));
+            if (!SettingsManager.ItemShuffle_ShuffleItemContainersIncludeKeyAndQuestItems!.Value)
                 containers = containers.Where(inv => !inv.slots.Any(slot => ItemPools.KEY_ITEMS.Keys.Concat(ItemPools.QUEST_ITEMS.Keys).Contains(slot.invItem?.type)));
 
             containers = containers

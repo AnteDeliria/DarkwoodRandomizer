@@ -2,7 +2,6 @@
 using DarkwoodRandomizer.Pools;
 using DarkwoodRandomizer.Settings;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,21 +12,16 @@ namespace DarkwoodRandomizer.Patches
     internal static class Characters
     {
         [HarmonyPatch(typeof(Character), "init")]
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         private static void ModifyCharacter(Character __instance)
         {
-            if (SettingsManager.CharacterStats_HealthVarianceRange!.Value != 0)
-            {
-                float healthVarianceRange = SettingsManager.CharacterStats_HealthVarianceRange!.Value / 100;
-                if (healthVarianceRange < 0)
-                {
-                    DarkwoodRandomizerPlugin.Logger.LogError("CharacterAttributes_HealthVarianceRange is negative - defaulting to 0");
-                    healthVarianceRange = 0;
-                }
+            if (Core.loadingGame)
+                return;
 
-                __instance.maxHealth = __instance.maxHealth * (1 + UnityEngine.Random.Range(-healthVarianceRange, healthVarianceRange));
-                __instance.health = __instance.maxHealth;
-            }
+            SettingsManager.ValidateSettings();
+
+            __instance.maxHealth = __instance.maxHealth * (1 + UnityEngine.Random.Range(-SettingsManager.Characters_HealthVarianceRange!.Value, SettingsManager.Characters_HealthVarianceRange!.Value) / 100f);
+            __instance.health = __instance.maxHealth;
 
             if (SettingsManager.Characters_PreventInfighting!.Value)
             {
@@ -37,40 +31,25 @@ namespace DarkwoodRandomizer.Patches
             }
         }
 
-
-        internal static void TryRandomizeCharacterProperties(Character character)
+        [HarmonyPatch(typeof(Character.SaveState), MethodType.Constructor, typeof(Character))]
+        [HarmonyPostfix]
+        private static void SaveCharacterProperties(Character.SaveState __instance, Character character)
         {
-            foreach (Character.EnemyType enemyType in character.enemyTypes)
-            {
-                bool randomBool = UnityEngine.Random.Range(0f, 1f) > 0.5f;
-                enemyType.attacks = randomBool;
-                enemyType.runsAwayFrom = !randomBool;
-            }
-            character.seekerType = Enum.GetValues(typeof(Character.SeekerType)).Cast<Character.SeekerType>().RandomItem();
-            //character.blind
-            //character.deaf
-            //character.ethereal
-            //character.fieldOfViewRange
-            //character.wantToAttackDistance
-            //character.wantToRangedAttackDistance
-            //character.accuracy
-            //character.enemyInSightCounterTarget
-            //character.enemyInSightCounterFade
-            //character.hearingQuality
+            __instance.health = character.maxHealth; // Inactive characters save with health 0 and die otherwise
+        }
 
-            //foreach (FieldInfo field in typeof(Character).GetFields())
-            //{
-            //    if (field.FieldType == typeof(bool))
-            //        field.SetValue(character, UnityEngine.Random.Range(0f, 1f) > 0.5f);
-            //    else if (field.FieldType == typeof(float))
-            //        field.SetValue(character, (float)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f));
-            //    else if (field.FieldType == typeof(double))
-            //        field.SetValue(character, (double)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f));
-            //    else if (field.FieldType == typeof(int))
-            //        field.SetValue(character, (int)((int)field.GetValue(character) * UnityEngine.Random.Range(0.5f, 1.5f)));
-            //    else if (field.FieldType == typeof(Enum))
-            //        field.SetValue(character, Enum.GetValues(field.FieldType).Cast<Enum>().RandomItem());
-            //}
+        [HarmonyPatch(typeof(Character.SaveState), "loadValues")]
+        [HarmonyPrefix]
+        private static void LoadCharacterProperties(Character.SaveState __instance, Character character)
+        {
+            character.maxHealth = __instance.health;
+
+            if (SettingsManager.Characters_PreventInfighting!.Value)
+            {
+                foreach (Character.EnemyType enemyType in character.enemyTypes)
+                    if (enemyType.faction != Faction.player)
+                        enemyType.attacks = false;
+            }
         }
 
 
@@ -192,7 +171,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPostfix]
         private static void RandomizeLocationCharacters(WorldGenerator __instance)
         {
-            if (!(Plugin.Controller.GameState == GameState.GeneratingCh1 || Plugin.Controller.GameState == GameState.GeneratingCh2))
+            if (!(Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh1 || Plugin.Controller.WorldGeneratorState == GameState.GeneratingCh2))
                 return;
 
             Plugin.Controller.RunWhenPredicateMet
@@ -207,9 +186,9 @@ namespace DarkwoodRandomizer.Patches
                             IEnumerable<string>? characterPool = null;
 
                             if (SettingsManager.Characters_RandomizeLocationActiveCharacters!.Value && oldCharacter.npc == null && CharacterPools.ACTIVE_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                                characterPool = CharacterPools.GetLocationActivePathsForBiome(location.biomeType);
+                                characterPool = CharacterPools.GetLocationActiveCharacterPathsForBiome(location.biomeType);
                             else if (SettingsManager.Characters_RandomizeLocationStaticCharacters!.Value && oldCharacter.npc == null && CharacterPools.STATIC_CHARACTERS.Keys.Contains(oldCharacter.name.ToLower()))
-                                characterPool = CharacterPools.GetLocationStaticPathsForBiome(location.biomeType);
+                                characterPool = CharacterPools.GetLocationStaticCharacterPathsForBiome(location.biomeType);
 
                             Character? newCharacter;
 
