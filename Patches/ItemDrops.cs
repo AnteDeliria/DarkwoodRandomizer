@@ -68,8 +68,8 @@ namespace DarkwoodRandomizer.Patches
             InvItemClass createdItem = inventory.addItem(new InvItemClass(itemName, durability, amount), true);
 
 
-            while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MaxRandomUpgades!.Value &&
-                UnityEngine.Random.Range(0f, 1f) < SettingsManager.ItemUpgrades_RandomUpgradeChance!.Value)
+            while (createdItem.upgrades.Count < SettingsManager.WeaponUpgrades_MaxRandomUpgades!.Value &&
+                UnityEngine.Random.Range(0f, 1f) < SettingsManager.WeaponUpgrades_RandomUpgradeChance!.Value)
             {
                 IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
                 if (upgradePool.Count() == 0)
@@ -78,7 +78,7 @@ namespace DarkwoodRandomizer.Patches
                 createdItem.addUpgrade(upgradePool.RandomItem());
             }
 
-            while (createdItem.upgrades.Count < SettingsManager.ItemUpgrades_MinRandomUpgades!.Value)
+            while (createdItem.upgrades.Count < SettingsManager.WeaponUpgrades_MinRandomUpgades!.Value)
             {
                 IEnumerable<ItemUpgrade> upgradePool = createdItem.baseClass.upgrades.Where(u => !createdItem.hasUpgrade(u));
                 if (upgradePool.Count() == 0)

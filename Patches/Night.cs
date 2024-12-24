@@ -74,6 +74,32 @@ namespace DarkwoodRandomizer.Patches
         }
 
 
+
+        [HarmonyPatch(typeof(NightScenarios), "setCurrentScenario")]
+        [HarmonyPrefix]
+        private static void EnsureRandomScenarioFromNight2Prefix(NightScenarios __instance, ref int __state)
+        {
+            if (!SettingsManager.Night_RandomizeScenarioDifficulty!.Value)
+                return;
+
+            if (Player.Instance?.whereAmI?.currentBiome?.type == Biome.Type.meadow && __instance.scenarioId == 3)
+            {
+                __state = __instance.scenarioId;
+                __instance.scenarioId = 4;
+            }
+        }
+
+        [HarmonyPatch(typeof(NightScenarios), "setCurrentScenario")]
+        [HarmonyPostfix]
+        private static void EnsureRandomScenarioFromNight2Postfix(NightScenarios __instance, ref int __state)
+        {
+            if (!SettingsManager.Night_RandomizeScenarioDifficulty!.Value)
+                return;
+
+            if (Player.Instance?.whereAmI?.currentBiome?.type == Biome.Type.meadow && __state == 3)
+                __instance.scenarioId = __state;
+        }
+
         [HarmonyPatch(typeof(NightScenarios), "getRandomScenarioOfDifficulty")]
         [HarmonyPrefix]
         private static void RandomizeNightScenarioDifficulty(ref int _diff)

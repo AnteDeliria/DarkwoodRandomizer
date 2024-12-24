@@ -50,9 +50,9 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<int>? ItemDrops_MaxRandomDrops;
 
 
-        internal static ConfigEntry<float>? ItemUpgrades_RandomUpgradeChance;
-        internal static ConfigEntry<int>? ItemUpgrades_MinRandomUpgades;
-        internal static ConfigEntry<int>? ItemUpgrades_MaxRandomUpgades;
+        internal static ConfigEntry<float>? WeaponUpgrades_RandomUpgradeChance;
+        internal static ConfigEntry<int>? WeaponUpgrades_MinRandomUpgades;
+        internal static ConfigEntry<int>? WeaponUpgrades_MaxRandomUpgades;
 
 
         internal static ConfigEntry<bool>? Map_RevealAllMapElements;
@@ -73,14 +73,14 @@ namespace DarkwoodRandomizer.Settings
                     section: "Locations",
                     key: "Randomize location position",
                     defaultValue: true,
-                    description: "Shuffles the position of non-border locations (excluding hideouts) by allowing them to be placed anywhere on the map"
+                    description: "Shuffles the position of non-border locations (excluding hideouts) by allowing them to be placed in any chunk"
                 );
             Locations_RandomizeHideoutPosition = config.Bind
                 (
                     section: "Locations",
                     key: "Randomize hideout position",
                     defaultValue: true,
-                    description: "Shuffles the position of hideout locations by allowing them to be placed anywhere within their respective biome"
+                    description: "Shuffles the position of hideout locations by allowing them to be placed in any chunk within their respective biome"
                 );
             Locations_RandomizeLocationRotation = config.Bind
                 (
@@ -156,7 +156,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Characters",
                     key: "Prevent character infighting",
                     defaultValue: true,
-                    description: "Prevents characters from different factions from attacking and killing each other"
+                    description: "Prevents characters from different factions from attacking and killing each other. As a result, all aggressive characters will only attack the player"
                 );
 
 
@@ -172,7 +172,7 @@ namespace DarkwoodRandomizer.Settings
                     section: "Night",
                     key: "Randomize night scenario difficulty",
                     defaultValue: true,
-                    description: "From night 4 onwards, expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
+                    description: "From night 3 onwards, expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
                 );
 
 
@@ -188,21 +188,21 @@ namespace DarkwoodRandomizer.Settings
                     section: "Vendors",
                     key: "Guarantee vendor staples",
                     defaultValue: true,
-                    description: "Guarantee certain items in trader inventories. Wolfman - chain, old woods map; Piotrek - chain, cable, old woods map; NightTrader/TheThree - gasoline, planks, nails, scrap, wires, rags, matchsticks, pellet ammo, shotgun shell, medium caliber bullet, small caliber magazine"
+                    description: "Guarantees certain items within vendor inventories. Wolfman - chain, old woods map; Piotrek - chain, cable, old woods map; NightTrader/TheThree - gasoline, planks, nails, scrap, wires, rags, matchsticks, pellet ammo, shotgun shell, medium caliber bullet, small caliber magazine"
                 );
             Vendors_MinRandomSlots = config.Bind
                 (
                     section: "Vendors",
                     key: "Vendor inventory min random slots",
                     defaultValue: 6,
-                    description: "Minimum number of randomized inventory slots that will be added to trader inventories"
+                    description: "Minimum number of randomized inventory slots that will be added to vendor inventories"
                 );
             Vendors_MaxRandomSlots = config.Bind
                 (
                     section: "Vendors",
-                    key: "Trader inventory max random slots",
+                    key: "Vendor inventory max random slots",
                     defaultValue: 18,
-                    description: "Maximum number of randomized inventory slots that will added to trader inventories"
+                    description: "Maximum number of randomized inventory slots that will added to vendor inventories"
                 );
 
 
@@ -211,33 +211,33 @@ namespace DarkwoodRandomizer.Settings
                     section: "Item Shuffle",
                     key: "Shuffle item containers",
                     defaultValue: true,
-                    description: "Shuffles item containers"
+                    description: "Whether to shuffle item containers"
                 );
             ItemShuffle_ShuffleItemContainersType = config.Bind
                 (
                     section: "Item Shuffle",
-                    key: "Item container shuffle type",
+                    key: "Shuffle type",
                     defaultValue: BiomeRandomizationType.WithinBiome,
                     description: "Global - shuffle item containers globally\nWithin Biome - shuffle item containers within each biome"
                 );
             ItemShuffle_ShuffleItemContainersIncludeEmptyContainers = config.Bind
                 (
                     section: "Item Shuffle",
-                    key: "Shuffle item containers - include empty containers",
+                    key: "Include empty containers",
                     defaultValue: false,
                     description: "Whether to include empty item containers in the shuffle pool"
                 );
             ItemShuffle_ShuffleItemContainersIncludeKeyAndQuestItems = config.Bind
                 (
                     section: "Item Shuffle",
-                    key: "Shuffle item containers - include key and quest items",
+                    key: "Include key and quest items",
                     defaultValue: false,
-                    description: "Whether to include item containers containing key and quest items in the shuffle pool. WARNING: This may result in key/quest items ending up in inaccessible locations"
+                    description: "Whether to include item containers containing key and quest items (as defined in Darkwood/BepInEx/plugins/DarkwoodRandomizer/ItemPools/ITEM_DICTIONARY) in the shuffle pool. WARNING: This may result in key/quest items ending up in inaccessible locations"
                 );
             ItemShuffle_ShuffleItemContainersIncludeOutsideLocations = config.Bind
                 (
                     section: "Item Shuffle",
-                    key: "Shuffle item containers - include outside locations",
+                    key: "Include outside locations",
                     defaultValue: true,
                     description: "Whether to include item containers from outside locations in the shuffle pool"
                 );
@@ -266,26 +266,26 @@ namespace DarkwoodRandomizer.Settings
                 );
 
 
-            ItemUpgrades_RandomUpgradeChance = config.Bind
+            WeaponUpgrades_RandomUpgradeChance = config.Bind
                 (
-                    section: "Item Upgrades",
+                    section: "Weapon Upgrades",
                     key: "Random upgrade chance",
                     defaultValue: 0.3f,
-                    description: "The chance (0-1) of adding a random upgrade to items sold by vendors or dropped by characters. This is rolled multiple times per item until a single failed roll occurs, or the maximum number of random upgrades is reached"
+                    description: "The chance (0-1) of adding a random upgrade to weapons sold by vendors or dropped by characters. This is rolled multiple times per item until a single failed roll occurs, or the maximum number of random upgrades is reached"
                 );
-            ItemUpgrades_MinRandomUpgades = config.Bind
+            WeaponUpgrades_MinRandomUpgades = config.Bind
                 (
-                    section: "Item Upgrades",
+                    section: "Weapon Upgrades",
                     key: "Min random upgrades",
                     defaultValue: 0,
-                    description: "The minimum number of random upgrades that can be added to items sold by vendors or dropped by characters. If the number of upgrades resulting from the upgrade chance roll is less than this, the number of upgrades will be set to this minimum"
+                    description: "The minimum number of random upgrades that can be added to weapons sold by vendors or dropped by characters. If the number of upgrades resulting from the upgrade chance roll is less than this, the number of upgrades will be set to this minimum"
                 );
-            ItemUpgrades_MaxRandomUpgades = config.Bind
+            WeaponUpgrades_MaxRandomUpgades = config.Bind
                 (
-                    section: "Item Upgrades",
+                    section: "Weapon Upgrades",
                     key: "Max random upgrades",
                     defaultValue: 3,
-                    description: "The maximum number of random upgrades that can be added to items sold by vendors or dropped by characters"
+                    description: "The maximum number of random upgrades that can be added to weapons sold by vendors or dropped by characters"
                 );
 
 
@@ -302,10 +302,10 @@ namespace DarkwoodRandomizer.Settings
 
         internal static void ValidateSettings()
         {
-            if (ItemUpgrades_RandomUpgradeChance!.Value < 0 || ItemUpgrades_RandomUpgradeChance!.Value > 1)
+            if (WeaponUpgrades_RandomUpgradeChance!.Value < 0 || WeaponUpgrades_RandomUpgradeChance!.Value > 1)
             {
                 DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
-                ItemUpgrades_RandomUpgradeChance!.Value = 0;
+                WeaponUpgrades_RandomUpgradeChance!.Value = 0;
             }
 
             if (ItemDrops_RandomDropChance!.Value < 0 || ItemDrops_RandomDropChance!.Value > 1)
@@ -314,10 +314,10 @@ namespace DarkwoodRandomizer.Settings
                 ItemDrops_RandomDropChance!.Value = 0;
             }
 
-            if (ItemUpgrades_RandomUpgradeChance!.Value < 0 || ItemUpgrades_RandomUpgradeChance!.Value > 1)
+            if (WeaponUpgrades_RandomUpgradeChance!.Value < 0 || WeaponUpgrades_RandomUpgradeChance!.Value > 1)
             {
                 DarkwoodRandomizerPlugin.Logger.LogError("Items_RandomUpgradeChance is not within [0, 1] - defaulting to 0");
-                ItemUpgrades_RandomUpgradeChance!.Value = 0;
+                WeaponUpgrades_RandomUpgradeChance!.Value = 0;
             }
 
             if (Characters_HealthVarianceRange!.Value < 0)
