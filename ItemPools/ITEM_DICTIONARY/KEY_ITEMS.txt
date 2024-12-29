@@ -23,3 +23,4 @@ key_treeVillage_granny_01
 key_treeVillage_mainKey
 key_village_brother_key_01
 key_wolfmanHideout_01
+note_gate_meadowForest_01

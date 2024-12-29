@@ -97,7 +97,10 @@ namespace DarkwoodRandomizer.Patches
                     durability = 1;
 
                 InvItemClass createdItem = nextFreeSlot.createItem(itemName, amount, durability, InvItem.ModifierQuality.none, false);
+                assignedSlots++;
 
+                if (!SettingsManager.WeaponUpgrades_RandomizeWeaponUpgrades!.Value)
+                    continue;
 
                 while (createdItem.upgrades.Count < SettingsManager.WeaponUpgrades_MaxRandomUpgades!.Value &&
                     UnityEngine.Random.Range(0f, 1f) < SettingsManager.WeaponUpgrades_RandomUpgradeChance!.Value)
@@ -117,8 +120,6 @@ namespace DarkwoodRandomizer.Patches
 
                     createdItem.addUpgrade(upgradePool.RandomItem());
                 }
-
-                assignedSlots++;
             }
 
             return;

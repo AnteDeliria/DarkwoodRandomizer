@@ -3,6 +3,7 @@ using DarkwoodRandomizer.Pools;
 using DarkwoodRandomizer.Settings;
 using HarmonyLib;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace DarkwoodRandomizer.Patches
@@ -14,7 +15,7 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static bool RandomizeNightEnemies(CharacterSpawner __instance, ref Character? __result, GameObject destGO, Vector3 offset, float distance, string type, bool nocturnal, bool attackPlayer = false, bool relentlessPursuit = false, bool canSpawnInside = false)
         {
-            if (!SettingsManager.Night_RandomizeCharacters!.Value)
+            if (!SettingsManager.Night_RandomizeCharacters!.Value || Core.isDay())
                 return true;
 
 
@@ -34,25 +35,28 @@ namespace DarkwoodRandomizer.Patches
             else
                 vector = offset * distance;
 
-            // Injection
             IEnumerable<string>? characterPool = CharacterPools.GetNightCharacterPathsForBiome(Player.Instance.whereAmI.bigLocation.biomeType);
 
             if (characterPool == null)
                 return true;
 
-            string randomCharacter = characterPool.RandomItem();
-            Character? character = Core.AddPrefab(randomCharacter, vector, Quaternion.Euler(90f, 0f, 0f), gameObject, false)?.GetComponent<Character>();
+            Character? character = Core.AddPrefab(characterPool.RandomItem(), vector, Quaternion.Euler(90f, 0f, 0f), gameObject, false)?.GetComponent<Character>();
 
             if (character == null)
                 return true;
-            // End Injection
+
+            character.gameObject.SetActive(true);
+            character.enableComponents(true);
 
             AccessTools.Field(typeof(CharacterSpawner), "character").SetValue(__instance, character);
             if (Player.Instance.whereAmI.bigLocation != null)
                 character.setWaypoints(Player.Instance.whereAmI.bigLocation.waypoints);
-            if (attackPlayer)
+
+            if (attackPlayer || SettingsManager.Night_AlwaysAttackPlayer!.Value)
                 character.attackPlayer();
-            character.relentlessPursuit = relentlessPursuit;
+            if (relentlessPursuit || SettingsManager.Night_RelentlessPursuit!.Value)
+                character.relentlessPursuit = true;
+
             character.nocturnal = nocturnal;
             character.temporarySpawned = true;
             if (!Singleton<Dreams>.Instance.dreaming)
@@ -68,6 +72,7 @@ namespace DarkwoodRandomizer.Patches
                 Core.addToSaveable(character.gameObject, true, false);
             }
             character.isActive = true;
+            
 
             __result = character;
             return false;

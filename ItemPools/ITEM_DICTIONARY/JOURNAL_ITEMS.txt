@@ -81,7 +81,6 @@ note_burnedHouse_01
 note_elephant_door
 note_elephant_picture
 note_gagarin
-note_gate_meadowForest_01
 note_generator
 note_hideout_swamp_01
 note_journal_bloody

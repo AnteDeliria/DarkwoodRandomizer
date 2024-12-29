@@ -30,6 +30,8 @@ namespace DarkwoodRandomizer.Settings
 
         internal static ConfigEntry<bool>? Night_RandomizeCharacters;
         internal static ConfigEntry<bool>? Night_RandomizeScenarioDifficulty;
+        internal static ConfigEntry<bool>? Night_AlwaysAttackPlayer;
+        internal static ConfigEntry<bool>? Night_RelentlessPursuit;
 
 
         internal static ConfigEntry<bool>? Vendors_RandomizeVendorInventory;
@@ -45,11 +47,13 @@ namespace DarkwoodRandomizer.Settings
         internal static ConfigEntry<bool>? ItemShuffle_ShuffleItemContainersIncludeKeyAndQuestItems;
 
 
+        internal static ConfigEntry<bool>? ItemDrops_RandomizeItemDrops;
         internal static ConfigEntry<float>? ItemDrops_RandomDropChance;
         internal static ConfigEntry<int>? ItemDrops_MinRandomDrops;
         internal static ConfigEntry<int>? ItemDrops_MaxRandomDrops;
 
 
+        internal static ConfigEntry<bool>? WeaponUpgrades_RandomizeWeaponUpgrades;
         internal static ConfigEntry<float>? WeaponUpgrades_RandomUpgradeChance;
         internal static ConfigEntry<int>? WeaponUpgrades_MinRandomUpgades;
         internal static ConfigEntry<int>? WeaponUpgrades_MaxRandomUpgades;
@@ -170,8 +174,29 @@ namespace DarkwoodRandomizer.Settings
                 (
                     section: "Night",
                     key: "Randomize night scenario difficulty",
-                    defaultValue: true,
+                    defaultValue: false,
                     description: "From night 3 onwards, expands the hideout-specific night scenario pools to include scenarios from every hideout. Some night events will fail to spawn due to missing hideout-specific elements"
+                );
+            Night_AlwaysAttackPlayer = config.Bind
+                (
+                    section: "Night",
+                    key: "Night characters always attack player",
+                    defaultValue: false,
+                    description: "Makes night characters attack the player after initially spawning. Character aggro can eventually be lost, except when [Night characters always pursue player] is enabled"
+                );
+            Night_RelentlessPursuit = config.Bind
+                (
+                    section: "Night",
+                    key: "Night characters never lose aggro",
+                    defaultValue: false,
+                    description: "Makes night characters never lose aggro on the player"
+                );
+            Night_RandomizeCharacters = config.Bind
+                (
+                    section: "Night",
+                    key: "Randomize night characters",
+                    defaultValue: true,
+                    description: "Randomizes spawns for night characters - characters that spawn during night scenarios. Character pools are defined within DarkwoodRandomizer/CharacterPools/[NightCharactersDryMeadow.txt, NightCharactersSilentForest.txt, NightCharactersOldWoods.txt, NightCharactersSwamp.txt]"
                 );
 
 
@@ -242,6 +267,13 @@ namespace DarkwoodRandomizer.Settings
                 );
 
 
+            ItemDrops_RandomizeItemDrops = config.Bind
+                (
+                    section: "Item Drops",
+                    key: "Randomize item drops",
+                    defaultValue: true,
+                    description: "Whether to randomize character item drops"
+                );
             ItemDrops_RandomDropChance = config.Bind
                 (
                     section: "Item Drops",
@@ -265,6 +297,13 @@ namespace DarkwoodRandomizer.Settings
                 );
 
 
+            WeaponUpgrades_RandomizeWeaponUpgrades = config.Bind
+                (
+                    section: "Weapon Upgrades",
+                    key: "Randomize weapon upgrades",
+                    defaultValue: true,
+                    description: "Whether to add random upgrades to weapons sold by vendors or dropped by characters"
+                );
             WeaponUpgrades_RandomUpgradeChance = config.Bind
                 (
                     section: "Weapon Upgrades",

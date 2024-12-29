@@ -109,7 +109,10 @@ namespace DarkwoodRandomizer.Patches
                             component.gameObject.SetActive(false);
                             component.enableComponents(false);
                         }
+                        DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawned {component.name} in {__instance.location.name} (CharacterSpawnPoint)");
                     }
+                    else
+                        DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawned {component.name} (no location) (CharacterSpawnPoint)");
                 }
             }
 
@@ -141,10 +144,12 @@ namespace DarkwoodRandomizer.Patches
                             Character? component = null;
                             if (characterPool != null)
                                 component = Core.AddPrefab(characterPool.RandomItem(), pointWithinBounds, Quaternion.Euler(90f, 0f, 0f), ___CharactersFreeRoaming, true).GetComponent<Character>();
-                            // End injection
 
                             if (component != null)
                             {
+                                DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawned {component.name} (free roaming)");
+                                // End injection
+
                                 component.noWaypoints = true;
                                 ___freeRoamingChars.Add(component.gameObject);
                                 Core.addToSaveable(component.gameObject, true, true);
@@ -203,10 +208,11 @@ namespace DarkwoodRandomizer.Patches
                             }
 
                             if (location.charactersList.Contains(oldCharacter))
-                            {
                                 location.charactersList.Remove(oldCharacter);
-                                if (newCharacter != null)
-                                    location.charactersList.Add(newCharacter);
+                            if (newCharacter != null)
+                            {
+                                location.charactersList.Add(newCharacter);
+                                DarkwoodRandomizerPlugin.Logger.LogInfo($"Spawned {newCharacter.name} in {location.name}");
                             }
                         }
                     }

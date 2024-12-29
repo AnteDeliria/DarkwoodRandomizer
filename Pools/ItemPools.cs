@@ -539,7 +539,6 @@ namespace DarkwoodRandomizer.Pools
             ["note_elephant_door"] = "InventoryItems/journalItems/note_elephant_door",
             ["note_elephant_picture"] = "InventoryItems/journalItems/note_elephant_picture",
             ["note_gagarin"] = "InventoryItems/journalItems/note_gagarin",
-            ["note_gate_meadowForest_01"] = "InventoryItems/journalItems/note_gate_meadowForest_01",
             ["note_generator"] = "InventoryItems/journalItems/note_generator",
             ["note_hideout_swamp_01"] = "InventoryItems/journalItems/note_hideout_swamp_01",
             ["note_journal_bloody"] = "InventoryItems/journalItems/note_journal_bloody",
@@ -636,7 +635,8 @@ namespace DarkwoodRandomizer.Pools
             ["key_treeVillage_granny_01"] = "InventoryItems/journalItems/key_treeVillage_granny_01",
             ["key_treeVillage_mainKey"] = "InventoryItems/journalItems/key_treeVillage_mainKey",
             ["key_village_brother_key_01"] = "InventoryItems/journalItems/key_village_brother_key_01",
-            ["key_wolfmanHideout_01"] = "InventoryItems/journalItems/key_wolfmanHideout_01"
+            ["key_wolfmanHideout_01"] = "InventoryItems/journalItems/key_wolfmanHideout_01",
+            ["note_gate_meadowForest_01"] = "InventoryItems/journalItems/note_gate_meadowForest_01"
         };
 
         internal static readonly Dictionary<string, string> WEAPON_ITEMS = new()

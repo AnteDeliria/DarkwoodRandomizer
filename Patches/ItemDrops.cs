@@ -14,6 +14,9 @@ namespace DarkwoodRandomizer.Patches
         [HarmonyPrefix]
         private static void RandomizeCharacterLoot(Character __instance)
         {
+            if (!SettingsManager.ItemDrops_RandomizeItemDrops!.Value)
+                return;
+
             if (Singleton<Dreams>.Instance.dreaming)
                 return;
 
@@ -67,6 +70,8 @@ namespace DarkwoodRandomizer.Patches
 
             InvItemClass createdItem = inventory.addItem(new InvItemClass(itemName, durability, amount), true);
 
+            if (!SettingsManager.WeaponUpgrades_RandomizeWeaponUpgrades!.Value)
+                return;
 
             while (createdItem.upgrades.Count < SettingsManager.WeaponUpgrades_MaxRandomUpgades!.Value &&
                 UnityEngine.Random.Range(0f, 1f) < SettingsManager.WeaponUpgrades_RandomUpgradeChance!.Value)
